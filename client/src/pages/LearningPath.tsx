@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Circle, ArrowLeft } from "lucide-react";
 import { useLocation } from "wouter";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function LearningPath() {
   const [, setLocation] = useLocation();
@@ -34,6 +35,9 @@ export default function LearningPath() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
       {/* Back Button */}
       <div className="container pt-8">
         <Button 

@@ -1,12 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, Target, Zap, TrendingUp } from "lucide-react";
 import { useLocation } from "wouter";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function Home() {
   const [, setLocation] = useLocation();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
+      {/* Theme Toggle - Fixed Position */}
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
       {/* Hero Section */}
       <div className="container py-20 md:py-32">
         <div className="max-w-4xl mx-auto text-center space-y-8">

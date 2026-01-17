@@ -3,6 +3,7 @@ import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, AlertCircle, CheckCircle2, Clock, DollarSign, Users } from "lucide-react";
 import { useState } from "react";
 import { useLocation, useParams } from "wouter";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const scenarioData: Record<string, any> = {
   "healthcare-ward": {
@@ -292,6 +293,9 @@ export default function Scenario() {
     const score = getOverallScore();
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
         <div className="container pt-8">
           <Button 
             variant="ghost" 
@@ -368,6 +372,9 @@ export default function Scenario() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
       {/* Header with Back Button */}
       <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container py-4">

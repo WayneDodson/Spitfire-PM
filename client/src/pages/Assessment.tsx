@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { useLocation } from "wouter";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const questions = [
   {
@@ -115,6 +116,9 @@ export default function Assessment() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
       {/* Back Button */}
       <div className="container pt-8">
         <Button 

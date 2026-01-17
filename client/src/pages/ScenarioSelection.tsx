@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Building2, Home, Globe } from "lucide-react";
 import { useLocation } from "wouter";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const scenarios = [
   {
@@ -43,6 +44,9 @@ export default function ScenarioSelection() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
       {/* Back Button */}
       <div className="container pt-8">
         <Button 
