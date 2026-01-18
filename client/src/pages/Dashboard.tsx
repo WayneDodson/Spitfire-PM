@@ -55,6 +55,12 @@ export default function Dashboard() {
   const completedLevels = userProgress?.filter((p: any) => p.completed).length || 0;
   const totalLevels = 7;
   const overallProgress = (completedLevels / totalLevels) * 100;
+  
+  // Find current level (first incomplete level or last completed level)
+  const currentLevelProgress = userProgress?.find((p: any) => !p.completed) || 
+                                userProgress?.find((p: any) => p.completed) ||
+                                null;
+  const currentLevelPercent = currentLevelProgress?.progressPercent || 0;
 
   const referralLink = user?.referralCode 
     ? `${window.location.origin}/?ref=${user.referralCode}`
@@ -126,14 +132,16 @@ export default function Dashboard() {
         <div className="grid md:grid-cols-4 gap-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Overall Progress</CardTitle>
+              <CardTitle className="text-sm font-medium">Current Level</CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{Math.round(overallProgress)}%</div>
-              <Progress value={overallProgress} className="mt-2" />
+              <div className="text-2xl font-bold">{Math.round(currentLevelPercent)}%</div>
+              <Progress value={currentLevelPercent} className="mt-2" />
               <p className="text-xs text-muted-foreground mt-2">
-                {completedLevels} of {totalLevels} levels complete
+                {currentLevelProgress ? 
+                  `Level ${levels?.find((l: any) => l.id === currentLevelProgress.levelId)?.orderIndex || 1} progress` :
+                  "Start your first level"}
               </p>
             </CardContent>
           </Card>

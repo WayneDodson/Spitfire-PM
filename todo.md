@@ -73,3 +73,6 @@
 - [x] Build level navigation with lock/unlock UI
 - [x] Add subscription status display
 - [x] Create dashboard route in App.tsx
+
+## Dashboard Improvements
+- [x] Fix progress bar to show current level progress instead of overall completion
