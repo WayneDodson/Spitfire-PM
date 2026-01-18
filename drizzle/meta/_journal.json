@@ -8,6 +8,13 @@
       "when": 1768723902707,
       "tag": "0000_blue_warlock",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1768725219346,
+      "tag": "0001_worthless_bloodaxe",
+      "breakpoints": true
     }
   ]
 }
