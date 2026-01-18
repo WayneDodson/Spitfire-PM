@@ -12,11 +12,13 @@ import LearningPath from "./pages/LearningPath";
 import Tutorial from "./pages/Tutorial";
 import ScenarioSelection from "./pages/ScenarioSelection";
 import Scenario from "./pages/Scenario";
+import Dashboard from "./pages/Dashboard";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/login"} component={Login} />
       <Route path="/onboarding" component={Onboarding} />
       <Route path="/assessment" component={Assessment} />

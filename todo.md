@@ -58,3 +58,18 @@
 - [x] Design level completion celebration messages
 - [x] Add progress reflection prompts
 - [ ] Implement quotes in database and UI
+
+## Knowledge Checks (Mid-Content Quizzes)
+- [x] Design knowledge check system (2 questions mid-content)
+- [ ] Add knowledge_checks table to database
+- [ ] Create sample knowledge checks for each level
+- [ ] Implement quiz interruption UI
+- [ ] Add progress tracking for knowledge checks
+
+## User Dashboard
+- [x] Create Dashboard page component
+- [x] Add progress overview section
+- [x] Implement referral link with copy button
+- [x] Build level navigation with lock/unlock UI
+- [x] Add subscription status display
+- [x] Create dashboard route in App.tsx
