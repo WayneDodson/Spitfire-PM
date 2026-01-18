@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, AlertCircle, CheckCircle2, Clock, DollarSign, Users } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useParams } from "wouter";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -239,11 +239,39 @@ const scenarioData: Record<string, any> = {
 export default function Scenario() {
   const { id } = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
-  const [currentDecision, setCurrentDecision] = useState(0);
-  const [stats, setStats] = useState(scenarioData[id!]?.initialStats || {});
+  
+  // Load saved progress from localStorage
+  const getSavedProgress = () => {
+    const saved = localStorage.getItem(`scenario-progress-${id}`);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  };
+
+  const savedProgress = getSavedProgress();
+  
+  const [currentDecision, setCurrentDecision] = useState(savedProgress?.currentDecision || 0);
+  const [stats, setStats] = useState(savedProgress?.stats || scenarioData[id!]?.initialStats || {});
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+
+  // Save progress to localStorage whenever state changes
+  useEffect(() => {
+    if (!isComplete && id) {
+      const progress = {
+        currentDecision,
+        stats,
+        timestamp: Date.now()
+      };
+      localStorage.setItem(`scenario-progress-${id}`, JSON.stringify(progress));
+    }
+  }, [currentDecision, stats, isComplete, id]);
 
   const scenario = scenarioData[id!];
 
@@ -256,10 +284,20 @@ export default function Scenario() {
   const handleOptionSelect = (optionIndex: number) => {
     if (showFeedback) return;
     
-    setSelectedOption(optionIndex);
+    // Allow deselecting by clicking the same option again
+    if (selectedOption === optionIndex) {
+      setSelectedOption(null);
+    } else {
+      setSelectedOption(optionIndex);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (selectedOption === null) return;
+    
     setShowFeedback(true);
 
-    const option = decisions[currentDecision].options[optionIndex];
+    const option = decisions[currentDecision].options[selectedOption];
     const newStats = { ...stats };
     
     Object.entries(option.impact).forEach(([key, value]) => {
@@ -276,6 +314,8 @@ export default function Scenario() {
       setShowFeedback(false);
     } else {
       setIsComplete(true);
+      // Clear saved progress when scenario is completed
+      localStorage.removeItem(`scenario-progress-${id}`);
     }
   };
 
@@ -495,6 +535,24 @@ export default function Scenario() {
                 </div>
               ))}
             </div>
+
+            {!showFeedback && (
+              <div className="mt-8">
+                <Button 
+                  onClick={handleSubmit} 
+                  size="lg" 
+                  className="w-full"
+                  disabled={selectedOption === null}
+                >
+                  Submit Answer
+                </Button>
+                {selectedOption !== null && (
+                  <p className="text-sm text-muted-foreground text-center mt-2">
+                    Click your selected answer again to change your choice
+                  </p>
+                )}
+              </div>
+            )}
 
             {showFeedback && (
               <div className="mt-8">

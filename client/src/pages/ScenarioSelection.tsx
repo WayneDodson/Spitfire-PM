@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Building2, Home, Globe } from "lucide-react";
+import { ArrowLeft, ArrowRight, Building2, Home, Globe, RotateCcw } from "lucide-react";
 import { useLocation } from "wouter";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useState, useEffect } from "react";
 
 const scenarios = [
   {
@@ -41,6 +42,33 @@ const scenarios = [
 
 export default function ScenarioSelection() {
   const [, setLocation] = useLocation();
+  const [savedProgress, setSavedProgress] = useState<Record<string, any>>({});
+
+  // Check for saved progress on mount
+  useEffect(() => {
+    const progress: Record<string, any> = {};
+    scenarios.forEach(scenario => {
+      const saved = localStorage.getItem(`scenario-progress-${scenario.id}`);
+      if (saved) {
+        try {
+          progress[scenario.id] = JSON.parse(saved);
+        } catch (e) {
+          // Ignore invalid data
+        }
+      }
+    });
+    setSavedProgress(progress);
+  }, []);
+
+  const clearProgress = (scenarioId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    localStorage.removeItem(`scenario-progress-${scenarioId}`);
+    setSavedProgress(prev => {
+      const updated = { ...prev };
+      delete updated[scenarioId];
+      return updated;
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
@@ -99,6 +127,26 @@ export default function ScenarioSelection() {
                     </p>
                   </div>
 
+                  {savedProgress[scenario.id] && (
+                    <div className="bg-primary/10 border border-primary/30 rounded-lg p-3 mb-2">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-medium text-primary">Progress Saved</span>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={(e) => clearProgress(scenario.id, e)}
+                          className="h-6 px-2 text-xs"
+                        >
+                          <RotateCcw className="h-3 w-3 mr-1" />
+                          Reset
+                        </Button>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Decision {savedProgress[scenario.id].currentDecision + 1} of 3
+                      </p>
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between pt-4 border-t border-border/50">
                     <span className="text-sm text-muted-foreground">
                       ⏱️ {scenario.duration}
@@ -112,7 +160,7 @@ export default function ScenarioSelection() {
                       }}
                       className="gap-2"
                     >
-                      Start
+                      {savedProgress[scenario.id] ? 'Resume' : 'Start'}
                       <ArrowRight className="h-4 w-4" />
                     </Button>
                   </div>
