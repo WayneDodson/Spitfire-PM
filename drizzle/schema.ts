@@ -193,3 +193,89 @@ export const userKnowledgeCheckAttempts = mysqlTable("userKnowledgeCheckAttempts
 
 export type UserKnowledgeCheckAttempt = typeof userKnowledgeCheckAttempts.$inferSelect;
 export type InsertUserKnowledgeCheckAttempt = typeof userKnowledgeCheckAttempts.$inferInsert;
+
+/**
+ * Achievements - gamification badges and milestones
+ */
+export const achievements = mysqlTable("achievements", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Unique identifier for the achievement */
+  key: varchar("key", { length: 64 }).notNull().unique(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  /** Icon name or emoji */
+  icon: varchar("icon", { length: 64 }).notNull(),
+  /** XP points awarded for this achievement */
+  xpReward: int("xpReward").default(0).notNull(),
+  /** Achievement category */
+  category: mysqlEnum("category", ["milestone", "streak", "mastery", "social", "special"]).notNull(),
+  /** Order for display */
+  orderIndex: int("orderIndex").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Achievement = typeof achievements.$inferSelect;
+export type InsertAchievement = typeof achievements.$inferInsert;
+
+/**
+ * User achievements - tracks which achievements users have unlocked
+ */
+export const userAchievements = mysqlTable("userAchievements", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  achievementId: int("achievementId").notNull(),
+  /** When the achievement was unlocked */
+  unlockedAt: timestamp("unlockedAt").defaultNow().notNull(),
+});
+
+export type UserAchievement = typeof userAchievements.$inferSelect;
+export type InsertUserAchievement = typeof userAchievements.$inferInsert;
+
+/**
+ * User XP and gamification stats
+ */
+export const userStats = mysqlTable("userStats", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  /** Total XP points earned */
+  totalXp: int("totalXp").default(0).notNull(),
+  /** Current level based on XP */
+  level: int("level").default(1).notNull(),
+  /** Current streak (consecutive days) */
+  currentStreak: int("currentStreak").default(0).notNull(),
+  /** Longest streak achieved */
+  longestStreak: int("longestStreak").default(0).notNull(),
+  /** Last login date for streak tracking */
+  lastLoginDate: timestamp("lastLoginDate"),
+  /** Total lessons completed */
+  lessonsCompleted: int("lessonsCompleted").default(0).notNull(),
+  /** Total quizzes completed */
+  quizzesCompleted: int("quizzesCompleted").default(0).notNull(),
+  /** Perfect quiz scores */
+  perfectScores: int("perfectScores").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserStats = typeof userStats.$inferSelect;
+export type InsertUserStats = typeof userStats.$inferInsert;
+
+/**
+ * XP transactions - log of all XP earned
+ */
+export const xpTransactions = mysqlTable("xpTransactions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  /** Amount of XP earned (can be negative for penalties) */
+  amount: int("amount").notNull(),
+  /** Reason for XP award */
+  reason: varchar("reason", { length: 255 }).notNull(),
+  /** Related entity type */
+  entityType: mysqlEnum("entityType", ["lesson", "quiz", "achievement", "streak", "bonus", "other"]),
+  /** Related entity ID */
+  entityId: int("entityId"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type XpTransaction = typeof xpTransactions.$inferSelect;
+export type InsertXpTransaction = typeof xpTransactions.$inferInsert;

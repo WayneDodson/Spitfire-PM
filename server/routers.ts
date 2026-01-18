@@ -4,6 +4,9 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
+import * as gamification from "./gamification";
+import { achievements, userAchievements, userStats, xpTransactions } from "../drizzle/schema";
+import { eq, desc, sql } from "drizzle-orm";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -161,7 +164,24 @@ export const appRouter = router({
     markLessonComplete: protectedProcedure
       .input(z.object({ lessonId: z.number() }))
       .mutation(async ({ input, ctx }) => {
-        return await db.markLessonComplete(ctx.user.id, input.lessonId);
+        const result = await db.markLessonComplete(ctx.user.id, input.lessonId);
+        
+        // Award XP for completing lesson
+        await gamification.awardXP(ctx.user.id, 25, 'Completed lesson', 'lesson', input.lessonId);
+        
+        // Update lesson count in stats
+        const dbInstance = await db.getDb();
+        if (dbInstance) {
+          await dbInstance
+            .update(userStats)
+            .set({ lessonsCompleted: sql`${userStats.lessonsCompleted} + 1` })
+            .where(eq(userStats.userId, ctx.user.id));
+        }
+        
+        // Check for achievements
+        await gamification.checkAchievements(ctx.user.id);
+        
+        return result;
       }),
 
     // Get user's lesson progress for a level
@@ -196,6 +216,56 @@ export const appRouter = router({
       .query(async ({ input, ctx }) => {
         return await db.getUserKnowledgeCheckAttempts(ctx.user.id, input.levelId);
       }),
+  }),
+
+  gamification: router({
+    // Get user's gamification stats
+    getMyStats: protectedProcedure.query(async ({ ctx }) => {
+      return await gamification.getUserGamificationStats(ctx.user.id);
+    }),
+
+    // Get all achievements
+    getAllAchievements: publicProcedure.query(async () => {
+      const dbInstance = await db.getDb();
+      if (!dbInstance) return [];
+      return await dbInstance.select().from(achievements).orderBy(achievements.orderIndex);
+    }),
+
+    // Get user's unlocked achievements
+    getMyAchievements: protectedProcedure.query(async ({ ctx }) => {
+      const dbInstance = await db.getDb();
+      if (!dbInstance) return [];
+      
+      const unlocked = await dbInstance
+        .select({
+          achievement: achievements,
+          unlockedAt: userAchievements.unlockedAt,
+        })
+        .from(userAchievements)
+        .innerJoin(achievements, eq(userAchievements.achievementId, achievements.id))
+        .where(eq(userAchievements.userId, ctx.user.id))
+        .orderBy(desc(userAchievements.unlockedAt));
+      
+      return unlocked;
+    }),
+
+    // Get recent XP transactions
+    getRecentXP: protectedProcedure.query(async ({ ctx }) => {
+      const dbInstance = await db.getDb();
+      if (!dbInstance) return [];
+      
+      return await dbInstance
+        .select()
+        .from(xpTransactions)
+        .where(eq(xpTransactions.userId, ctx.user.id))
+        .orderBy(desc(xpTransactions.createdAt))
+        .limit(20);
+    }),
+
+    // Update streak (called on login)
+    updateStreak: protectedProcedure.mutation(async ({ ctx }) => {
+      return await gamification.updateStreak(ctx.user.id);
+    }),
   }),
 });
 
