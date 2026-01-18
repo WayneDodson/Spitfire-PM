@@ -141,6 +141,62 @@ export const appRouter = router({
         return { success: true };
       }),
   }),
+
+  lessons: router({
+    // Get all lessons for a specific level
+    getLessonsByLevel: publicProcedure
+      .input(z.object({ levelId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getLessonsByLevel(input.levelId);
+      }),
+
+    // Get a specific lesson
+    getLesson: publicProcedure
+      .input(z.object({ lessonId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getLessonById(input.lessonId);
+      }),
+
+    // Mark lesson as completed
+    markLessonComplete: protectedProcedure
+      .input(z.object({ lessonId: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        return await db.markLessonComplete(ctx.user.id, input.lessonId);
+      }),
+
+    // Get user's lesson progress for a level
+    getMyLessonProgress: protectedProcedure
+      .input(z.object({ levelId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        return await db.getUserLessonProgress(ctx.user.id, input.levelId);
+      }),
+  }),
+
+  knowledgeChecks: router({
+    // Get knowledge checks for a specific lesson
+    getByLesson: publicProcedure
+      .input(z.object({ levelId: z.number(), afterLessonNumber: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getKnowledgeChecksByLesson(input.levelId, input.afterLessonNumber);
+      }),
+
+    // Submit answer and get feedback
+    submitAnswer: protectedProcedure
+      .input(z.object({
+        checkId: z.number(),
+        selectedAnswerIndex: z.number(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return await db.submitKnowledgeCheckAnswer(ctx.user.id, input.checkId, input.selectedAnswerIndex);
+      }),
+
+    // Get user's attempts for a level
+    getMyAttempts: protectedProcedure
+      .input(z.object({ levelId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        return await db.getUserKnowledgeCheckAttempts(ctx.user.id, input.levelId);
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

@@ -13,6 +13,8 @@ import Tutorial from "./pages/Tutorial";
 import ScenarioSelection from "./pages/ScenarioSelection";
 import Scenario from "./pages/Scenario";
 import Dashboard from "./pages/Dashboard";
+import Lesson from "./pages/Lesson";
+import Level from "./pages/Level";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -26,6 +28,8 @@ function Router() {
       <Route path="/tutorial/:id" component={Tutorial} />
       <Route path="/scenarios" component={ScenarioSelection} />
       <Route path="/scenario/:id" component={Scenario} />
+      <Route path="/level/:id" component={Level} />
+      <Route path="/lesson/:id" component={Lesson} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

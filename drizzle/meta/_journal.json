@@ -15,6 +15,13 @@
       "when": 1768725219346,
       "tag": "0001_worthless_bloodaxe",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1768728836904,
+      "tag": "0002_classy_shape",
+      "breakpoints": true
     }
   ]
 }

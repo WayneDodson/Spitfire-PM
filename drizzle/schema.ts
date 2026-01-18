@@ -121,3 +121,75 @@ export const subscriptions = mysqlTable("subscriptions", {
 
 export type Subscription = typeof subscriptions.$inferSelect;
 export type InsertSubscription = typeof subscriptions.$inferInsert;
+/**
+ * Lessons table - individual lessons within each level
+ */
+export const lessons = mysqlTable("lessons", {
+  id: int("id").autoincrement().primaryKey(),
+  levelId: int("levelId").notNull(),
+  /** Lesson number within the level (1-12) */
+  lessonNumber: int("lessonNumber").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  /** Main lesson content in markdown */
+  content: text("content").notNull(),
+  /** Estimated minutes to complete */
+  estimatedMinutes: int("estimatedMinutes").default(30).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Lesson = typeof lessons.$inferSelect;
+export type InsertLesson = typeof lessons.$inferInsert;
+
+/**
+ * Knowledge checks - quiz questions that appear during lessons
+ */
+export const knowledgeChecks = mysqlTable("knowledgeChecks", {
+  id: int("id").autoincrement().primaryKey(),
+  levelId: int("levelId").notNull(),
+  /** Which lesson this check appears after (6 or 12 for Level 1) */
+  afterLessonNumber: int("afterLessonNumber").notNull(),
+  question: text("question").notNull(),
+  /** JSON array of answer options */
+  options: text("options").notNull(),
+  /** Index of correct answer (0-based) */
+  correctAnswerIndex: int("correctAnswerIndex").notNull(),
+  /** Explanation shown after answering */
+  explanation: text("explanation").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type KnowledgeCheck = typeof knowledgeChecks.$inferSelect;
+export type InsertKnowledgeCheck = typeof knowledgeChecks.$inferInsert;
+
+/**
+ * User lesson progress - tracks completion of individual lessons
+ */
+export const userLessonProgress = mysqlTable("userLessonProgress", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  lessonId: int("lessonId").notNull(),
+  completed: boolean("completed").default(false).notNull(),
+  completedAt: timestamp("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type UserLessonProgress = typeof userLessonProgress.$inferSelect;
+export type InsertUserLessonProgress = typeof userLessonProgress.$inferInsert;
+
+/**
+ * User knowledge check attempts
+ */
+export const userKnowledgeCheckAttempts = mysqlTable("userKnowledgeCheckAttempts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  knowledgeCheckId: int("knowledgeCheckId").notNull(),
+  /** User's selected answer index */
+  selectedAnswerIndex: int("selectedAnswerIndex").notNull(),
+  /** Whether the answer was correct */
+  correct: boolean("correct").notNull(),
+  attemptedAt: timestamp("attemptedAt").defaultNow().notNull(),
+});
+
+export type UserKnowledgeCheckAttempt = typeof userKnowledgeCheckAttempts.$inferSelect;
+export type InsertUserKnowledgeCheckAttempt = typeof userKnowledgeCheckAttempts.$inferInsert;

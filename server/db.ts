@@ -212,3 +212,130 @@ export async function upsertSubscription(subscription: InsertSubscription) {
 
   await db.insert(subscriptions).values(subscription);
 }
+
+// Lesson helpers
+
+export async function getLessonsByLevel(levelId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { lessons } = await import("../drizzle/schema");
+  return await db.select().from(lessons).where(eq(lessons.levelId, levelId)).orderBy(lessons.lessonNumber);
+}
+
+export async function getLessonById(lessonId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const { lessons } = await import("../drizzle/schema");
+  const result = await db.select().from(lessons).where(eq(lessons.id, lessonId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function markLessonComplete(userId: number, lessonId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const { userLessonProgress } = await import("../drizzle/schema");
+  
+  const existing = await db
+    .select()
+    .from(userLessonProgress)
+    .where(and(eq(userLessonProgress.userId, userId), eq(userLessonProgress.lessonId, lessonId)))
+    .limit(1);
+
+  if (existing.length > 0) {
+    await db
+      .update(userLessonProgress)
+      .set({ completed: true, completedAt: new Date() })
+      .where(and(eq(userLessonProgress.userId, userId), eq(userLessonProgress.lessonId, lessonId)));
+  } else {
+    await db.insert(userLessonProgress).values({
+      userId,
+      lessonId,
+      completed: true,
+      completedAt: new Date(),
+    });
+  }
+
+  return { success: true };
+}
+
+export async function getUserLessonProgress(userId: number, levelId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { userLessonProgress, lessons } = await import("../drizzle/schema");
+  
+  const result = await db
+    .select({
+      lessonId: userLessonProgress.lessonId,
+      completed: userLessonProgress.completed,
+      completedAt: userLessonProgress.completedAt,
+    })
+    .from(userLessonProgress)
+    .innerJoin(lessons, eq(lessons.id, userLessonProgress.lessonId))
+    .where(and(eq(userLessonProgress.userId, userId), eq(lessons.levelId, levelId)));
+
+  return result;
+}
+
+// Knowledge check helpers
+
+export async function getKnowledgeChecksByLesson(levelId: number, afterLessonNumber: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { knowledgeChecks } = await import("../drizzle/schema");
+  return await db
+    .select()
+    .from(knowledgeChecks)
+    .where(and(eq(knowledgeChecks.levelId, levelId), eq(knowledgeChecks.afterLessonNumber, afterLessonNumber)));
+}
+
+export async function submitKnowledgeCheckAnswer(userId: number, checkId: number, selectedAnswerIndex: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const { knowledgeChecks, userKnowledgeCheckAttempts } = await import("../drizzle/schema");
+  
+  // Get the question
+  const check = await db.select().from(knowledgeChecks).where(eq(knowledgeChecks.id, checkId)).limit(1);
+  if (!check[0]) throw new Error("Knowledge check not found");
+
+  const isCorrect = check[0].correctAnswerIndex === selectedAnswerIndex;
+
+  // Record the attempt
+  await db.insert(userKnowledgeCheckAttempts).values({
+    userId,
+    knowledgeCheckId: checkId,
+    selectedAnswerIndex,
+    correct: isCorrect,
+  });
+
+  return {
+    isCorrect,
+    correctAnswerIndex: check[0].correctAnswerIndex,
+    explanation: check[0].explanation,
+  };
+}
+
+export async function getUserKnowledgeCheckAttempts(userId: number, levelId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { userKnowledgeCheckAttempts, knowledgeChecks } = await import("../drizzle/schema");
+  
+  const result = await db
+    .select({
+      checkId: userKnowledgeCheckAttempts.knowledgeCheckId,
+      selectedAnswerIndex: userKnowledgeCheckAttempts.selectedAnswerIndex,
+      isCorrect: userKnowledgeCheckAttempts.correct,
+      attemptedAt: userKnowledgeCheckAttempts.attemptedAt,
+    })
+    .from(userKnowledgeCheckAttempts)
+    .innerJoin(knowledgeChecks, eq(knowledgeChecks.id, userKnowledgeCheckAttempts.knowledgeCheckId))
+    .where(and(eq(userKnowledgeCheckAttempts.userId, userId), eq(knowledgeChecks.levelId, levelId)));
+
+  return result;
+}
