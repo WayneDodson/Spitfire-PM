@@ -15,6 +15,7 @@ import Scenario from "./pages/Scenario";
 import Dashboard from "./pages/Dashboard";
 import Lesson from "./pages/Lesson";
 import Level from "./pages/Level";
+import Achievements from "./pages/Achievements";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -30,6 +31,7 @@ function Router() {
       <Route path="/scenario/:id" component={Scenario} />
       <Route path="/level/:id" component={Level} />
       <Route path="/lesson/:id" component={Lesson} />
+      <Route path="/achievements" component={Achievements} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

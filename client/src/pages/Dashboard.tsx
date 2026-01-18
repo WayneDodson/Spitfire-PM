@@ -18,6 +18,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { XPProgressBar } from "@/components/XPProgressBar";
 
 export default function Dashboard() {
   const { user, loading, isAuthenticated } = useAuth();
@@ -110,6 +111,10 @@ export default function Dashboard() {
             </nav>
           </div>
           <div className="flex items-center gap-4">
+            <Button variant="ghost" size="sm" onClick={() => setLocation("/achievements")}>
+              <Award className="h-4 w-4 mr-2" />
+              Achievements
+            </Button>
             <ThemeToggle />
             <div className="text-sm text-right">
               <p className="font-medium">{user?.name}</p>
@@ -121,11 +126,14 @@ export default function Dashboard() {
 
       <div className="container py-8 space-y-8">
         {/* Welcome Section */}
-        <div className="space-y-2">
-          <h2 className="text-4xl font-bold">Welcome back, {user?.name?.split(" ")[0]}!</h2>
-          <p className="text-xl text-muted-foreground">
-            Continue your journey to becoming a professional project manager
-          </p>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <h2 className="text-4xl font-bold">Welcome back, {user?.name?.split(" ")[0]}!</h2>
+            <p className="text-xl text-muted-foreground">
+              Continue your journey to becoming a professional project manager
+            </p>
+          </div>
+          <XPProgressBar />
         </div>
 
         {/* Stats Grid */}
