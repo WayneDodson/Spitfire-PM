@@ -90,10 +90,10 @@
 - [x] Create Level 2: Waterfall Methodology (12 lessons + 4 knowledge check questions)
 - [x] Create Level 3: Agile & Scrum (12 lessons + 4 knowledge check questions)
 - [x] Create Level 4: Stakeholder Management (12 lessons + 4 knowledge check questions)
-- [ ] Create Level 5: Risk & Budget Management (12 lessons + 4 knowledge check questions)
-- [ ] Create Level 6: Leadership & Team Management (12 lessons + 4 knowledge check questions)
-- [ ] Create Level 7: Advanced PM & Certification Prep (12 lessons + 28 final exam questions)
-- [ ] Test all levels end-to-end
+- [x] Create Level 5: Risk & Budget Management (12 lessons + 4 knowledge check questions)
+- [x] Create Level 6: Leadership & Team Management (12 lessons + 4 knowledge check questions)
+- [x] Create Level 7: Advanced PM & Certification Prep (12 lessons + 28 final exam questions)
+- [x] Test all levels end-to-end
 
 ## Gamification & Psychological Engagement
 - [x] Design achievement/badge system with psychological principles
