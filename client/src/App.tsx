@@ -12,8 +12,8 @@ import LearningPath from "./pages/LearningPath";
 import Tutorial from "./pages/Tutorial";
 import ScenarioSelection from "./pages/ScenarioSelection";
 import Scenario from "./pages/Scenario";
-
 function Router() {
+  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path={"/"} component={Home} />

@@ -1,9 +1,11 @@
+import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, Target, Zap, TrendingUp } from "lucide-react";
 import { useLocation } from "wouter";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function Home() {
+  const { user, loading, error, isAuthenticated, logout } = useAuth();
   const [, setLocation] = useLocation();
 
   return (
@@ -46,8 +48,6 @@ export default function Home() {
               Login
             </Button>
           </div>
-          
-          <p className="text-sm text-muted-foreground">NO CREDIT CARD REQUIRED</p>
         </div>
       </div>
 
