@@ -339,3 +339,16 @@ export async function getUserKnowledgeCheckAttempts(userId: number, levelId: num
 
   return result;
 }
+
+/**
+ * Update user's display name
+ */
+export async function updateUserDisplayName(userId: number, displayName: string) {
+  const dbInstance = await getDb();
+  if (!dbInstance) throw new Error("Database not available");
+  
+  await dbInstance
+    .update(users)
+    .set({ displayName })
+    .where(eq(users.id, userId));
+}

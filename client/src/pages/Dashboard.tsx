@@ -14,16 +14,18 @@ import {
   TrendingUp,
   Users
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { XPProgressBar } from "@/components/XPProgressBar";
+import { OnboardingModal } from "@/components/OnboardingModal";
 
 export default function Dashboard() {
   const { user, loading, isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
   const [copiedLink, setCopiedLink] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   // Fetch user data
   const { data: levels } = trpc.levels.getAll.useQuery();
@@ -39,6 +41,13 @@ export default function Dashboard() {
   const userProgress = levelProgress?.progress;
   const referralCount = referralData?.count || 0;
   const hasActiveSubscription = levelProgress?.hasActiveSubscription || false;
+
+  // Show onboarding modal if user has no display name
+  useEffect(() => {
+    if (user && !user.displayName) {
+      setShowOnboarding(true);
+    }
+  }, [user]);
 
   if (loading) {
     return (
@@ -95,6 +104,7 @@ export default function Dashboard() {
   };
 
   return (
+    <>
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
@@ -117,7 +127,7 @@ export default function Dashboard() {
             </Button>
             <ThemeToggle />
             <div className="text-sm text-right">
-              <p className="font-medium">{user?.name}</p>
+              <p className="font-medium">{user?.displayName || user?.name}</p>
               <p className="text-muted-foreground text-xs">{user?.email}</p>
             </div>
           </div>
@@ -128,7 +138,7 @@ export default function Dashboard() {
         {/* Welcome Section */}
         <div className="space-y-4">
           <div className="space-y-2">
-            <h2 className="text-4xl font-bold">Welcome back, {user?.name?.split(" ")[0]}!</h2>
+            <h2 className="text-4xl font-bold">Welcome back, {(user?.displayName || user?.name)?.split(" ")[0]}!</h2>
             <p className="text-xl text-muted-foreground">
               Continue your journey to becoming a professional project manager
             </p>
@@ -339,5 +349,16 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
+
+    {/* Onboarding Modal */}
+    <OnboardingModal 
+      open={showOnboarding} 
+      onComplete={() => {
+        setShowOnboarding(false);
+        // Refresh user data to get updated display name
+        window.location.reload();
+      }} 
+    />
+    </>
   );
 }

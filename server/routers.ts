@@ -218,6 +218,16 @@ export const appRouter = router({
       }),
   }),
 
+  profile: router({
+    // Update user's display name
+    updateDisplayName: protectedProcedure
+      .input(z.object({ displayName: z.string().min(1).max(100) }))
+      .mutation(async ({ input, ctx }) => {
+        await db.updateUserDisplayName(ctx.user.id, input.displayName);
+        return { success: true };
+      }),
+  }),
+
   gamification: router({
     // Get user's gamification stats
     getMyStats: protectedProcedure.query(async ({ ctx }) => {

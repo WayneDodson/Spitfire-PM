@@ -127,3 +127,10 @@
 - [ ] Add loading states and skeletons
 - [ ] Implement proper error boundaries
 - [ ] Test all user flows end-to-end
+
+## Display Name Feature
+- [x] Add displayName field to user schema
+- [x] Create onboarding flow to collect preferred name after first login
+- [ ] Add profile settings page to update display name
+- [x] Update all UI components to show display name instead of email
+- [ ] Test display name feature
