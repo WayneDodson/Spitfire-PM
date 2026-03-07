@@ -11,10 +11,20 @@ export const users = mysqlTable("users", {
    * Use this for relations between tables.
    */
   id: int("id").autoincrement().primaryKey(),
-  /** Manus OAuth identifier (openId) returned from the OAuth callback. Unique per user. */
-  openId: varchar("openId", { length: 64 }).notNull().unique(),
+  /** Manus OAuth identifier (openId) - kept for backward compat, nullable for new email/google users */
+  openId: varchar("openId", { length: 64 }).unique(),
   name: text("name"),
-  email: varchar("email", { length: 320 }),
+  email: varchar("email", { length: 320 }).unique(),
+  /** Bcrypt hashed password - null for Google OAuth users */
+  passwordHash: varchar("passwordHash", { length: 255 }),
+  /** Google OAuth subject ID */
+  googleId: varchar("googleId", { length: 128 }).unique(),
+  /** Profile picture URL from Google */
+  avatarUrl: varchar("avatarUrl", { length: 512 }),
+  /** Auth method: 'email', 'google' */
+  authProvider: mysqlEnum("authProvider", ["email", "google", "manus"]).default("email"),
+  /** Email verified flag */
+  emailVerified: boolean("emailVerified").default(false),
   /** User's preferred display name shown throughout the site */
   displayName: varchar("displayName", { length: 100 }),
   loginMethod: varchar("loginMethod", { length: 64 }),

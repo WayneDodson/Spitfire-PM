@@ -6,6 +6,9 @@ import type { Request } from "express";
 import { SignJWT, jwtVerify } from "jose";
 import type { User } from "../../drizzle/schema";
 import * as db from "../db";
+import { getDb } from "../db";
+import { users } from "../../drizzle/schema";
+import { eq } from "drizzle-orm";
 import { ENV } from "./env";
 import type {
   ExchangeTokenRequest,
@@ -14,6 +17,7 @@ import type {
   GetUserInfoWithJwtRequest,
   GetUserInfoWithJwtResponse,
 } from "./types/manusTypes";
+
 // Utility function
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === "string" && value.length > 0;
@@ -24,17 +28,21 @@ export type SessionPayload = {
   name: string;
 };
 
+// New custom session payload (email/password + Google OAuth users)
+export type CustomSessionPayload = {
+  userId: number;
+  email: string;
+  type: 'custom';
+};
+
 const EXCHANGE_TOKEN_PATH = `/webdev.v1.WebDevAuthPublicService/ExchangeToken`;
 const GET_USER_INFO_PATH = `/webdev.v1.WebDevAuthPublicService/GetUserInfo`;
 const GET_USER_INFO_WITH_JWT_PATH = `/webdev.v1.WebDevAuthPublicService/GetUserInfoWithJwt`;
 
 class OAuthService {
   constructor(private client: ReturnType<typeof axios.create>) {
-    console.log("[OAuth] Initialized with baseURL:", ENV.oAuthServerUrl);
     if (!ENV.oAuthServerUrl) {
-      console.error(
-        "[OAuth] ERROR: OAUTH_SERVER_URL is not configured! Set OAUTH_SERVER_URL environment variable."
-      );
+      console.warn("[OAuth] OAUTH_SERVER_URL is not configured - Manus OAuth disabled");
     }
   }
 
@@ -113,11 +121,6 @@ class SDKServer {
     return first ? first.toLowerCase() : null;
   }
 
-  /**
-   * Exchange OAuth authorization code for access token
-   * @example
-   * const tokenResponse = await sdk.exchangeCodeForToken(code, state);
-   */
   async exchangeCodeForToken(
     code: string,
     state: string
@@ -125,11 +128,6 @@ class SDKServer {
     return this.oauthService.getTokenByCode(code, state);
   }
 
-  /**
-   * Get user information using access token
-   * @example
-   * const userInfo = await sdk.getUserInfo(tokenResponse.accessToken);
-   */
   async getUserInfo(accessToken: string): Promise<GetUserInfoResponse> {
     const data = await this.oauthService.getUserInfoByToken({
       accessToken,
@@ -159,11 +157,6 @@ class SDKServer {
     return new TextEncoder().encode(secret);
   }
 
-  /**
-   * Create a session token for a Manus user openId
-   * @example
-   * const sessionToken = await sdk.createSessionToken(userInfo.openId);
-   */
   async createSessionToken(
     openId: string,
     options: { expiresInMs?: number; name?: string } = {}
@@ -201,7 +194,6 @@ class SDKServer {
     cookieValue: string | undefined | null
   ): Promise<{ openId: string; appId: string; name: string } | null> {
     if (!cookieValue) {
-      console.warn("[Auth] Missing session cookie");
       return null;
     }
 
@@ -217,17 +209,38 @@ class SDKServer {
         !isNonEmptyString(appId) ||
         !isNonEmptyString(name)
       ) {
-        console.warn("[Auth] Session payload missing required fields");
         return null;
       }
 
-      return {
-        openId,
-        appId,
-        name,
-      };
+      return { openId, appId, name };
     } catch (error) {
-      console.warn("[Auth] Session verification failed", String(error));
+      return null;
+    }
+  }
+
+  /**
+   * Verify a custom JWT session (email/password or Google OAuth users).
+   * These tokens contain { userId, email, type: 'custom' }.
+   */
+  async verifyCustomSession(
+    cookieValue: string | undefined | null
+  ): Promise<CustomSessionPayload | null> {
+    if (!cookieValue) return null;
+
+    try {
+      const secretKey = this.getSessionSecret();
+      const { payload } = await jwtVerify(cookieValue, secretKey, {
+        algorithms: ["HS256"],
+      });
+
+      const { userId, email, type } = payload as Record<string, unknown>;
+
+      if (type !== 'custom' || typeof userId !== 'number' || !isNonEmptyString(email)) {
+        return null;
+      }
+
+      return { userId, email, type: 'custom' };
+    } catch (error) {
       return null;
     }
   }
@@ -257,11 +270,39 @@ class SDKServer {
   }
 
   async authenticateRequest(req: Request): Promise<User> {
-    // Regular authentication flow
     const cookies = this.parseCookies(req.headers.cookie);
     const sessionCookie = cookies.get(COOKIE_NAME);
-    const session = await this.verifySession(sessionCookie);
 
+    if (!sessionCookie) {
+      throw ForbiddenError("No session cookie");
+    }
+
+    // Try custom session first (email/password + Google OAuth users)
+    const customSession = await this.verifyCustomSession(sessionCookie);
+    if (customSession) {
+      const dbInstance = await getDb();
+      if (!dbInstance) throw ForbiddenError("Database unavailable");
+
+      const result = await dbInstance
+        .select()
+        .from(users)
+        .where(eq(users.id, customSession.userId))
+        .limit(1);
+
+      const user = result[0];
+      if (!user) throw ForbiddenError("User not found");
+
+      // Update last signed in
+      await dbInstance
+        .update(users)
+        .set({ lastSignedIn: new Date() })
+        .where(eq(users.id, user.id));
+
+      return user;
+    }
+
+    // Fall back to Manus OAuth session (legacy users with openId)
+    const session = await this.verifySession(sessionCookie);
     if (!session) {
       throw ForbiddenError("Invalid session cookie");
     }
@@ -272,6 +313,9 @@ class SDKServer {
 
     // If user not in DB, sync from OAuth server automatically
     if (!user) {
+      if (!ENV.oAuthServerUrl) {
+        throw ForbiddenError("OAuth server not configured");
+      }
       try {
         const userInfo = await this.getUserInfoWithJwt(sessionCookie ?? "");
         await db.upsertUser({

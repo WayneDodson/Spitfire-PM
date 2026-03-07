@@ -10,6 +10,42 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <!-- Google Identity Services for Sign in with Google -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+      // Global callback for Google One Tap / Sign in with Google
+      window.__googleSignInCallback = async function(response) {
+        try {
+          const res = await fetch('/api/auth/google', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ credential: response.credential }),
+          });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            // Dispatch custom event so React can react
+            window.dispatchEvent(new CustomEvent('google-auth-success', { detail: data.user }));
+          } else {
+            window.dispatchEvent(new CustomEvent('google-auth-error', { detail: data.error || 'Google sign-in failed' }));
+          }
+        } catch (err) {
+          window.dispatchEvent(new CustomEvent('google-auth-error', { detail: 'Google sign-in failed' }));
+        }
+      };
+
+      // Initialize Google Identity Services once the script loads
+      window.addEventListener('load', function() {
+        if (typeof google !== 'undefined' && google.accounts) {
+          google.accounts.id.initialize({
+            client_id: '%VITE_GOOGLE_CLIENT_ID%',
+            callback: window.__googleSignInCallback,
+            auto_select: false,
+            cancel_on_tap_outside: true,
+          });
+        }
+      });
+    </script>
   </head>
 
   <body>

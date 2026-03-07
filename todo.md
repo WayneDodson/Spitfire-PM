@@ -148,3 +148,48 @@
 - [x] Add PM frameworks reference page (6 frameworks with pros/cons/certifications)
 - [x] Add Learning Resources section to Dashboard
 - [ ] Run comprehensive tests
+
+## Authentication System Replacement
+- [ ] Store Google OAuth credentials as secrets
+- [ ] Install auth dependencies (passport, bcrypt, google-auth-library)
+- [ ] Update database schema for email/password auth
+- [ ] Build email/password registration endpoint
+- [ ] Build email/password login endpoint
+- [ ] Build Google OAuth callback endpoint
+- [ ] Build login page UI (email/password + Google button)
+- [ ] Build registration page UI
+- [ ] Update useAuth hook to use new auth system
+- [ ] Remove Manus OAuth dependency
+- [ ] Test complete auth flow
+
+## Auth System Migration (Completed)
+- [x] Install auth dependencies (bcryptjs, google-auth-library, jose)
+- [x] Update database schema for email/password auth (passwordHash, googleId, authProvider, avatarUrl)
+- [x] Build email/password registration endpoint (/api/auth/register)
+- [x] Build email/password login endpoint (/api/auth/login)
+- [x] Build Google OAuth callback endpoint (/api/auth/google)
+- [x] Update SDK context to support both Manus OAuth and custom JWT sessions
+- [x] Build login/register page UI with email/password + Google Sign-In button
+- [x] Add VITE_GOOGLE_CLIENT_ID environment variable
+- [x] Add Google Identity Services script to index.html
+- [x] Update Onboarding page to redirect to login/register
+- [x] Handle referral code from URL during registration
+
+## Stripe Subscription (Completed)
+- [x] Install Stripe SDK (stripe, @stripe/stripe-js)
+- [x] Create £20/month subscription product and price in Stripe
+- [x] Set STRIPE_PRICE_ID environment variable
+- [x] Create Stripe router with checkout, portal, and status endpoints
+- [x] Register Stripe webhook route before body parser
+- [x] Handle webhook events (checkout.session.completed, subscription.updated, subscription.deleted)
+- [x] Build Subscription page UI (/subscribe) with free vs premium comparison
+- [x] Add /subscribe route to App.tsx
+- [x] Update Dashboard to link to /subscribe page
+- [x] Add subscription success toast on Dashboard after Stripe redirect
+
+## Referral System (Completed)
+- [x] Referral code generation on user creation
+- [x] Track referrals when users register with ?ref=CODE URL
+- [x] Display referral link in Dashboard
+- [x] Level 2 unlock logic based on referral count >= 1
+- [x] Referral banner on Login page when ?ref=CODE is present

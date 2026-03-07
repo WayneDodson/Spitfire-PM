@@ -10,8 +10,10 @@ import {
   Clock, 
   Copy, 
   CreditCard, 
+  Crown,
   Layers,
   Lock, 
+  LogOut,
   Share2, 
   TrendingUp,
   Users
@@ -50,6 +52,16 @@ export default function Dashboard() {
       setShowOnboarding(true);
     }
   }, [user]);
+
+  // Show success toast when redirected from Stripe checkout
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("subscribed") === "true") {
+      toast.success("Subscription activated! You now have access to all 7 levels.");
+      // Clean up URL
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
 
   if (loading) {
     return (
@@ -256,7 +268,8 @@ export default function Dashboard() {
           <div className="flex items-center justify-between">
             <h3 className="text-2xl font-bold">Your Learning Path</h3>
             {!hasActiveSubscription && completedLevels >= 1 && (
-              <Button onClick={() => toast.info("Stripe integration coming soon!")}>
+              <Button onClick={() => setLocation("/subscribe")} className="gap-2">
+                <Crown className="h-4 w-4" />
                 Upgrade to Pro - £20/month
               </Button>
             )}

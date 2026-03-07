@@ -18,6 +18,7 @@ import Level from "./pages/Level";
 import Achievements from "./pages/Achievements";
 import Glossary from "./pages/Glossary";
 import Frameworks from "./pages/Frameworks";
+import Subscription from "./pages/Subscription";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -36,6 +37,7 @@ function Router() {
       <Route path="/achievements" component={Achievements} />
       <Route path="/glossary" component={Glossary} />
       <Route path="/frameworks" component={Frameworks} />
+      <Route path="/subscribe" component={Subscription} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

@@ -4,6 +4,8 @@ import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
+import authRouter from "../authRouter";
+import { handleStripeWebhook } from "../routers/stripe";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
@@ -39,11 +41,11 @@ async function startServer() {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://js.stripe.com"],
-          styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+          scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://js.stripe.com", "https://accounts.google.com"],
+          styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://accounts.google.com"],
           fontSrc: ["'self'", "https://fonts.gstatic.com"],
           imgSrc: ["'self'", "data:", "https:", "blob:"],
-          connectSrc: ["'self'", "https://api.manus.im", "https://*.manus.computer", "wss:"],
+          connectSrc: ["'self'", "https://api.manus.im", "https://*.manus.computer", "wss:", "https://accounts.google.com"],
           frameSrc: ["'none'"],
           objectSrc: ["'none'"],
         },
@@ -72,12 +74,22 @@ async function startServer() {
 
   app.use("/api/trpc", generalLimiter);
   app.use("/api/oauth", authLimiter);
+  app.use("/api/auth", authLimiter);
+
+  // Stripe webhook must receive raw body - register BEFORE body parser
+  app.post("/api/stripe/webhook", express.raw({ type: "application/json" }), (req, res) => {
+    // Attach rawBody for Stripe signature verification
+    (req as any).rawBody = req.body;
+    handleStripeWebhook(req, res);
+  });
 
   // Configure body parser with reasonable size limits
   app.use(express.json({ limit: "5mb" }));
   app.use(express.urlencoded({ limit: "5mb", extended: true }));
 
-  // OAuth callback under /api/oauth/callback
+  // Custom auth routes (email/password + Google OAuth) at /api/auth
+  app.use("/api/auth", authRouter);
+  // Legacy OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   // tRPC API
   app.use(
