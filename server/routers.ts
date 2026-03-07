@@ -221,11 +221,31 @@ export const appRouter = router({
   profile: router({
     // Update user's display name
     updateDisplayName: protectedProcedure
-      .input(z.object({ displayName: z.string().min(1).max(100) }))
+      .input(z.object({
+        displayName: z.string()
+          .min(2, "Name must be at least 2 characters")
+          .max(50, "Name must be 50 characters or less")
+          .trim()
+          .regex(/^[a-zA-Z0-9\s'\-\.]+$/, "Name can only contain letters, numbers, spaces, hyphens, apostrophes and periods")
+      }))
       .mutation(async ({ input, ctx }) => {
-        await db.updateUserDisplayName(ctx.user.id, input.displayName);
+        // Sanitise: strip any remaining HTML tags just in case
+        const sanitised = input.displayName.replace(/<[^>]*>/g, "").trim();
+        await db.updateUserDisplayName(ctx.user.id, sanitised);
         return { success: true };
       }),
+
+    // Get user profile
+    getProfile: protectedProcedure.query(async ({ ctx }) => {
+      return {
+        id: ctx.user.id,
+        name: ctx.user.name,
+        email: ctx.user.email,
+        displayName: ctx.user.displayName,
+        role: ctx.user.role,
+        createdAt: ctx.user.createdAt,
+      };
+    }),
   }),
 
   gamification: router({

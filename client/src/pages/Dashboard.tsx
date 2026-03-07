@@ -5,10 +5,12 @@ import { Progress } from "@/components/ui/progress";
 import { trpc } from "@/lib/trpc";
 import { 
   Award, 
+  BookOpen,
   CheckCircle2, 
   Clock, 
   Copy, 
   CreditCard, 
+  Layers,
   Lock, 
   Share2, 
   TrendingUp,
@@ -124,6 +126,14 @@ export default function Dashboard() {
             <Button variant="ghost" size="sm" onClick={() => setLocation("/achievements")}>
               <Award className="h-4 w-4 mr-2" />
               Achievements
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setLocation("/glossary")}>
+              <BookOpen className="h-4 w-4 mr-2" />
+              Glossary
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setLocation("/frameworks")}>
+              <Layers className="h-4 w-4 mr-2" />
+              Frameworks
             </Button>
             <ThemeToggle />
             <div className="text-sm text-right">
@@ -347,6 +357,38 @@ export default function Dashboard() {
             })}
           </div>
         </div>
+      {/* Resources Section */}
+      <div className="space-y-4">
+        <h3 className="text-xl font-bold">Learning Resources</h3>
+        <div className="grid md:grid-cols-2 gap-4">
+          <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => setLocation("/glossary")}>
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <BookOpen className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-base">PM Glossary</CardTitle>
+                  <CardDescription>60+ essential project management terms</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
+          <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => setLocation("/frameworks")}>
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <Layers className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-base">Frameworks Reference</CardTitle>
+                  <CardDescription>Waterfall, Agile, Scrum, PRINCE2 & more</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
+        </div>
+      </div>
       </div>
     </div>
 

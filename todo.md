@@ -134,3 +134,17 @@
 - [ ] Add profile settings page to update display name
 - [x] Update all UI components to show display name instead of email
 - [ ] Test display name feature
+
+## Security Audit & Content Quality
+- [x] Audit server for security vulnerabilities (rate limiting, CSRF, headers)
+- [x] Review PM content accuracy against modern standards (PMI, APM, PRINCE2)
+- [x] Implement security headers (Helmet.js - CSP, HSTS, X-Frame-Options)
+- [x] Add rate limiting to API endpoints (express-rate-limit)
+- [x] Add input validation and sanitisation (Zod refinements)
+- [x] Fix level titles in database
+- [x] Add missing knowledge checks for Levels 2 and 3
+- [x] Improve PM content with practical tools and templates
+- [x] Add PM glossary page (60+ terms)
+- [x] Add PM frameworks reference page (6 frameworks with pros/cons/certifications)
+- [x] Add Learning Resources section to Dashboard
+- [ ] Run comprehensive tests
