@@ -137,6 +137,32 @@
 }
 
 @layer components {
+  /* ── Lesson prose: uniform heading sizes regardless of H1/H2/H3 in content ── */
+  .lesson-prose h1,
+  .lesson-prose h2 {
+    font-size: 1.2rem !important;   /* ~text-xl */
+    line-height: 1.5 !important;
+    font-weight: 700 !important;
+    margin-top: 1.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  .lesson-prose h3,
+  .lesson-prose h4 {
+    font-size: 1.05rem !important;  /* slightly above base */
+    line-height: 1.5 !important;
+    font-weight: 600 !important;
+    margin-top: 1.25rem !important;
+    margin-bottom: 0.4rem !important;
+  }
+  .lesson-prose p,
+  .lesson-prose li {
+    font-size: 1rem !important;
+    line-height: 1.75 !important;
+  }
+  .lesson-prose strong {
+    font-weight: 600 !important;
+  }
+
   .container {
     width: 100%;
     margin-left: auto;

@@ -381,3 +381,10 @@
 - [x] Fix @source path to correct relative path (../../node_modules)
 - [x] Update prose wrapper in Lesson.tsx with consistent heading/text sizing for dark theme
 - [x] Verify fix: 81 tests passing, 0 TypeScript errors
+
+## Lesson Typography Uniformity Fix
+- [x] Diagnose: 122 of 168 lessons use H1 headings, 46 use H2/H3 only — causing size inconsistency
+- [x] Add .lesson-prose CSS class to index.css — locks H1/H2 to 1.2rem, H3/H4 to 1.05rem, body to 1rem with !important overrides
+- [x] Update prose wrapper in Lesson.tsx to include lesson-prose class alongside prose-slate
+- [x] Remove conflicting per-heading prose-h1/h2/h3 modifier classes (now handled by lesson-prose)
+- [x] 81 tests passing, 0 TypeScript errors
