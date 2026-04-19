@@ -9,7 +9,7 @@ import { ENV } from "./_core/env";
 import { COOKIE_NAME, ONE_YEAR_MS } from "../shared/const";
 import { SignJWT } from "jose";
 import { z } from "zod";
-import { createEmailToken, verifyEmailToken, sendVerificationEmail } from "./email";
+import { createEmailToken, verifyEmailToken, sendVerificationEmail, sendPasswordResetEmail } from "./email";
 import { startTrialIfNeeded, recordDailyLogin } from "./trial";
 
 const router = Router();
@@ -385,6 +385,83 @@ router.post("/resend-verification", async (req: Request, res: Response) => {
   } catch (err) {
     console.error("[Auth] Resend verification error:", err);
     return res.status(500).json({ error: "Failed to resend verification email. Please try again." });
+  }
+});
+
+// ─── Forgot Password ─────────────────────────────────────────────────────────
+router.post("/forgot-password", async (req: Request, res: Response) => {
+  const schema = z.object({
+    email: z.string().email().transform((v) => v.toLowerCase().trim()),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "Invalid email address" });
+
+  try {
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Service temporarily unavailable" });
+
+    const [user] = await db
+      .select({ id: users.id, displayName: users.displayName, name: users.name, authProvider: users.authProvider })
+      .from(users)
+      .where(eq(users.email, parsed.data.email))
+      .limit(1);
+
+    // Always return success to prevent email enumeration
+    if (user && user.authProvider !== "google") {
+      const rawToken = await createEmailToken(user.id, "password_reset");
+      const displayName = user.displayName || user.name || "there";
+      await sendPasswordResetEmail(parsed.data.email, displayName, rawToken).catch((err) => {
+        console.error("[Auth] Failed to send password reset email:", err);
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "If that email is registered, a password reset link has been sent.",
+    });
+  } catch (err) {
+    console.error("[Auth] Forgot password error:", err);
+    return res.status(500).json({ error: "Failed to process request. Please try again." });
+  }
+});
+
+// ─── Reset Password ───────────────────────────────────────────────────────────
+router.post("/reset-password", async (req: Request, res: Response) => {
+  const schema = z.object({
+    token: z.string().min(1).max(128),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .max(128, "Password too long")
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+      ),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) {
+    const msg = parsed.error.issues[0]?.message ?? "Invalid input";
+    return res.status(400).json({ error: msg });
+  }
+
+  try {
+    const userId = await verifyEmailToken(parsed.data.token, "password_reset");
+    if (!userId) {
+      return res.status(400).json({
+        error: "This reset link is invalid or has expired. Please request a new one.",
+      });
+    }
+
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Service temporarily unavailable" });
+
+    const passwordHash = await bcrypt.hash(parsed.data.password, 12);
+    await db.update(users).set({ passwordHash }).where(eq(users.id, userId));
+
+    return res.json({ success: true, message: "Password updated successfully. You can now log in." });
+  } catch (err) {
+    console.error("[Auth] Reset password error:", err);
+    return res.status(500).json({ error: "Failed to reset password. Please try again." });
   }
 });
 
