@@ -9,6 +9,7 @@ import { ENV } from "./_core/env";
 import { COOKIE_NAME, ONE_YEAR_MS } from "../shared/const";
 import { SignJWT } from "jose";
 import { z } from "zod";
+import { createEmailToken, verifyEmailToken, sendVerificationEmail } from "./email";
 
 const router = Router();
 
@@ -49,12 +50,12 @@ const registerSchema = z.object({
 });
 
 const loginSchema = z.object({
-  email: z
+  // Accept either an email address or a username in the same field
+  identifier: z
     .string()
-    .min(1, "Email is required")
-    .max(320, "Email too long")
-    .email("Invalid email address")
-    .transform((v) => v.toLowerCase().trim()),
+    .min(1, "Email or username is required")
+    .max(320, "Input too long")
+    .transform((v) => v.trim()),
   password: z
     .string()
     .min(1, "Password is required")
@@ -174,9 +175,15 @@ router.post("/register", async (req: Request, res: Response) => {
 
     await createUserSession(res, userId, email, req);
 
+    // Send verification email asynchronously — don't block the response
+    createEmailToken(userId, "email_verification")
+      .then((rawToken) => sendVerificationEmail(email, displayName, rawToken))
+      .catch((err) => console.error("[Auth] Failed to send verification email:", err));
+
     return res.status(201).json({
       success: true,
       user: sanitiseUser({ id: userId, email, displayName, name: displayName, authProvider: "email" }),
+      emailVerificationSent: true,
     });
   } catch (err) {
     console.error("[Auth] Register error:", err);
@@ -188,19 +195,20 @@ router.post("/register", async (req: Request, res: Response) => {
 router.post("/login", async (req: Request, res: Response) => {
   const parsed = loginSchema.safeParse(req.body);
   if (!parsed.success) {
-    // Generic error to avoid leaking which field failed
-    return res.status(400).json({ error: "Invalid email or password" });
+    return res.status(400).json({ error: "Invalid credentials" });
   }
-  const { email, password } = parsed.data;
+  const { identifier, password } = parsed.data;
 
   try {
     const db = await getDb();
     if (!db) return res.status(503).json({ error: "Service temporarily unavailable" });
 
+    // Determine if the identifier looks like an email or a username
+    const isEmail = identifier.includes("@");
     const [user] = await db
       .select()
       .from(users)
-      .where(eq(users.email, email))
+      .where(isEmail ? eq(users.email, identifier.toLowerCase()) : eq(users.username, identifier))
       .limit(1);
 
     // Always run bcrypt.compare to prevent timing attacks that reveal whether
@@ -210,8 +218,8 @@ router.post("/login", async (req: Request, res: Response) => {
     const valid = await bcrypt.compare(password, hashToCompare);
 
     if (!user || !user.passwordHash || !valid) {
-      // Uniform error message — never reveal whether the email exists
-      return res.status(401).json({ error: "Invalid email or password" });
+      // Uniform message — never reveal whether the account exists
+      return res.status(401).json({ error: "Invalid username/email or password" });
     }
 
     // Update last signed in
@@ -312,6 +320,61 @@ router.post("/google", async (req: Request, res: Response) => {
   } catch (err) {
     console.error("[Auth] Google OAuth error:", err);
     return res.status(500).json({ error: "Google sign-in failed. Please try again." });
+  }
+});
+
+// ─── Email Verification ──────────────────────────────────────────────────────
+router.post("/verify-email", async (req: Request, res: Response) => {
+  const schema = z.object({ token: z.string().min(1).max(128) });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "Invalid token" });
+
+  try {
+    const userId = await verifyEmailToken(parsed.data.token, "email_verification");
+    if (!userId) {
+      return res.status(400).json({ error: "This verification link is invalid or has expired. Please request a new one." });
+    }
+
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Service temporarily unavailable" });
+
+    await db.update(users).set({ emailVerified: true }).where(eq(users.id, userId));
+
+    return res.json({ success: true, message: "Email verified successfully!" });
+  } catch (err) {
+    console.error("[Auth] Verify email error:", err);
+    return res.status(500).json({ error: "Verification failed. Please try again." });
+  }
+});
+
+router.post("/resend-verification", async (req: Request, res: Response) => {
+  const schema = z.object({
+    email: z.string().email().transform((v) => v.toLowerCase().trim()),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "Invalid email" });
+
+  try {
+    const db = await getDb();
+    if (!db) return res.status(503).json({ error: "Service temporarily unavailable" });
+
+    const [user] = await db
+      .select({ id: users.id, displayName: users.displayName, name: users.name, emailVerified: users.emailVerified })
+      .from(users)
+      .where(eq(users.email, parsed.data.email))
+      .limit(1);
+
+    // Always return success to prevent email enumeration
+    if (user && !user.emailVerified) {
+      const rawToken = await createEmailToken(user.id, "email_verification");
+      const displayName = user.displayName || user.name || "there";
+      await sendVerificationEmail(parsed.data.email, displayName, rawToken);
+    }
+
+    return res.json({ success: true, message: "If that email is registered and unverified, a new verification link has been sent." });
+  } catch (err) {
+    console.error("[Auth] Resend verification error:", err);
+    return res.status(500).json({ error: "Failed to resend verification email. Please try again." });
   }
 });
 

@@ -43,6 +43,20 @@
       "when": 1772875763246,
       "tag": "0005_mysterious_millenium_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1776587156905,
+      "tag": "0006_optimal_blink",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1776587589132,
+      "tag": "0007_watery_klaw",
+      "breakpoints": true
     }
   ]
 }

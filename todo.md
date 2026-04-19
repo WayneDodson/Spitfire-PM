@@ -207,3 +207,23 @@
 - [x] Add hpp middleware to prevent HTTP parameter pollution
 - [x] Add X-Request-ID for traceability
 - [x] Ensure no sensitive data in error responses
+
+## New Features (Requested Post-Security Audit)
+- [ ] Email verification: send verification email on registration
+- [ ] Email verification: /verify-email page with token validation
+- [ ] Email verification: gate paid content behind verified email
+- [ ] Password reset: forgot password page with email input
+- [ ] Password reset: secure token generation and email send
+- [ ] Password reset: /reset-password page with new password form
+- [ ] Password reset: token expiry (1 hour) and single-use enforcement
+- [ ] Profile settings page: update display name
+- [ ] Profile settings page: show subscription status and manage link
+- [ ] Profile settings page: show account info (email, auth provider, member since)
+- [ ] Profile settings page: change password (for email users)
+- [ ] Add /profile route to App.tsx navigation
+
+## Username Login Support
+- [x] Add username column to users table (unique, nullable, max 32 chars)
+- [x] Update login to accept username OR email
+- [x] Update registration to optionally set a username
+- [x] Create admin account (username: Admin, role: admin)

@@ -27,6 +27,8 @@ export const users = mysqlTable("users", {
   emailVerified: boolean("emailVerified").default(false),
   /** User's preferred display name shown throughout the site */
   displayName: varchar("displayName", { length: 100 }),
+  /** Unique username for login (alternative to email) — alphanumeric + underscores, max 32 chars */
+  username: varchar("username", { length: 32 }).unique(),
   loginMethod: varchar("loginMethod", { length: 64 }),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
   
@@ -291,3 +293,24 @@ export const xpTransactions = mysqlTable("xpTransactions", {
 
 export type XpTransaction = typeof xpTransactions.$inferSelect;
 export type InsertXpTransaction = typeof xpTransactions.$inferInsert;
+
+/**
+ * Email tokens table — used for both email verification and password reset.
+ * Each token is single-use and expires after 1 hour.
+ */
+export const emailTokens = mysqlTable("emailTokens", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  /** SHA-256 hash of the raw token (never store raw token) */
+  tokenHash: varchar("tokenHash", { length: 64 }).notNull().unique(),
+  /** 'email_verification' | 'password_reset' */
+  type: mysqlEnum("type", ["email_verification", "password_reset"]).notNull(),
+  /** Token expires at this time (1 hour from creation) */
+  expiresAt: timestamp("expiresAt").notNull(),
+  /** Whether the token has already been used */
+  used: boolean("used").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type EmailToken = typeof emailTokens.$inferSelect;
+export type InsertEmailToken = typeof emailTokens.$inferInsert;

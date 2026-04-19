@@ -19,7 +19,7 @@ export default function Login() {
     return raw.replace(/[^A-Z0-9]/gi, "").toUpperCase().slice(0, 32);
   }, []);
   const [mode, setMode] = useState<"login" | "register">(referralCode ? "register" : "login");
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState(""); // username or email
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -65,8 +65,8 @@ export default function Login() {
       const endpoint = mode === "login" ? "/api/auth/login" : "/api/auth/register";
       const body =
         mode === "login"
-          ? { email, password }
-          : { email, password, displayName, referralCode: referralCode || undefined };
+          ? { identifier, password }
+          : { email: identifier, password, displayName, referralCode: referralCode || undefined };
 
       const res = await fetch(endpoint, {
         method: "POST",
@@ -196,13 +196,13 @@ export default function Login() {
               Continue with Google
             </Button>
 
-            <div className="relative">
+              <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-border" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-card px-2 text-muted-foreground">
-                  or continue with email
+                  or continue with email / username
                 </span>
               </div>
             </div>
@@ -225,15 +225,17 @@ export default function Login() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="identifier">
+                  {mode === "login" ? "Email or Username" : "Email Address"}
+                </Label>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  id="identifier"
+                  type={mode === "login" ? "text" : "email"}
+                  placeholder={mode === "login" ? "you@example.com or Admin" : "you@example.com"}
+                  value={identifier}
+                  onChange={e => setIdentifier(e.target.value)}
                   required
-                  autoComplete="email"
+                  autoComplete={mode === "login" ? "username" : "email"}
                 />
               </div>
 
