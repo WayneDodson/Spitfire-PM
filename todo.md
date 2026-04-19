@@ -298,3 +298,10 @@
 - [x] Add reply-to header (support@spitfireitsolutions.com) to all outbound emails
 - [x] Add contact email to website footer
 - [x] Add contact email to homepage B2B / contact section
+
+## Password Policy & Seed Accounts
+- [x] Strengthen password validation: require uppercase + number + special character
+- [x] Update validation in registration, password reset, and profile change password endpoints
+- [x] Update password-reset.test.ts to cover special character requirement
+- [x] Create test user: username=user, password=Edenbridge1! (hashed)
+- [x] Update admin password to 1jV1v15ta03! (hashed)

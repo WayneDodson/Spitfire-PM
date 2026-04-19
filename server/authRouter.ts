@@ -6,7 +6,7 @@ import { users } from "../drizzle/schema";
 import { eq, or } from "drizzle-orm";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { ENV } from "./_core/env";
-import { COOKIE_NAME, ONE_YEAR_MS } from "../shared/const";
+import { COOKIE_NAME, ONE_YEAR_MS, PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH, PASSWORD_REGEX, PASSWORD_REGEX_MSG } from "../shared/const";
 import { SignJWT } from "jose";
 import { z } from "zod";
 import { createEmailToken, verifyEmailToken, sendVerificationEmail, sendPasswordResetEmail } from "./email";
@@ -27,12 +27,9 @@ const registerSchema = z.object({
     .transform((v) => v.toLowerCase().trim()),
   password: z
     .string()
-    .min(8, "Password must be at least 8 characters")
-    .max(128, "Password too long")
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      "Password must contain at least one uppercase letter, one lowercase letter, and one number"
-    ),
+    .min(PASSWORD_MIN_LENGTH, `Password must be at least ${PASSWORD_MIN_LENGTH} characters`)
+    .max(PASSWORD_MAX_LENGTH, "Password too long")
+    .regex(PASSWORD_REGEX, PASSWORD_REGEX_MSG),
   displayName: z
     .string()
     .min(2, "Display name must be at least 2 characters")
@@ -431,12 +428,9 @@ router.post("/reset-password", async (req: Request, res: Response) => {
     token: z.string().min(1).max(128),
     password: z
       .string()
-      .min(8, "Password must be at least 8 characters")
-      .max(128, "Password too long")
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-        "Password must contain at least one uppercase letter, one lowercase letter, and one number"
-      ),
+      .min(PASSWORD_MIN_LENGTH, `Password must be at least ${PASSWORD_MIN_LENGTH} characters`)
+      .max(PASSWORD_MAX_LENGTH, "Password too long")
+      .regex(PASSWORD_REGEX, PASSWORD_REGEX_MSG),
   });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) {

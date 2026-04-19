@@ -92,85 +92,68 @@ describe("Forgot Password Endpoint Validation", () => {
   });
 });
 
-describe("Reset Password Endpoint Validation", () => {
-  const passwordSchema = () => {
-    const { z } = require("zod");
+describe("Reset Password Endpoint Validation (shared PASSWORD_REGEX)", () => {
+  // Use the shared constant — same regex enforced server-side
+  const buildSchema = async () => {
+    const { z } = await import("zod");
+    const { PASSWORD_REGEX, PASSWORD_REGEX_MSG, PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH } = await import(
+      "../shared/const"
+    );
     return z.object({
       token: z.string().min(1).max(128),
       password: z
         .string()
-        .min(8, "Password must be at least 8 characters")
-        .max(128, "Password too long")
-        .regex(
-          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-          "Password must contain at least one uppercase letter, one lowercase letter, and one number"
-        ),
+        .min(PASSWORD_MIN_LENGTH, `Password must be at least ${PASSWORD_MIN_LENGTH} characters`)
+        .max(PASSWORD_MAX_LENGTH, "Password too long")
+        .regex(PASSWORD_REGEX, PASSWORD_REGEX_MSG),
     });
   };
 
   it("rejects a password shorter than 8 characters", async () => {
-    const { z } = await import("zod");
-    const schema = z.object({
-      token: z.string().min(1).max(128),
-      password: z
-        .string()
-        .min(8, "Password must be at least 8 characters")
-        .max(128)
-        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/),
-    });
-    const result = schema.safeParse({ token: "abc", password: "Ab1" });
+    const schema = await buildSchema();
+    const result = schema.safeParse({ token: "abc", password: "Ab1!" });
     expect(result.success).toBe(false);
   });
 
   it("rejects a password without uppercase letter", async () => {
-    const { z } = await import("zod");
-    const schema = z.object({
-      token: z.string().min(1).max(128),
-      password: z
-        .string()
-        .min(8)
-        .max(128)
-        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/),
-    });
-    const result = schema.safeParse({ token: "abc", password: "alllower1" });
+    const schema = await buildSchema();
+    const result = schema.safeParse({ token: "abc", password: "alllower1!" });
     expect(result.success).toBe(false);
   });
 
   it("rejects a password without a digit", async () => {
-    const { z } = await import("zod");
-    const schema = z.object({
-      token: z.string().min(1).max(128),
-      password: z
-        .string()
-        .min(8)
-        .max(128)
-        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/),
-    });
-    const result = schema.safeParse({ token: "abc", password: "NoDigitHere" });
+    const schema = await buildSchema();
+    const result = schema.safeParse({ token: "abc", password: "NoDigitHere!" });
     expect(result.success).toBe(false);
   });
 
-  it("accepts a valid strong password", async () => {
-    const { z } = await import("zod");
-    const schema = z.object({
-      token: z.string().min(1).max(128),
-      password: z
-        .string()
-        .min(8)
-        .max(128)
-        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/),
-    });
-    const result = schema.safeParse({ token: "sometoken", password: "StrongPass1" });
+  it("rejects a password without a special character", async () => {
+    const schema = await buildSchema();
+    const result = schema.safeParse({ token: "abc", password: "StrongPass1" });
+    expect(result.success).toBe(false);
+  });
+
+  it("accepts a valid strong password with special character", async () => {
+    const schema = await buildSchema();
+    const result = schema.safeParse({ token: "sometoken", password: "StrongPass1!" });
+    expect(result.success).toBe(true);
+  });
+
+  it("accepts Edenbridge1! (test user password)", async () => {
+    const schema = await buildSchema();
+    const result = schema.safeParse({ token: "tok", password: "Edenbridge1!" });
+    expect(result.success).toBe(true);
+  });
+
+  it("accepts 1jV1v15ta03! (admin password)", async () => {
+    const schema = await buildSchema();
+    const result = schema.safeParse({ token: "tok", password: "1jV1v15ta03!" });
     expect(result.success).toBe(true);
   });
 
   it("rejects an empty token", async () => {
-    const { z } = await import("zod");
-    const schema = z.object({
-      token: z.string().min(1).max(128),
-      password: z.string().min(8).max(128).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/),
-    });
-    const result = schema.safeParse({ token: "", password: "StrongPass1" });
+    const schema = await buildSchema();
+    const result = schema.safeParse({ token: "", password: "StrongPass1!" });
     expect(result.success).toBe(false);
   });
 });
