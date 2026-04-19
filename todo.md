@@ -273,3 +273,14 @@
 - [x] Replace current "Cancel Subscription" button with new flow entry point
 - [x] Build admin cancellation intelligence view (/admin/cancellations)
 - [x] Write vitest tests for cancellation flow procedures
+
+## Mindset Conditioning System
+- [ ] Build Mindset Hub page (/mindset) — Social Feed Awareness, Habit Reinforcement, Identity Shift modules
+- [ ] Build 20-minute focus reset overlay — 60-second guided break with movement prompts
+- [ ] Build 10-second return countdown in final phase of reset break
+- [ ] Build 60-minute hydration reminder — premium toast with identity-reinforcement messaging
+- [ ] Add FocusResetProvider to app layout (tracks active time, triggers overlays)
+- [ ] Add Mindset Hub link to Dashboard navigation
+- [ ] Add mindset card to Dashboard (daily habit check-in)
+- [ ] Allow user to skip/snooze break (limited skips per session)
+- [ ] Allow user to dismiss hydration reminder with "Done" or "Snooze 10 min"

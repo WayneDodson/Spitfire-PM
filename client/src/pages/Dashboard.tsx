@@ -25,6 +25,7 @@ import {
   ChevronRight,
   ArrowRight,
   Shield,
+  Brain,
 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
@@ -225,6 +226,15 @@ export default function Dashboard() {
                     Admin
                   </Button>
                 )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setLocation("/mindset")}
+                  className="text-purple-400/70 hover:text-purple-300"
+                >
+                  <Brain className="h-4 w-4 mr-1.5" />
+                  Mindset
+                </Button>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -677,6 +687,19 @@ export default function Dashboard() {
           <div className="space-y-4">
             <h3 className="text-xl font-bold">Reference Materials</h3>
             <div className="grid md:grid-cols-2 gap-4">
+              <div
+                className="bg-purple-500/[0.05] border border-purple-500/20 rounded-xl p-5 flex items-center gap-4 cursor-pointer hover:border-purple-400/40 transition-colors col-span-full md:col-span-2"
+                onClick={() => setLocation("/mindset")}
+              >
+                <div className="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Brain className="h-5 w-5 text-purple-400" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-semibold text-purple-200">Mindset Hub</p>
+                  <p className="text-white/40 text-sm">Social media awareness, habit reinforcement, and identity conditioning for your PM transition</p>
+                </div>
+                <ChevronRight className="h-4 w-4 text-purple-400/40 ml-auto" />
+              </div>
               <div
                 className="bg-white/[0.03] border border-white/10 rounded-xl p-5 flex items-center gap-4 cursor-pointer hover:border-cyan-400/20 transition-colors"
                 onClick={() => setLocation("/glossary")}

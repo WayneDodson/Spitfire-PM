@@ -21,14 +21,19 @@ import Frameworks from "./pages/Frameworks";
 import Subscription from "./pages/Subscription";
 import VerifyEmail from "./pages/VerifyEmail";
 import AdminCancellations from "./pages/AdminCancellations";
+import MindsetHub from "./pages/MindsetHub";
 import { TrialBanner } from "./components/TrialBanner";
 import { FounderAccessModal } from "./components/FounderAccessModal";
+import FocusResetProvider from "./components/FocusResetProvider";
 import { useAuth } from "./_core/hooks/useAuth";
 import { trpc } from "./lib/trpc";
 import { useState, useEffect, useRef } from "react";
 
 // Pages where the trial banner should NOT appear
 const BANNER_EXCLUDED_PATHS = ["/", "/login", "/subscribe", "/verify-email"];
+
+// Pages where the focus reset system should NOT be active (public/auth pages)
+const FOCUS_RESET_EXCLUDED_PATHS = ["/", "/login", "/subscribe", "/verify-email", "/onboarding"];
 
 function TrialAwareLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
@@ -37,6 +42,7 @@ function TrialAwareLayout({ children }: { children: React.ReactNode }) {
   const prevFounderEarned = useRef<boolean | null>(null);
 
   const showBanner = isAuthenticated && !BANNER_EXCLUDED_PATHS.includes(location);
+  const enableFocusReset = isAuthenticated && !FOCUS_RESET_EXCLUDED_PATHS.includes(location);
 
   const { data: trial } = trpc.trial.getStatus.useQuery(undefined, {
     enabled: isAuthenticated,
@@ -57,14 +63,16 @@ function TrialAwareLayout({ children }: { children: React.ReactNode }) {
   }, [trial?.founderAccessEarned]);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {showBanner && <TrialBanner />}
-      <div className="flex-1">{children}</div>
-      <FounderAccessModal
-        open={founderModalOpen}
-        onClose={() => setFounderModalOpen(false)}
-      />
-    </div>
+    <FocusResetProvider enabled={enableFocusReset}>
+      <div className="min-h-screen flex flex-col">
+        {showBanner && <TrialBanner />}
+        <div className="flex-1">{children}</div>
+        <FounderAccessModal
+          open={founderModalOpen}
+          onClose={() => setFounderModalOpen(false)}
+        />
+      </div>
+    </FocusResetProvider>
   );
 }
 
@@ -88,6 +96,7 @@ function Router() {
       <Route path="/frameworks" component={Frameworks} />
       <Route path="/subscribe" component={Subscription} />
       <Route path="/verify-email" component={VerifyEmail} />
+      <Route path="/mindset" component={MindsetHub} />
       <Route path="/admin/cancellations" component={AdminCancellations} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
