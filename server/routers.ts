@@ -6,6 +6,7 @@ import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
 import * as gamification from "./gamification";
+import { getTrialStatus, recordLessonCompletion, recordSimulationCompletion, STRIPE_PRICES } from "./trial";
 import { achievements, userAchievements, userStats, xpTransactions } from "../drizzle/schema";
 import { eq, desc, sql } from "drizzle-orm";
 
@@ -287,6 +288,30 @@ export const appRouter = router({
   }),
 
   stripe: stripeRouter,
+
+  trial: router({
+    // Get the current user's trial status and engagement
+    getStatus: protectedProcedure.query(async ({ ctx }) => {
+      return await getTrialStatus(ctx.user.id);
+    }),
+
+    // Get Stripe price IDs for all tiers
+    getPrices: publicProcedure.query(() => {
+      return STRIPE_PRICES;
+    }),
+
+    // Record a lesson completion for engagement tracking
+    recordLesson: protectedProcedure.mutation(async ({ ctx }) => {
+      await recordLessonCompletion(ctx.user.id);
+      return { success: true };
+    }),
+
+    // Record a simulation completion for engagement tracking
+    recordSimulation: protectedProcedure.mutation(async ({ ctx }) => {
+      await recordSimulationCompletion(ctx.user.id);
+      return { success: true };
+    }),
+  }),
 
   gamification: router({
     // Get user's gamification stats

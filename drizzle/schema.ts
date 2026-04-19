@@ -40,6 +40,13 @@ export const users = mysqlTable("users", {
   /** Goal timeline: '1_month' | '3_months' | '6_months' | '12_months' | 'no_rush' */
   goalTimeline: varchar("goalTimeline", { length: 32 }),
 
+  /** 7-day free trial tracking */
+  trialStartedAt: timestamp("trialStartedAt"),
+  trialEndsAt: timestamp("trialEndsAt"),
+  /** Whether user earned Founder Access through consistent engagement during trial */
+  founderAccessEarned: boolean("founderAccessEarned").default(false).notNull(),
+  founderAccessEarnedAt: timestamp("founderAccessEarnedAt"),
+
   /** Unique referral code for this user */
   referralCode: varchar("referralCode", { length: 32 }).unique(),
   /** ID of the user who referred this user (nullable) */
@@ -322,3 +329,27 @@ export const emailTokens = mysqlTable("emailTokens", {
 
 export type EmailToken = typeof emailTokens.$inferSelect;
 export type InsertEmailToken = typeof emailTokens.$inferInsert;
+
+/**
+ * Daily engagement tracking — one row per user per calendar day.
+ * Used to calculate Founder Access eligibility during the 7-day trial.
+ */
+export const dailyEngagement = mysqlTable("dailyEngagement", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  /** Date string in YYYY-MM-DD format (UTC) */
+  date: varchar("date", { length: 10 }).notNull(),
+  /** Whether the user logged in on this day */
+  loggedIn: boolean("loggedIn").default(true).notNull(),
+  /** Number of lessons completed on this day */
+  lessonsCompleted: int("lessonsCompleted").default(0).notNull(),
+  /** Number of simulations/scenarios completed on this day */
+  simulationsCompleted: int("simulationsCompleted").default(0).notNull(),
+  /** Number of knowledge checks completed on this day */
+  checksCompleted: int("checksCompleted").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type DailyEngagement = typeof dailyEngagement.$inferSelect;
+export type InsertDailyEngagement = typeof dailyEngagement.$inferInsert;

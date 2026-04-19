@@ -10,6 +10,7 @@ import { COOKIE_NAME, ONE_YEAR_MS } from "../shared/const";
 import { SignJWT } from "jose";
 import { z } from "zod";
 import { createEmailToken, verifyEmailToken, sendVerificationEmail } from "./email";
+import { startTrialIfNeeded, recordDailyLogin } from "./trial";
 
 const router = Router();
 
@@ -175,6 +176,9 @@ router.post("/register", async (req: Request, res: Response) => {
 
     await createUserSession(res, userId, email, req);
 
+    // Start 7-day free trial and record first login
+    startTrialIfNeeded(userId).then(() => recordDailyLogin(userId)).catch(() => {});
+
     // Send verification email asynchronously — don't block the response
     createEmailToken(userId, "email_verification")
       .then((rawToken) => sendVerificationEmail(email, displayName, rawToken))
@@ -226,6 +230,9 @@ router.post("/login", async (req: Request, res: Response) => {
     await db.update(users).set({ lastSignedIn: new Date() }).where(eq(users.id, user.id));
 
     await createUserSession(res, user.id, user.email!, req);
+
+    // Start trial if not yet started, and record daily login
+    startTrialIfNeeded(user.id).then(() => recordDailyLogin(user.id)).catch(() => {});
 
     return res.json({
       success: true,
@@ -312,6 +319,9 @@ router.post("/google", async (req: Request, res: Response) => {
     }
 
     await createUserSession(res, userId, email.toLowerCase(), req);
+
+    // Start trial if not yet started, and record daily login
+    startTrialIfNeeded(userId).then(() => recordDailyLogin(userId)).catch(() => {});
 
     return res.json({
       success: true,

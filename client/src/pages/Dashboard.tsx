@@ -107,6 +107,9 @@ export default function Dashboard() {
   const { data: referralData } = trpc.referrals.getMyReferralCount.useQuery(undefined, {
     enabled: isAuthenticated,
   });
+  const { data: trialStatus } = trpc.trial.getStatus.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
 
   const userProgress = levelProgress?.progress;
   const referralCount = referralData?.count || 0;
@@ -401,6 +404,88 @@ export default function Dashboard() {
               </p>
             </div>
           </div>
+
+          {/* Trial progress card — shown during trial period */}
+          {trialStatus && !trialStatus.trialExpired && !hasActiveSubscription && (
+            <div className={`rounded-2xl p-6 border ${
+              trialStatus.founderAccessEarned
+                ? 'bg-cyan-950/30 border-cyan-500/40'
+                : 'bg-white/[0.02] border-white/10'
+            }`}>
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-start gap-4">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                    trialStatus.founderAccessEarned ? 'bg-cyan-400/20' : 'bg-white/5'
+                  }`}>
+                    {trialStatus.founderAccessEarned
+                      ? <Star className="h-5 w-5 text-cyan-400" />
+                      : <Flame className="h-5 w-5 text-orange-400" />}
+                  </div>
+                  <div className="flex-1">
+                    {trialStatus.founderAccessEarned ? (
+                      <>
+                        <h3 className="font-black text-lg text-cyan-400 mb-1">Founder Access Earned</h3>
+                        <p className="text-white/60 text-sm">
+                          Your consistency during the free trial unlocked PM Readiness Member Pricing at £19/month.
+                          Claim it before your trial ends.
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <h3 className="font-bold text-lg mb-1">
+                          Day {trialStatus.dayNumber} of 7 — Free Trial
+                        </h3>
+                        <p className="text-white/50 text-sm">
+                          Log in consistently and complete lessons to earn Founder Access at £19/month.
+                          {trialStatus.activeDays >= 3
+                            ? " You're building a strong streak — keep going."
+                            : " Consistency is what separates people who get hired from people who don't."}
+                        </p>
+                        <div className="flex gap-1.5 mt-3">
+                          {Array.from({ length: 7 }).map((_, i) => (
+                            <div
+                              key={i}
+                              className={`h-1.5 flex-1 rounded-full ${
+                                i < trialStatus.activeDays
+                                  ? 'bg-cyan-400'
+                                  : i === trialStatus.activeDays
+                                  ? 'bg-cyan-400/30'
+                                  : 'bg-white/10'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        <p className="text-xs text-white/30 mt-1.5">
+                          {trialStatus.activeDays} of 7 days active
+                          {trialStatus.activeDays >= 5 ? ' — Founder Access threshold reached!' : ` — ${5 - trialStatus.activeDays} more days needed for Founder Access`}
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div className="flex-shrink-0">
+                  {trialStatus.founderAccessEarned ? (
+                    <Button
+                      onClick={() => setLocation('/subscribe?tier=founder')}
+                      className="bg-cyan-500 hover:bg-cyan-400 text-black font-black whitespace-nowrap"
+                    >
+                      <Zap className="h-4 w-4 mr-2" />
+                      Claim Founder Access
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      onClick={() => setLocation('/subscribe')}
+                      className="border-white/20 text-white/60 hover:text-white bg-transparent whitespace-nowrap"
+                    >
+                      View Plans
+                      <ChevronRight className="h-4 w-4 ml-1" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Referral section */}
           {!hasActiveSubscription && (

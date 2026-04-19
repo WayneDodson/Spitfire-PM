@@ -241,3 +241,19 @@
 - [x] Dashboard: motivational copy and psychological reinforcement messages
 - [x] Onboarding: capture career transition background (previous industry, goal)
 - [x] Onboarding: personalised readiness goal setting
+
+## Commitment-Based Pricing Model
+- [x] Add trialStartedAt, trialEndsAt, founderAccessEarned, founderAccessEarnedAt to users table
+- [x] Add dailyEngagement table to track per-day login/lesson/simulation activity
+- [x] Create engagementScore calculation (daily logins + lessons + simulations during trial)
+- [x] Create isFounderEligible logic (5+ of 7 days active, 3+ lessons, 1+ simulation)
+- [x] Create Stripe prices: Founder £19/month, Standard £39/month, Annual £197/year
+- [x] Update access control: full free access during 7-day trial
+- [x] Update access control: post-trial gate with Founder vs Standard pricing
+- [x] Build Day X of 7 trial progress banner component
+- [x] Build Founder Access unlock celebration screen
+- [x] Redesign /subscribe page with 3-tier pricing (Founder, Standard, Annual)
+- [x] Add commitment psychology copy throughout (earned access language)
+- [x] Add motivational reinforcement messages to Dashboard and lesson pages
+- [x] Update onboarding to set trialStartedAt on first login
+- [x] Write vitest tests for trial eligibility and engagement scoring

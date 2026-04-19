@@ -23,12 +23,14 @@ function getStripe(): Stripe | null {
 }
 
 export const stripeRouter = router({
-  // Create a Stripe Checkout session for the £20/month subscription
+  // Create a Stripe Checkout session — accepts optional priceId for tier selection
   createCheckoutSession: protectedProcedure
     .input(
       z.object({
         successUrl: z.string().url(),
         cancelUrl: z.string().url(),
+        // Optional: specific price ID for tier selection (Founder/Standard/Annual)
+        priceId: z.string().optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -45,8 +47,22 @@ export const stripeRouter = router({
         throw new TRPCError({ code: 'BAD_REQUEST', message: 'Redirect URLs must be same-origin' });
       }
 
-      if (!STRIPE_PRICE_ID) {
+      // Allowed price IDs — validated server-side to prevent price manipulation
+      const ALLOWED_PRICE_IDS = [
+        "price_1TNrMnAlIkFVb04s0DqEUelE", // Founder £19/month
+        "price_1TNrMnAlIkFVb04scUtJB4Hr", // Standard £39/month
+        "price_1TNrMoAlIkFVb04s7L47K0qg", // Annual £197/year
+        STRIPE_PRICE_ID,                    // Legacy env-based price
+      ].filter(Boolean);
+
+      const resolvedPriceId = input.priceId ?? STRIPE_PRICE_ID;
+
+      if (!resolvedPriceId) {
         throw new Error("Subscription price not configured. Please contact support.");
+      }
+
+      if (!ALLOWED_PRICE_IDS.includes(resolvedPriceId)) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid price selection' });
       }
 
       const db = await getDb();
@@ -97,7 +113,7 @@ export const stripeRouter = router({
         payment_method_types: ["card"],
         line_items: [
           {
-            price: STRIPE_PRICE_ID,
+            price: resolvedPriceId,
             quantity: 1,
           },
         ],

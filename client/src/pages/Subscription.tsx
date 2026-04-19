@@ -1,289 +1,486 @@
-import { useState } from "react";
-import { useLocation } from "wouter";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  ArrowLeft,
-  CheckCircle2,
-  Loader2,
-  Crown,
-  BookOpen,
-  Trophy,
-  Zap,
-  Users,
-  Star,
-} from "lucide-react";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { useAuth } from "@/_core/hooks/useAuth";
+/**
+ * Subscription / Membership page
+ *
+ * Commitment-based pricing model:
+ * - Founder Access (£19/month) — earned by consistent trial users
+ * - Standard Professional Access (£39/month) — for all other users
+ * - Annual Professional Access (£197/year) — best value anchor
+ *
+ * Language: earned access, not discounts. Premium, not cheap.
+ */
+
+import { useState, useEffect } from "react";
+import { useLocation, useSearch } from "wouter";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import {
+  CheckCircle2,
+  Star,
+  Zap,
+  ArrowRight,
+  Lock,
+  Shield,
+  TrendingUp,
+  Award,
+  Users,
+  ChevronDown,
+  ChevronUp,
+  Loader2,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-const PREMIUM_LEVELS = [
-  { level: 3, title: "Agile & Scrum Mastery", lessons: 12 },
-  { level: 4, title: "Stakeholder Management", lessons: 12 },
-  { level: 5, title: "Risk & Budget Control", lessons: 12 },
-  { level: 6, title: "Leadership & Team Dynamics", lessons: 12 },
-  { level: 7, title: "Advanced PM & Certification", lessons: 12 },
+const FEATURES_ALL = [
+  "Full access to all 7 levels",
+  "All PM simulations and real-world scenarios",
+  "AI-powered feedback on every decision",
+  "PM Readiness Certificate on completion",
+  "Interview preparation toolkit",
+  "Stakeholder management simulations",
+  "Risk and budget scenario training",
+  "Agile, Scrum, and Waterfall frameworks",
+  "Glossary of 200+ PM terms",
+  "Progress tracking and confidence scoring",
+  "Lifetime access to your completed work",
 ];
 
-const FEATURES = [
-  { icon: BookOpen, text: "60 advanced lessons across 5 levels" },
-  { icon: CheckCircle2, text: "Knowledge checks with expert explanations" },
-  { icon: Trophy, text: "Advanced achievement badges & XP rewards" },
-  { icon: Zap, text: "Practice scenarios: Healthcare, Construction, Tech" },
-  { icon: Users, text: "Stakeholder management simulations" },
-  { icon: Star, text: "Certification preparation (PMP, PRINCE2, Agile)" },
+const FAQS = [
+  {
+    q: "What is Founder Access?",
+    a: "Founder Access is earned — not discounted. Users who demonstrate consistent engagement during the 7-day free trial (logging in most days, completing lessons, running simulations) unlock PM Readiness Member Pricing at £19/month for the first 6 months. It reflects your commitment, not a sale.",
+  },
+  {
+    q: "What happens after the 6-month Founder period?",
+    a: "After 6 months, your subscription moves to the standard rate of £39/month. You can cancel anytime before then — no lock-in, no penalties.",
+  },
+  {
+    q: "Can I cancel anytime?",
+    a: "Yes. Cancel anytime from your account settings. You keep access until the end of your current billing period.",
+  },
+  {
+    q: "Is the Annual plan better value?",
+    a: "The Annual plan at £197/year works out at £16.42/month — the best value option. It is designed for professionals who are serious about completing their transition and want to invest in the full journey.",
+  },
+  {
+    q: "What if I did not earn Founder Access?",
+    a: "Standard Professional Access at £39/month gives you exactly the same platform. The pricing difference reflects the commitment demonstrated during the trial — consistent users earn better pricing.",
+  },
+  {
+    q: "Is this right for someone with no PM experience?",
+    a: "Yes. The platform is built specifically for career changers — people transitioning from teaching, healthcare, finance, engineering, and other industries. You start from the foundations and build to interview readiness.",
+  },
 ];
+
+const PRICE_IDS = {
+  founder: "price_1TNrMnAlIkFVb04s0DqEUelE",
+  standard: "price_1TNrMnAlIkFVb04scUtJB4Hr",
+  annual: "price_1TNrMoAlIkFVb04s7L47K0qg",
+};
 
 export default function Subscription() {
-  const [, setLocation] = useLocation();
-  const { user, loading } = useAuth();
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
-  const [isPortaling, setIsPortaling] = useState(false);
+  const [, navigate] = useLocation();
+  const search = useSearch();
+  const params = new URLSearchParams(search);
+  const preferredTier = params.get("tier") as "founder" | "standard" | "annual" | null;
 
-  const { data: subStatus } = trpc.stripe.getSubscriptionStatus.useQuery(
-    undefined,
-    { enabled: !!user }
+  const { isAuthenticated, loading: authLoading } = useAuth();
+  const [selectedTier, setSelectedTier] = useState<"founder" | "standard" | "annual">(
+    preferredTier ?? "annual"
   );
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const createCheckout = trpc.stripe.createCheckoutSession.useMutation({
+  const { data: trial } = trpc.trial.getStatus.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
+
+  const { data: subscription } = trpc.stripe.getSubscriptionStatus.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
+
+  const checkoutMutation = trpc.stripe.createCheckoutSession.useMutation({
     onSuccess: (data) => {
       if (data.url) {
-        window.location.href = data.url;
+        toast("Redirecting to secure checkout...", { duration: 2000 });
+        window.open(data.url, "_blank");
       }
     },
     onError: (err) => {
-      toast.error(err.message || "Failed to start checkout");
-      setIsCheckingOut(false);
+      toast.error(err.message || "Failed to start checkout. Please try again.");
     },
   });
 
-  const createPortal = trpc.stripe.createPortalSession.useMutation({
+  const portalMutation = trpc.stripe.createPortalSession.useMutation({
     onSuccess: (data) => {
-      if (data.url) {
-        window.location.href = data.url;
-      }
+      if (data.url) window.open(data.url, "_blank");
     },
     onError: (err) => {
-      toast.error(err.message || "Failed to open billing portal");
-      setIsPortaling(false);
+      toast.error(err.message || "Failed to open billing portal.");
     },
   });
 
-  const handleSubscribe = async () => {
-    if (!user) {
-      setLocation("/login");
+  const founderEarned = trial?.founderAccessEarned ?? false;
+
+  useEffect(() => {
+    if (preferredTier) {
+      setSelectedTier(preferredTier);
+    } else if (founderEarned) {
+      setSelectedTier("founder");
+    }
+  }, [founderEarned, preferredTier]);
+
+  const handleCheckout = (tier: "founder" | "standard" | "annual") => {
+    if (!isAuthenticated) {
+      navigate("/login?redirect=/subscribe");
       return;
     }
-    setIsCheckingOut(true);
     const origin = window.location.origin;
-    createCheckout.mutate({
+    checkoutMutation.mutate({
+      priceId: PRICE_IDS[tier],
       successUrl: `${origin}/dashboard?subscribed=true`,
       cancelUrl: `${origin}/subscribe`,
     });
   };
 
-  const handleManageSubscription = async () => {
-    setIsPortaling(true);
-    const origin = window.location.origin;
-    createPortal.mutate({
-      returnUrl: `${origin}/dashboard`,
-    });
-  };
-
-  if (loading) {
+  if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-[#060d1a] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
       </div>
     );
   }
 
-  const hasSubscription = subStatus?.hasSubscription;
+  // Already subscribed
+  if (subscription?.hasSubscription && subscription?.subscription?.status === 'active') {
+    return (
+      <div className="min-h-screen bg-[#060d1a] flex items-center justify-center px-4">
+        <div className="max-w-md w-full text-center space-y-6">
+          <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto">
+            <CheckCircle2 className="h-10 w-10 text-green-400" />
+          </div>
+          <h1 className="text-3xl font-black text-white">You are a Member</h1>
+          <p className="text-white/50">
+            Full access is active. Continue your PM career transition journey.
+          </p>
+          <div className="flex gap-3 justify-center">
+            <Button
+              onClick={() => navigate("/dashboard")}
+              className="bg-cyan-500 hover:bg-cyan-400 text-black font-bold"
+            >
+              Go to Dashboard
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => portalMutation.mutate({ returnUrl: window.location.origin + "/dashboard" })}
+              disabled={portalMutation.isPending}
+              className="border-white/20 text-white/60 hover:text-white bg-transparent"
+            >
+              Manage Billing
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
-      <div className="fixed top-4 right-4 z-50">
-        <ThemeToggle />
-      </div>
-      <div className="fixed top-4 left-4 z-50">
-        <Button
-          variant="ghost"
-          onClick={() => setLocation("/dashboard")}
-          className="gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Dashboard
-        </Button>
+    <div className="min-h-screen bg-[#060d1a] text-white">
+      {/* Header */}
+      <div className="border-b border-white/5 px-4 py-4">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <button
+            onClick={() => navigate(isAuthenticated ? "/dashboard" : "/")}
+            className="text-white/40 hover:text-white/70 text-sm transition-colors"
+          >
+            ← Back
+          </button>
+          <span className="text-white/20 text-xs">Secure checkout powered by Stripe</span>
+        </div>
       </div>
 
-      <div className="container py-20 max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center space-y-4 mb-12">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center">
-              <Crown className="h-6 w-6 text-amber-500" />
+      <div className="max-w-5xl mx-auto px-4 py-16 space-y-20">
+
+        {/* Hero */}
+        <div className="text-center space-y-4">
+          {founderEarned && (
+            <div className="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/30 rounded-full px-4 py-2 text-sm text-cyan-400 font-semibold mb-4">
+              <Star className="h-4 w-4" />
+              Commitment Reward Activated — Founder Access Earned
             </div>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold">
-            Unlock Premium Access
+          )}
+          <h1 className="text-4xl md:text-6xl font-black leading-tight">
+            {founderEarned ? (
+              <>
+                You earned<br />
+                <span className="text-cyan-400">Founder Access</span>
+              </>
+            ) : (
+              <>
+                Continue your<br />
+                <span className="text-cyan-400">career transition</span>
+              </>
+            )}
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Master all 7 levels of project management. Go from fundamentals to
-            advanced certification-ready skills.
+          <p className="text-white/40 text-lg max-w-xl mx-auto">
+            {founderEarned
+              ? "Your consistency during the free trial unlocked PM Readiness Member Pricing. This is what commitment looks like."
+              : "People do not buy courses. They buy confidence, career progression, and proof of readiness."}
           </p>
         </div>
 
-        {/* Pricing Card */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
-          {/* Free Tier */}
-          <div className="bg-card border border-border rounded-2xl p-8 space-y-6">
-            <div>
-              <Badge variant="secondary" className="mb-3">Free</Badge>
-              <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-bold">£0</span>
-                <span className="text-muted-foreground">/month</span>
+        {/* Pricing cards */}
+        <div className="grid md:grid-cols-3 gap-6">
+
+          {/* Founder Access */}
+          <div
+            className={cn(
+              "relative rounded-2xl border p-6 transition-all duration-200 space-y-5",
+              founderEarned ? "cursor-pointer" : "cursor-default",
+              selectedTier === "founder" && founderEarned
+                ? "border-cyan-500/60 bg-cyan-950/20 ring-1 ring-cyan-500/30"
+                : "border-white/10 bg-white/[0.02]",
+              founderEarned && selectedTier !== "founder" && "hover:border-white/20",
+              !founderEarned && "opacity-55"
+            )}
+            onClick={() => founderEarned && setSelectedTier("founder")}
+          >
+            {founderEarned ? (
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span className="bg-cyan-500 text-black text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider whitespace-nowrap">
+                  Your Earned Rate
+                </span>
               </div>
-              <p className="text-muted-foreground mt-2">Perfect for getting started</p>
+            ) : (
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span className="bg-white/10 text-white/40 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1 whitespace-nowrap">
+                  <Lock className="h-3 w-3" /> Earned by Consistency
+                </span>
+              </div>
+            )}
+
+            <div className="pt-2">
+              <div className="flex items-center gap-2 mb-1">
+                <Star className="h-4 w-4 text-cyan-400" />
+                <span className="text-xs uppercase tracking-widest text-cyan-400/70 font-semibold">
+                  Founder Access
+                </span>
+              </div>
+              <div className="flex items-end gap-1">
+                <span className="text-4xl font-black text-white">£19</span>
+                <span className="text-white/40 mb-1">/month</span>
+              </div>
+              <p className="text-xs text-white/30 mt-1">First 6 months · then £39/month</p>
             </div>
 
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0" />
-                <span className="text-sm">Level 1: Introduction to PM (12 lessons)</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0" />
-                <span className="text-sm">Level 2: Waterfall (unlock with 1 referral)</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0" />
-                <span className="text-sm">XP system and basic achievements</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0" />
-                <span className="text-sm">PM Glossary and Frameworks Reference</span>
-              </div>
-            </div>
+            <p className="text-sm text-white/50">
+              {founderEarned
+                ? "You proved your commitment. This is your reward."
+                : "Earned by users who demonstrate consistent engagement during the 7-day free trial."}
+            </p>
 
-            {user ? (
-              <Button variant="outline" className="w-full" onClick={() => setLocation("/dashboard")}>
-                Current Plan
+            {founderEarned ? (
+              <Button
+                onClick={() => handleCheckout("founder")}
+                disabled={checkoutMutation.isPending}
+                className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-black"
+              >
+                {checkoutMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  <Zap className="h-4 w-4 mr-2" />
+                )}
+                Claim Founder Access
               </Button>
             ) : (
-              <Button variant="outline" className="w-full" onClick={() => setLocation("/login")}>
-                Get Started Free
-              </Button>
+              <div className="text-xs text-white/25 text-center py-2">
+                Complete the 7-day trial consistently to unlock
+              </div>
             )}
           </div>
 
-          {/* Premium Tier */}
-          <div className="bg-card border-2 border-amber-500/50 rounded-2xl p-8 space-y-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 bg-amber-500 text-black text-xs font-bold px-3 py-1 rounded-bl-lg">
-              MOST POPULAR
-            </div>
-
-            <div>
-              <Badge className="mb-3 bg-amber-500/10 text-amber-600 border-amber-500/20">
-                Premium
-              </Badge>
-              <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-bold">£20</span>
-                <span className="text-muted-foreground">/month</span>
-              </div>
-              <p className="text-muted-foreground mt-2">
-                Full access to all 7 levels
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="h-4 w-4 text-amber-500 flex-shrink-0" />
-                <span className="text-sm font-medium">Everything in Free</span>
-              </div>
-              {PREMIUM_LEVELS.map((l) => (
-                <div key={l.level} className="flex items-center gap-3">
-                  <CheckCircle2 className="h-4 w-4 text-amber-500 flex-shrink-0" />
-                  <span className="text-sm">
-                    Level {l.level}: {l.title} ({l.lessons} lessons)
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {hasSubscription ? (
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-sm text-green-600 font-medium">
-                  <CheckCircle2 className="h-4 w-4" />
-                  Active subscription
-                </div>
-                {subStatus?.subscription?.currentPeriodEnd && (
-                  <p className="text-xs text-muted-foreground">
-                    Renews{" "}
-                    {new Date(
-                      subStatus.subscription.currentPeriodEnd
-                    ).toLocaleDateString()}
-                  </p>
-                )}
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={handleManageSubscription}
-                  disabled={isPortaling}
-                >
-                  {isPortaling ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : null}
-                  Manage Subscription
-                </Button>
-              </div>
-            ) : (
-              <Button
-                className="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold"
-                size="lg"
-                onClick={handleSubscribe}
-                disabled={isCheckingOut}
-              >
-                {isCheckingOut ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Redirecting to checkout...
-                  </>
-                ) : (
-                  <>
-                    <Crown className="mr-2 h-4 w-4" />
-                    Subscribe for £20/month
-                  </>
-                )}
-              </Button>
+          {/* Annual — best value anchor */}
+          <div
+            className={cn(
+              "relative rounded-2xl border p-6 cursor-pointer transition-all duration-200 space-y-5",
+              selectedTier === "annual"
+                ? "border-amber-500/60 bg-amber-950/20 ring-1 ring-amber-500/30"
+                : "border-white/10 bg-white/[0.02] hover:border-white/20"
             )}
+            onClick={() => setSelectedTier("annual")}
+          >
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+              <span className="bg-amber-500 text-black text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
+                Best Value
+              </span>
+            </div>
+
+            <div className="pt-2">
+              <div className="flex items-center gap-2 mb-1">
+                <Award className="h-4 w-4 text-amber-400" />
+                <span className="text-xs uppercase tracking-widest text-amber-400/70 font-semibold">
+                  Annual Professional
+                </span>
+              </div>
+              <div className="flex items-end gap-1">
+                <span className="text-4xl font-black text-white">£197</span>
+                <span className="text-white/40 mb-1">/year</span>
+              </div>
+              <p className="text-xs text-white/30 mt-1">£16.42/month · save £271 vs monthly</p>
+            </div>
+
+            <p className="text-sm text-white/50">
+              For professionals committed to completing their full career transition. The most serious choice.
+            </p>
+
+            <Button
+              onClick={() => handleCheckout("annual")}
+              disabled={checkoutMutation.isPending}
+              className={cn(
+                "w-full font-black",
+                selectedTier === "annual"
+                  ? "bg-amber-500 hover:bg-amber-400 text-black"
+                  : "bg-white/10 hover:bg-white/15 text-white"
+              )}
+            >
+              {checkoutMutation.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : null}
+              Start Annual Access
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* Standard */}
+          <div
+            className={cn(
+              "relative rounded-2xl border p-6 cursor-pointer transition-all duration-200 space-y-5",
+              selectedTier === "standard"
+                ? "border-white/30 bg-white/[0.04] ring-1 ring-white/20"
+                : "border-white/10 bg-white/[0.02] hover:border-white/20"
+            )}
+            onClick={() => setSelectedTier("standard")}
+          >
+            <div className="pt-2">
+              <div className="flex items-center gap-2 mb-1">
+                <TrendingUp className="h-4 w-4 text-white/50" />
+                <span className="text-xs uppercase tracking-widest text-white/30 font-semibold">
+                  Standard Professional
+                </span>
+              </div>
+              <div className="flex items-end gap-1">
+                <span className="text-4xl font-black text-white">£39</span>
+                <span className="text-white/40 mb-1">/month</span>
+              </div>
+              <p className="text-xs text-white/30 mt-1">Full access · cancel anytime</p>
+            </div>
+
+            <p className="text-sm text-white/50">
+              Full platform access. The standard rate for professionals ready to invest in their career transition.
+            </p>
+
+            <Button
+              onClick={() => handleCheckout("standard")}
+              disabled={checkoutMutation.isPending}
+              variant="outline"
+              className={cn(
+                "w-full font-bold bg-transparent",
+                selectedTier === "standard"
+                  ? "border-white/30 text-white hover:bg-white/5"
+                  : "border-white/10 text-white/50 hover:border-white/20 hover:text-white/70"
+              )}
+            >
+              {checkoutMutation.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : null}
+              Start Standard Access
+            </Button>
           </div>
         </div>
 
-        {/* Feature Grid */}
-        <div className="bg-card border border-border rounded-2xl p-8">
-          <h2 className="text-2xl font-bold mb-6 text-center">
-            What you'll master with Premium
-          </h2>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {FEATURES.map(({ icon: Icon, text }) => (
-              <div key={text} className="flex items-start gap-3">
-                <div className="w-8 h-8 bg-amber-500/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Icon className="h-4 w-4 text-amber-500" />
-                </div>
-                <span className="text-sm text-muted-foreground">{text}</span>
+        {/* What's included */}
+        <div className="space-y-8">
+          <div className="text-center">
+            <h2 className="text-2xl font-black text-white">Everything included in every plan</h2>
+            <p className="text-white/40 mt-2">No tiers within tiers. Full access, always.</p>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-3 max-w-2xl mx-auto">
+            {FEATURES_ALL.map((feature) => (
+              <div key={feature} className="flex items-start gap-3">
+                <CheckCircle2 className="h-4 w-4 text-cyan-400 flex-shrink-0 mt-0.5" />
+                <span className="text-sm text-white/60">{feature}</span>
               </div>
             ))}
           </div>
         </div>
 
+        {/* Trust signals */}
+        <div className="grid sm:grid-cols-3 gap-6 border-y border-white/5 py-10">
+          {[
+            {
+              icon: <Shield className="h-5 w-5 text-cyan-400" />,
+              title: "Secure checkout",
+              desc: "Payments handled by Stripe. We never store card details.",
+            },
+            {
+              icon: <Users className="h-5 w-5 text-cyan-400" />,
+              title: "Built for career changers",
+              desc: "Designed for NHS professionals, teachers, engineers, and others transitioning into PM roles.",
+            },
+            {
+              icon: <TrendingUp className="h-5 w-5 text-cyan-400" />,
+              title: "Cancel anytime",
+              desc: "No lock-in. Cancel from your account settings at any time.",
+            },
+          ].map((item) => (
+            <div key={item.title} className="flex gap-4">
+              <div className="flex-shrink-0 mt-0.5">{item.icon}</div>
+              <div>
+                <p className="text-sm font-semibold text-white/70">{item.title}</p>
+                <p className="text-xs text-white/30 mt-1">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
         {/* FAQ */}
-        <div className="mt-8 text-center space-y-2">
-          <p className="text-sm text-muted-foreground">
-            Cancel anytime. No long-term commitment required.
+        <div className="space-y-4 max-w-2xl mx-auto">
+          <h2 className="text-2xl font-black text-white text-center">Common questions</h2>
+          <div className="space-y-2">
+            {FAQS.map((faq, i) => (
+              <div
+                key={i}
+                className="border border-white/8 rounded-xl overflow-hidden"
+              >
+                <button
+                  className="w-full flex items-center justify-between px-5 py-4 text-left"
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                >
+                  <span className="text-sm font-semibold text-white/70">{faq.q}</span>
+                  {openFaq === i ? (
+                    <ChevronUp className="h-4 w-4 text-white/30 flex-shrink-0" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 text-white/30 flex-shrink-0" />
+                  )}
+                </button>
+                {openFaq === i && (
+                  <div className="px-5 pb-4">
+                    <p className="text-sm text-white/40 leading-relaxed">{faq.a}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom note */}
+        <div className="text-center space-y-2 pb-8">
+          <p className="text-white/20 text-sm">
+            Test payments: use card{" "}
+            <span className="font-mono text-white/30">4242 4242 4242 4242</span>
           </p>
-          <p className="text-sm text-muted-foreground">
-            Secure payment powered by Stripe. Your card details are never stored on our servers.
+          <p className="text-white/15 text-xs">
+            PM Simulate · UK career transition platform · Powered by Stripe
           </p>
         </div>
       </div>
