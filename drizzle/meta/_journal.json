@@ -71,6 +71,13 @@
       "when": 1776589800085,
       "tag": "0009_famous_wallop",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1776590590615,
+      "tag": "0010_milky_stingray",
+      "breakpoints": true
     }
   ]
 }

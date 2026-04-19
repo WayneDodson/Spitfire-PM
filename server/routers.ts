@@ -1,5 +1,6 @@
 import { COOKIE_NAME } from "@shared/const";
 import { stripeRouter } from "./routers/stripe";
+import { cancellationRouter } from "./routers/cancellation";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
@@ -288,6 +289,7 @@ export const appRouter = router({
   }),
 
   stripe: stripeRouter,
+  cancellation: cancellationRouter,
 
   trial: router({
     // Get the current user's trial status and engagement

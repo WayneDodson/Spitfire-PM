@@ -24,6 +24,7 @@ import {
   Star,
   ChevronRight,
   ArrowRight,
+  Shield,
 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
@@ -213,6 +214,17 @@ export default function Dashboard() {
                   <Award className="h-4 w-4 mr-1.5" />
                   Achievements
                 </Button>
+                {user?.role === "admin" && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setLocation("/admin/cancellations")}
+                    className="text-rose-400/70 hover:text-rose-300"
+                  >
+                    <Shield className="h-4 w-4 mr-1.5" />
+                    Admin
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   size="sm"

@@ -20,6 +20,7 @@ import Glossary from "./pages/Glossary";
 import Frameworks from "./pages/Frameworks";
 import Subscription from "./pages/Subscription";
 import VerifyEmail from "./pages/VerifyEmail";
+import AdminCancellations from "./pages/AdminCancellations";
 import { TrialBanner } from "./components/TrialBanner";
 import { FounderAccessModal } from "./components/FounderAccessModal";
 import { useAuth } from "./_core/hooks/useAuth";
@@ -87,6 +88,7 @@ function Router() {
       <Route path="/frameworks" component={Frameworks} />
       <Route path="/subscribe" component={Subscription} />
       <Route path="/verify-email" component={VerifyEmail} />
+      <Route path="/admin/cancellations" component={AdminCancellations} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

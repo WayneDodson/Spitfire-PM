@@ -353,3 +353,89 @@ export const dailyEngagement = mysqlTable("dailyEngagement", {
 
 export type DailyEngagement = typeof dailyEngagement.$inferSelect;
 export type InsertDailyEngagement = typeof dailyEngagement.$inferInsert;
+
+/**
+ * Cancellation reasons — captured at the start of the cancellation flow.
+ * Stores why the user is leaving, their readiness score, and progress snapshot
+ * so future re-engagement can feel personal and relevant.
+ */
+export const cancellationReasons = mysqlTable("cancellationReasons", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  /** Primary reason selected from the dropdown */
+  reason: mysqlEnum("reason", [
+    "too_expensive",
+    "need_more_time",
+    "not_using_enough",
+    "feel_overwhelmed",
+    "unsure_if_ready",
+    "got_the_job",
+    "struggling_with_interviews",
+    "need_career_advice",
+    "other",
+  ]).notNull(),
+  /** Free text for "Other" or additional context */
+  customReason: text("customReason"),
+  /** Readiness score at time of cancellation (0–100) */
+  readinessScore: int("readinessScore"),
+  /** Number of levels completed at time of cancellation */
+  levelsCompleted: int("levelsCompleted"),
+  /** Overall progress percentage at time of cancellation */
+  overallProgress: decimal("overallProgress", { precision: 5, scale: 2 }),
+  /** User's original career goal from onboarding */
+  careerGoal: varchar("careerGoal", { length: 255 }),
+  /** Current industry from onboarding */
+  currentIndustry: varchar("currentIndustry", { length: 100 }),
+  /** Target PM role from onboarding */
+  targetRole: varchar("targetRole", { length: 100 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type CancellationReason = typeof cancellationReasons.$inferSelect;
+export type InsertCancellationReason = typeof cancellationReasons.$inferInsert;
+
+/**
+ * Mentor call requests — submitted when a user accepts the free mentor call offer
+ * during the cancellation flow.
+ */
+export const mentorRequests = mysqlTable("mentorRequests", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  /** Link back to the cancellation reason that triggered this */
+  cancellationReasonId: int("cancellationReasonId"),
+  /** Selected help topics (comma-separated enum values stored as text) */
+  helpTopics: text("helpTopics"),
+  /** Main question the user wants answered in the mentor call */
+  mainQuestion: text("mainQuestion").notNull(),
+  /** Where the user is now in their career transition */
+  currentSituation: text("currentSituation"),
+  /** What outcome the user is hoping for */
+  desiredOutcome: text("desiredOutcome"),
+  /** Status: pending → scheduled → completed → no_show */
+  status: mysqlEnum("status", ["pending", "scheduled", "completed", "no_show"]).default("pending").notNull(),
+  /** Admin notes on the request */
+  adminNotes: text("adminNotes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type MentorRequest = typeof mentorRequests.$inferSelect;
+export type InsertMentorRequest = typeof mentorRequests.$inferInsert;
+
+/**
+ * Re-engagement opt-ins — captured on the final farewell step.
+ * If the user opts in, we check in with them in 3 months with a personalised message.
+ */
+export const reEngagementOptIns = mysqlTable("reEngagementOptIns", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  /** Link back to the cancellation reason */
+  cancellationReasonId: int("cancellationReasonId"),
+  /** Whether the user opted in to a 3-month check-in */
+  optedIn: boolean("optedIn").default(false).notNull(),
+  /** Scheduled check-in date (3 months from cancellation) */
+  checkInDate: timestamp("checkInDate"),
+  /** Whether the check-in has been sent */
+  checkInSent: boolean("checkInSent").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type ReEngagementOptIn = typeof reEngagementOptIns.$inferSelect;
+export type InsertReEngagementOptIn = typeof reEngagementOptIns.$inferInsert;

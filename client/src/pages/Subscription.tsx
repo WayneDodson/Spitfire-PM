@@ -14,6 +14,7 @@ import { useLocation, useSearch } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { CancellationFlowModal } from "@/components/CancellationFlowModal";
 import {
   CheckCircle2,
   Star,
@@ -89,6 +90,9 @@ export default function Subscription() {
     preferredTier ?? "annual"
   );
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [showCancellationFlow, setShowCancellationFlow] = useState(false);
+
+  const utils = trpc.useUtils();
 
   const { data: trial } = trpc.trial.getStatus.useQuery(undefined, {
     enabled: isAuthenticated,
@@ -153,34 +157,56 @@ export default function Subscription() {
   // Already subscribed
   if (subscription?.hasSubscription && subscription?.subscription?.status === 'active') {
     return (
-      <div className="min-h-screen bg-[#060d1a] flex items-center justify-center px-4">
-        <div className="max-w-md w-full text-center space-y-6">
-          <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto">
-            <CheckCircle2 className="h-10 w-10 text-green-400" />
-          </div>
-          <h1 className="text-3xl font-black text-white">You are a Member</h1>
-          <p className="text-white/50">
-            Full access is active. Continue your PM career transition journey.
-          </p>
-          <div className="flex gap-3 justify-center">
-            <Button
-              onClick={() => navigate("/dashboard")}
-              className="bg-cyan-500 hover:bg-cyan-400 text-black font-bold"
+      <>
+        <div className="min-h-screen bg-[#060d1a] flex items-center justify-center px-4">
+          <div className="max-w-md w-full text-center space-y-6">
+            <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto">
+              <CheckCircle2 className="h-10 w-10 text-green-400" />
+            </div>
+            <h1 className="text-3xl font-black text-white">You are a Member</h1>
+            <p className="text-white/50">
+              Full access is active. Continue your PM career transition journey.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Button
+                onClick={() => navigate("/dashboard")}
+                className="bg-cyan-500 hover:bg-cyan-400 text-black font-bold"
+              >
+                Go to Dashboard
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => portalMutation.mutate({ returnUrl: window.location.origin + "/dashboard" })}
+                disabled={portalMutation.isPending}
+                className="border-white/20 text-white/60 hover:text-white bg-transparent"
+              >
+                Manage Billing
+              </Button>
+            </div>
+            <button
+              onClick={() => setShowCancellationFlow(true)}
+              className="text-xs text-white/20 hover:text-white/40 transition-colors mt-2"
             >
-              Go to Dashboard
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => portalMutation.mutate({ returnUrl: window.location.origin + "/dashboard" })}
-              disabled={portalMutation.isPending}
-              className="border-white/20 text-white/60 hover:text-white bg-transparent"
-            >
-              Manage Billing
-            </Button>
+              Cancel membership
+            </button>
           </div>
         </div>
-      </div>
+
+        {/* Cancellation Flow Modal */}
+        <CancellationFlowModal
+          open={showCancellationFlow}
+          onClose={() => setShowCancellationFlow(false)}
+          onCancelled={() => {
+            setShowCancellationFlow(false);
+            utils.stripe.getSubscriptionStatus.invalidate();
+            navigate("/dashboard");
+          }}
+          readinessScore={0}
+          levelsCompleted={0}
+          overallProgress={0}
+        />
+      </>
     );
   }
 

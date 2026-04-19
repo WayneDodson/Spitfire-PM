@@ -257,3 +257,19 @@
 - [x] Add motivational reinforcement messages to Dashboard and lesson pages
 - [x] Update onboarding to set trialStartedAt on first login
 - [x] Write vitest tests for trial eligibility and engagement scoring
+
+## Emotionally Intelligent Cancellation Flow
+- [x] Add cancellationReasons table (userId, reason, customReason, readinessScore, progressSnapshot, createdAt)
+- [x] Add mentorRequests table (userId, helpTopics, mainQuestion, currentSituation, desiredOutcome, status, createdAt)
+- [x] Add reEngagementOptIns table (userId, optIn, checkInDate, cancellationReasonId, createdAt)
+- [x] Add tRPC procedures: submitCancellationReason, requestMentorCall, submitReEngagementOptIn
+- [x] Admin notification on mentor request (notifyOwner with full context)
+- [x] Build 4-step cancellation modal: Step 1 reason, Step 2 mentor offer, Step 3 question form, Step 4 farewell
+- [x] Step 1: 9-option reason selector with "Other" free text
+- [x] Step 2: Free PM Career Clarity Call offer (supportive, not sales)
+- [x] Step 3: Mentor question form (topics + main question + current situation + desired outcome)
+- [x] Step 4: Warm farewell with optional 3-month check-in opt-in (Yes / No thanks)
+- [x] Store readiness score + progress snapshot + career goal at cancellation time
+- [x] Replace current "Cancel Subscription" button with new flow entry point
+- [x] Build admin cancellation intelligence view (/admin/cancellations)
+- [x] Write vitest tests for cancellation flow procedures
