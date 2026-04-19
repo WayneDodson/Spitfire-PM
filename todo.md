@@ -388,3 +388,9 @@
 - [x] Update prose wrapper in Lesson.tsx to include lesson-prose class alongside prose-slate
 - [x] Remove conflicting per-heading prose-h1/h2/h3 modifier classes (now handled by lesson-prose)
 - [x] 81 tests passing, 0 TypeScript errors
+
+## Lesson Content \\n Fix
+- [x] Verify literal \\n sequences are stored in DB instead of real newlines
+- [x] Write and run script to replace all literal \\n with real newlines across all 168 lessons
+- [x] Verify lesson content renders correctly after fix (hex 0A0A confirmed real newlines)
+- [x] Run tests and save checkpoint
