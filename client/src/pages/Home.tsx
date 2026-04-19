@@ -78,12 +78,12 @@ const PSYCHOLOGY_MOMENTS = [
 ];
 
 const WHO_ITS_FOR = [
-  { role: "NHS & Healthcare Staff", detail: "Coordinators, band 5\u20137 moving into project roles" },
+  { role: "NHS & Healthcare Staff", detail: "Coordinators, band 5–7 moving into project roles" },
   { role: "Care Sector Professionals", detail: "Team leaders and managers seeking PM credentials" },
-  { role: "Administrators & Coordinators", detail: "Already doing PM work \u2014 now prove it formally" },
+  { role: "Administrators & Coordinators", detail: "Already doing PM work — now prove it formally" },
   { role: "Internal Promotions", detail: "Staff being considered for PM progression" },
   { role: "Career Changers", detail: "Any professional making the transition into PM" },
-  { role: "Certification Holders", detail: "Google PM, PRINCE2, Agile, APM \u2014 ready to perform" },
+  { role: "Certification Holders", detail: "Google PM, PRINCE2, Agile, APM — ready to perform" },
 ];
 
 export default function Home() {
@@ -159,7 +159,7 @@ export default function Home() {
           </p>
           <p className="text-lg text-white/40 max-w-2xl mx-auto mb-10">
             The UK&apos;s leading platform for career changers, NHS professionals, and internal candidates
-            preparing for their first PM role \u2014 or their next one.
+            preparing for their first PM role — or their next one.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -168,7 +168,7 @@ export default function Home() {
               onClick={() => setLocation("/login")}
               className="text-lg px-8 py-6 bg-cyan-500 hover:bg-cyan-400 text-black font-bold shadow-lg shadow-cyan-500/20"
             >
-              Start Proving Readiness \u2014 Free
+              Start Proving Readiness — Free
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button
@@ -225,18 +225,18 @@ export default function Home() {
               <p className="text-white/60 text-lg leading-relaxed mb-6">
                 You&apos;ve done the Google PM course. Maybe PRINCE2. Perhaps a Level 4 or 5 qualification.
                 You understand the frameworks. But when the interview panel asks{" "}
-                <em>&ldquo;Tell me about a time you managed a difficult stakeholder&hellip;&rdquo;</em> \u2014 you freeze.
+                <em>&ldquo;Tell me about a time you managed a difficult stakeholder&hellip;&rdquo;</em> — you freeze.
               </p>
               <p className="text-white/60 text-lg leading-relaxed">
                 PM Simulate bridges that gap. Real scenarios. Real decisions. Real confidence built
-                through repetition \u2014 not revision.
+                through repetition — not revision.
               </p>
             </div>
             <div className="space-y-4">
               {[
-                { before: "I hope I\u2019m ready", after: "I know I can do this" },
-                { before: "I\u2019ve studied the theory", after: "I\u2019ve performed under pressure" },
-                { before: "I\u2019m not sure I can answer that", after: "I\u2019ve answered it 20 times" },
+                { before: "I hope I’m ready", after: "I know I can do this" },
+                { before: "I’ve studied the theory", after: "I’ve performed under pressure" },
+                { before: "I’m not sure I can answer that", after: "I’ve answered it 20 times" },
               ].map(({ before, after }) => (
                 <div key={before} className="bg-white/[0.03] border border-white/10 rounded-xl p-5">
                   <div className="flex items-center gap-3 mb-3">
@@ -269,7 +269,7 @@ export default function Home() {
               Stop studying. Start performing.
             </h2>
             <p className="text-white/50 text-lg max-w-2xl mx-auto">
-              Every simulation mirrors a real situation you&apos;ll face in the role \u2014 and in the interview.
+              Every simulation mirrors a real situation you&apos;ll face in the role — and in the interview.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -432,7 +432,7 @@ export default function Home() {
                 { icon: BarChart3, label: "Individual competency reports" },
                 { icon: Shield, label: "Secure, GDPR-compliant data handling" },
                 { icon: Star, label: "Aligned to APM, PRINCE2 & Agile" },
-                { icon: Clock, label: "Self-paced \u2014 fits around shift patterns" },
+                { icon: Clock, label: "Self-paced — fits around shift patterns" },
               ].map(({ icon: Icon, label }) => (
                 <div key={label} className="flex items-center gap-4">
                   <div className="w-10 h-10 bg-cyan-400/10 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -463,11 +463,11 @@ export default function Home() {
             onClick={() => setLocation("/login")}
             className="text-xl px-10 py-7 bg-cyan-500 hover:bg-cyan-400 text-black font-black shadow-2xl shadow-cyan-500/30"
           >
-            Start Proving Readiness \u2014 Free
+            Start Proving Readiness — Free
             <ArrowRight className="ml-3 h-6 w-6" />
           </Button>
           <p className="text-white/30 text-sm mt-5">
-            No credit card required \u00b7 Level 1 always free \u00b7 Cancel anytime
+            No credit card required · Level 1 always free · Cancel anytime
           </p>
         </div>
       </section>
@@ -479,7 +479,7 @@ export default function Home() {
             <div className="w-5 h-5 rounded bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
               <Target className="h-3 w-3 text-white" />
             </div>
-            PM Simulate \u00b7 UK Career Transition Platform
+            PM Simulate · UK Career Transition Platform
           </div>
           <div className="flex gap-6 text-white/30 text-sm">
             <button onClick={() => setLocation("/login")} className="hover:text-white/60 transition-colors">
