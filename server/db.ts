@@ -439,8 +439,10 @@ export async function saveReflection(
   }
 }
 
-/** Trial lesson limit — first 6 lessons of Level 1 only */
+/** Trial lesson limit — first 6 lessons of Level 1 only (25% of 24 lessons) */
 export const TRIAL_LESSON_LIMIT = 6;
+/** Number of days in the free trial */
+export const TRIAL_DAYS = 7;
 
 /**
  * Check whether a user can access a specific lesson.
@@ -471,14 +473,29 @@ export async function canAccessLesson(
     .limit(1);
   const hasSubscription = !!sub;
 
-  // Trial restriction: Level 1 only, first TRIAL_LESSON_LIMIT lessons
-  if (!hasSubscription && lesson.levelId === 1 && lesson.lessonNumber > TRIAL_LESSON_LIMIT) {
-    return { canAccess: false, reason: "trial_limit" };
-  }
+  if (!hasSubscription) {
+    // Check trial status
+    const now = new Date();
+    const trialStartedAt = user.trialStartedAt;
+    const trialEndsAt = user.trialEndsAt
+      ?? (trialStartedAt ? new Date(trialStartedAt.getTime() + TRIAL_DAYS * 24 * 60 * 60 * 1000) : null);
+    const trialExpired = trialEndsAt ? now >= trialEndsAt : false;
+    const trialActive = trialStartedAt && !trialExpired;
 
-  // Level access check for levels 2+
-  if (!hasSubscription && lesson.levelId > 1) {
-    return { canAccess: false, reason: "subscription_required" };
+    // Expired trial: block ALL content
+    if (trialExpired) {
+      return { canAccess: false, reason: "trial_expired" };
+    }
+
+    // Active trial: Level 1 only, first TRIAL_LESSON_LIMIT lessons
+    if (lesson.levelId === 1 && lesson.lessonNumber > TRIAL_LESSON_LIMIT) {
+      return { canAccess: false, reason: "trial_limit" };
+    }
+
+    // Active trial: block Levels 2-7
+    if (lesson.levelId > 1) {
+      return { canAccess: false, reason: "subscription_required" };
+    }
   }
 
   // Mastery lock: lesson 1 is always accessible; all others require previous lesson's confidence check

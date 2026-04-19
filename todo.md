@@ -354,3 +354,14 @@
 - [x] Run all tests (81 passing)
 - [x] Verify mastery lock flow end-to-end
 - [x] Save checkpoint
+
+## 7-Day Trial Logic
+- [x] Backend: confirm/update TRIAL_LESSON_LIMIT = 6 (first 6 of 24 = 25% of Level 1)
+- [x] Backend: block all levels 2-7 for trial/unsubscribed users
+- [x] Backend: getTrialStatus procedure — trialActive, daysRemaining, trialExpired, lessonsUsed
+- [x] Backend: canAccessLesson returns trial_limit reason with days remaining info
+- [x] Frontend: trial countdown banner on Dashboard (X days remaining)
+- [x] Frontend: locked lesson cards (lessons 7-24 in Level 1) show lock + upgrade CTA
+- [x] Frontend: locked level cards (Levels 2-7) show lock + upgrade CTA for trial users
+- [x] Frontend: upgrade prompt when user hits trial limit mid-lesson-flow
+- [x] Frontend: trial expired full upgrade wall (post 7 days, no subscription)

@@ -13,6 +13,7 @@ import {
   Sparkles,
   Brain,
   Trophy,
+  Crown,
 } from "lucide-react";
 import { Streamdown } from "streamdown";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -181,11 +182,18 @@ export default function Lesson() {
   // Access denied states
   if (isAuthenticated && accessCheck && !accessCheck.canAccess) {
     const reason = accessCheck.reason;
+    const isTrialBlock = reason === "trial_limit" || reason === "trial_expired";
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="p-8 max-w-md text-center space-y-4">
-          <div className="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mx-auto">
-            <Lock className="h-8 w-8 text-amber-600 dark:text-amber-400" />
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <Card className="p-8 max-w-md w-full text-center space-y-4">
+          <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto ${
+            isTrialBlock ? "bg-amber-100 dark:bg-amber-900/30" : "bg-muted"
+          }`}>
+            {isTrialBlock ? (
+              <Crown className="h-8 w-8 text-amber-600 dark:text-amber-400" />
+            ) : (
+              <Lock className="h-8 w-8 text-muted-foreground" />
+            )}
           </div>
           {reason === "mastery_lock" ? (
             <>
@@ -202,23 +210,43 @@ export default function Lesson() {
             </>
           ) : reason === "trial_limit" ? (
             <>
-              <h2 className="text-2xl font-bold">Trial Limit Reached</h2>
+              <h2 className="text-2xl font-bold">You've Reached Your Trial Limit</h2>
               <p className="text-muted-foreground">
-                Your free trial includes the first 6 lessons of Level 1. Upgrade to unlock all 168
-                lessons across 7 levels.
+                Your free trial includes the first 6 lessons of Level 1. Subscribe to unlock all
+                168 lessons across 7 levels and complete your PM journey.
               </p>
-              <Button asChild>
-                <Link href="/subscription">See Subscription Plans</Link>
+              <div className="bg-muted/50 rounded-lg p-4 text-left text-sm space-y-1.5">
+                <p className="font-medium">What you unlock with a subscription:</p>
+                <p className="text-muted-foreground flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-green-500 flex-shrink-0" /> All 7 levels — 168 lessons</p>
+                <p className="text-muted-foreground flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-green-500 flex-shrink-0" /> 168 Confidence Checks + 35 assessments</p>
+                <p className="text-muted-foreground flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-green-500 flex-shrink-0" /> PM Readiness Certificate</p>
+              </div>
+              <Button className="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold" onClick={() => setLocation("/subscribe")}>
+                <Crown className="mr-2 h-4 w-4" />
+                Subscribe to Continue
+              </Button>
+            </>
+          ) : reason === "trial_expired" ? (
+            <>
+              <h2 className="text-2xl font-bold">Your Free Trial Has Ended</h2>
+              <p className="text-muted-foreground">
+                Your 7-day free trial is over. Subscribe to continue your PM journey and unlock all
+                7 levels.
+              </p>
+              <Button className="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold" onClick={() => setLocation("/subscribe")}>
+                <Crown className="mr-2 h-4 w-4" />
+                Subscribe to Continue
               </Button>
             </>
           ) : (
             <>
               <h2 className="text-2xl font-bold">Subscription Required</h2>
               <p className="text-muted-foreground">
-                This lesson is part of a paid level. Upgrade to unlock full access.
+                This lesson is part of a paid level. Subscribe to unlock full access across all 7
+                levels.
               </p>
-              <Button asChild>
-                <Link href="/subscription">See Subscription Plans</Link>
+              <Button className="w-full" onClick={() => setLocation("/subscribe")}>
+                See Subscription Plans
               </Button>
             </>
           )}

@@ -171,6 +171,8 @@ export default function Dashboard() {
     const progress = userProgress?.find((p: any) => p.levelId === level.id);
     if (progress?.completed) return "completed";
     if (progress && !progress.completed) return "in_progress";
+    // Trial expired — block all levels until subscription
+    if (!hasActiveSubscription && trialStatus?.trialExpired) return "trial_expired";
     if (level.accessType === "free") return "unlocked";
     if (level.accessType === "referral") return referralCount >= 1 ? "unlocked" : "locked";
     if (level.accessType === "paid") return hasActiveSubscription ? "unlocked" : "locked";
@@ -568,18 +570,21 @@ export default function Dashboard() {
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {levels?.map((level: any) => {
+               {levels?.map((level: any) => {
                 const status = getLevelStatus(level);
                 const progress = userProgress?.find((p: any) => p.levelId === level.id);
                 const isLocked = status === "locked";
+                const isTrialExpired = status === "trial_expired";
                 const isCompleted = status === "completed";
                 const isInProgress = status === "in_progress";
-
+                const isAnyLocked = isLocked || isTrialExpired;
                 return (
                   <div
                     key={level.id}
                     className={`relative bg-[#0d1420] border rounded-2xl p-6 transition-all ${
-                      isLocked
+                      isTrialExpired
+                        ? "border-amber-500/20 opacity-70"
+                        : isLocked
                         ? "border-white/5 opacity-50"
                         : isCompleted
                         ? "border-green-500/30 bg-green-500/5"
@@ -590,7 +595,9 @@ export default function Dashboard() {
                   >
                     {/* Status badge */}
                     <div className="absolute top-4 right-4">
-                      {isLocked ? (
+                      {isTrialExpired ? (
+                        <Crown className="h-5 w-5 text-amber-500/60" />
+                      ) : isLocked ? (
                         <Lock className="h-5 w-5 text-white/20" />
                       ) : isCompleted ? (
                         <CheckCircle2 className="h-5 w-5 text-green-400" />
@@ -636,7 +643,9 @@ export default function Dashboard() {
 
                     <Button
                       className={`w-full font-semibold ${
-                        isLocked
+                        isTrialExpired
+                          ? "bg-amber-500 hover:bg-amber-400 text-black"
+                          : isLocked
                           ? "bg-white/5 text-white/20 cursor-not-allowed"
                           : isCompleted
                           ? "bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500/20"
@@ -644,7 +653,9 @@ export default function Dashboard() {
                       }`}
                       disabled={isLocked}
                       onClick={() => {
-                        if (isLocked) {
+                        if (isTrialExpired) {
+                          setLocation("/subscribe");
+                        } else if (isLocked) {
                           if (level.accessType === "referral") {
                             toast.info("Refer 1 friend to unlock this level — it's free!");
                           } else {
@@ -655,7 +666,12 @@ export default function Dashboard() {
                         }
                       }}
                     >
-                      {isLocked ? (
+                      {isTrialExpired ? (
+                        <>
+                          <Crown className="h-4 w-4 mr-2" />
+                          Subscribe to Continue
+                        </>
+                      ) : isLocked ? (
                         <>
                           <Lock className="h-4 w-4 mr-2" />
                           {level.accessType === "referral" ? "Refer to Unlock" : "Upgrade to Unlock"}
