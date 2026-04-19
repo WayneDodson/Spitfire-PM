@@ -365,3 +365,11 @@
 - [x] Frontend: locked level cards (Levels 2-7) show lock + upgrade CTA for trial users
 - [x] Frontend: upgrade prompt when user hits trial limit mid-lesson-flow
 - [x] Frontend: trial expired full upgrade wall (post 7 days, no subscription)
+
+## Profile Page
+- [x] Backend: getProfile procedure (account info, auth provider, member since)
+- [x] Backend: changePassword procedure (verify current password, hash new, enforce policy)
+- [x] Backend: getSubscriptionStatus procedure (plan, status, renewal date, manage billing link)
+- [x] Frontend: Profile page (/profile) — account info card, subscription card, change password card
+- [x] Frontend: Add /profile route to App.tsx
+- [x] Frontend: Add Profile link/icon to Dashboard header (user name + User icon button)

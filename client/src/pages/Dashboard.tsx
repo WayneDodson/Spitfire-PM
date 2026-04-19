@@ -18,6 +18,7 @@ import {
   TrendingUp,
   Users,
   Target,
+  User,
   Zap,
   BarChart3,
   Flame,
@@ -259,15 +260,28 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center gap-3">
               <ThemeToggle />
-              <div className="text-sm text-right hidden sm:block">
+              <button
+                onClick={() => setLocation("/profile")}
+                className="text-sm text-right hidden sm:block hover:opacity-80 transition-opacity cursor-pointer"
+              >
                 <p className="font-medium text-white">{user?.displayName || user?.name}</p>
                 <p className="text-white/40 text-xs">{user?.email}</p>
-              </div>
+              </button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setLocation("/profile")}
+                className="text-white/40 hover:text-white"
+                title="My Profile"
+              >
+                <User className="h-4 w-4" />
+              </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => logout()}
                 className="text-white/40 hover:text-white"
+                title="Sign out"
               >
                 <LogOut className="h-4 w-4" />
               </Button>

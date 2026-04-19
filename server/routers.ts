@@ -8,6 +8,8 @@ import { z } from "zod";
 import * as db from "./db";
 import * as gamification from "./gamification";
 import { getTrialStatus, recordLessonCompletion, recordSimulationCompletion, recordCheckCompletion, STRIPE_PRICES } from "./trial";
+import bcrypt from "bcryptjs";
+import { PASSWORD_REGEX, PASSWORD_REGEX_MSG, PASSWORD_MIN_LENGTH } from "../shared/const";
 import { achievements, userAchievements, userStats, xpTransactions } from "../drizzle/schema";
 import { eq, desc, sql } from "drizzle-orm";
 
@@ -336,6 +338,44 @@ export const appRouter = router({
           .where(eq(usersTable.id, ctx.user.id));
         return { success: true };
       }),
+
+    // Change password (email/password users only)
+    changePassword: protectedProcedure
+      .input(
+        z.object({
+          currentPassword: z.string().min(1, "Current password is required"),
+          newPassword: z
+            .string()
+            .min(PASSWORD_MIN_LENGTH, `Password must be at least ${PASSWORD_MIN_LENGTH} characters`)
+            .regex(PASSWORD_REGEX, PASSWORD_REGEX_MSG),
+          confirmPassword: z.string(),
+        }).refine((d) => d.newPassword === d.confirmPassword, {
+          message: "Passwords do not match",
+          path: ["confirmPassword"],
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const dbInstance = await db.getDb();
+        if (!dbInstance) throw new Error("Database unavailable");
+        const user = ctx.user as any;
+        if (user.authProvider !== "email") {
+          throw new Error("Password change is only available for email/password accounts.");
+        }
+        if (!user.passwordHash) {
+          throw new Error("No password set on this account.");
+        }
+        const valid = await bcrypt.compare(input.currentPassword, user.passwordHash);
+        if (!valid) {
+          throw new Error("Current password is incorrect.");
+        }
+        const { users: usersTable } = await import("../drizzle/schema");
+        const newHash = await bcrypt.hash(input.newPassword, 12);
+        await dbInstance
+          .update(usersTable)
+          .set({ passwordHash: newHash, updatedAt: new Date() })
+          .where(eq(usersTable.id, ctx.user.id));
+        return { success: true };
+      }),
   }),
 
   stripe: stripeRouter,
@@ -409,11 +449,10 @@ export const appRouter = router({
         .limit(20);
     }),
 
-    // Update streak (called on login)
+     // Update streak (called on login)
     updateStreak: protectedProcedure.mutation(async ({ ctx }) => {
       return await gamification.updateStreak(ctx.user.id);
     }),
   }),
 });
-
 export type AppRouter = typeof appRouter;

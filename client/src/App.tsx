@@ -25,6 +25,7 @@ import MindsetHub from "./pages/MindsetHub";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import LevelAssessment from "./pages/LevelAssessment";
+import Profile from "./pages/Profile";
 import { TrialBanner } from "./components/TrialBanner";
 import { FounderAccessModal } from "./components/FounderAccessModal";
 import FocusResetProvider from "./components/FocusResetProvider";
@@ -103,6 +104,7 @@ function Router() {
       <Route path="/reset-password" component={ResetPassword} />
       <Route path="/mindset" component={MindsetHub} />
       <Route path="/level/:levelId/assessment" component={LevelAssessment} />
+      <Route path="/profile" component={Profile} />
       <Route path="/admin/cancellations" component={AdminCancellations} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
