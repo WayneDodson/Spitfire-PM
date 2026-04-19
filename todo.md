@@ -193,3 +193,17 @@
 - [x] Display referral link in Dashboard
 - [x] Level 2 unlock logic based on referral count >= 1
 - [x] Referral banner on Login page when ?ref=CODE is present
+
+## Security Hardening (Pre-Jenny Testing)
+- [x] Patch drizzle-orm to >=0.45.2 (SQL injection CVE)
+- [x] Patch fast-xml-parser via AWS SDK update (critical CVE)
+- [x] Strip passwordHash/googleId/openId from auth.me response
+- [x] Reduce body parser limit to 100KB for auth endpoints
+- [x] Remove 'unsafe-eval' from CSP
+- [x] Add Permissions-Policy header
+- [x] Change cookie sameSite from "none" to "lax"
+- [x] Add Zod schema validation to authRouter endpoints
+- [x] Tighten auth rate limiter (10 req/15min, skip on success)
+- [x] Add hpp middleware to prevent HTTP parameter pollution
+- [x] Add X-Request-ID for traceability
+- [x] Ensure no sensitive data in error responses

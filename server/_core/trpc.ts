@@ -3,8 +3,21 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import type { TrpcContext } from "./context";
 
+const isDev = process.env.NODE_ENV === 'development';
+
 const t = initTRPC.context<TrpcContext>().create({
   transformer: superjson,
+  // Strip stack traces from error responses in production to prevent
+  // leaking internal implementation details to clients.
+  errorFormatter({ shape, error }) {
+    return {
+      ...shape,
+      data: {
+        ...shape.data,
+        stack: isDev ? error.stack : undefined,
+      },
+    };
+  },
 });
 
 export const router = t.router;

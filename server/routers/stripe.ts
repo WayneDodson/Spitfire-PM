@@ -1,6 +1,7 @@
 import { protectedProcedure, publicProcedure, router } from "../_core/trpc";
 import { z } from "zod";
 import Stripe from "stripe";
+import { TRPCError } from "@trpc/server";
 import { getDb } from "../db";
 import { subscriptions, users } from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
@@ -34,6 +35,14 @@ export const stripeRouter = router({
       const stripe = getStripe();
       if (!stripe) {
         throw new Error("Payment system is not configured. Please contact support.");
+      }
+
+      // Validate that redirect URLs are same-origin to prevent open redirect
+      const requestOrigin = ctx.req.headers.origin || `${ctx.req.protocol}://${ctx.req.headers.host}`;
+      const successOrigin = new URL(input.successUrl).origin;
+      const cancelOrigin = new URL(input.cancelUrl).origin;
+      if (successOrigin !== requestOrigin || cancelOrigin !== requestOrigin) {
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'Redirect URLs must be same-origin' });
       }
 
       if (!STRIPE_PRICE_ID) {
@@ -193,6 +202,12 @@ export async function handleStripeWebhook(req: Request, res: Response) {
 
   const db = await getDb();
   if (!db) return res.status(500).json({ error: "Database unavailable" });
+
+  // Required: handle Stripe test events (CLI test webhooks)
+  if (event.id.startsWith('evt_test_')) {
+    console.log('[Stripe Webhook] Test event detected, returning verification response');
+    return res.json({ verified: true });
+  }
 
   try {
     switch (event.type) {

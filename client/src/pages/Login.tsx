@@ -14,7 +14,9 @@ export default function Login() {
   // Capture referral code from URL (?ref=CODE)
   const referralCode = useMemo(() => {
     const params = new URLSearchParams(window.location.search);
-    return params.get("ref") || "";
+    const raw = params.get("ref") || "";
+    // Sanitise: allow only uppercase alphanumeric, max 32 chars (matches server-side Zod schema)
+    return raw.replace(/[^A-Z0-9]/gi, "").toUpperCase().slice(0, 32);
   }, []);
   const [mode, setMode] = useState<"login" | "register">(referralCode ? "register" : "login");
   const [email, setEmail] = useState("");

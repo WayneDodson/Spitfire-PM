@@ -42,10 +42,16 @@ export function useAuth(options?: UseAuthOptions) {
   }, [logoutMutation, utils]);
 
   const state = useMemo(() => {
-    localStorage.setItem(
-      "manus-runtime-user-info",
-      JSON.stringify(meQuery.data)
-    );
+    // Store only non-sensitive display info (id + displayName) for runtime use.
+    // Never store email, role, or other PII in localStorage.
+    if (meQuery.data) {
+      localStorage.setItem(
+        "manus-runtime-user-info",
+        JSON.stringify({ id: (meQuery.data as any).id, displayName: (meQuery.data as any).displayName })
+      );
+    } else {
+      localStorage.removeItem("manus-runtime-user-info");
+    }
     return {
       user: meQuery.data ?? null,
       loading: meQuery.isLoading || logoutMutation.isPending,

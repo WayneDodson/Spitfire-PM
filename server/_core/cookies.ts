@@ -40,9 +40,12 @@ export function getSessionCookieOptions(
   //       : undefined;
 
   return {
-    httpOnly: true,
+    httpOnly: true,           // Prevent JavaScript access (XSS mitigation)
     path: "/",
-    sameSite: "none",
-    secure: isSecureRequest(req),
+    // "lax" protects against CSRF while allowing normal navigation.
+    // "none" would require Secure=true and is only needed for cross-origin
+    // embeds (e.g. iframes) — not applicable here.
+    sameSite: "lax",
+    secure: isSecureRequest(req), // Only send over HTTPS in production
   };
 }
