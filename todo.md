@@ -227,3 +227,17 @@
 - [x] Update login to accept username OR email
 - [x] Update registration to optionally set a username
 - [x] Create admin account (username: Admin, role: admin)
+
+## Platform Repositioning (Career Transition Focus)
+- [x] Redesign homepage: new hero "Completed the courses? Now prove you're ready."
+- [x] Homepage: B2C + B2B sections (individual + business)
+- [x] Homepage: social proof / trust signals (UK-focused)
+- [x] Homepage: outcome-focused messaging (confidence, promotion, salary, job offer)
+- [x] Homepage: premium, authoritative visual design
+- [x] Homepage: clear CTA conversion flow
+- [x] Dashboard: confidence score widget
+- [x] Dashboard: PM readiness score / interview readiness tracker
+- [x] Dashboard: streak + momentum tracking UI
+- [x] Dashboard: motivational copy and psychological reinforcement messages
+- [x] Onboarding: capture career transition background (previous industry, goal)
+- [x] Onboarding: personalised readiness goal setting

@@ -32,6 +32,14 @@ export const users = mysqlTable("users", {
   loginMethod: varchar("loginMethod", { length: 64 }),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
   
+  /** Career transition context — captured during onboarding */
+  currentIndustry: varchar("currentIndustry", { length: 128 }),
+  targetRole: varchar("targetRole", { length: 128 }),
+  /** Certifications held: comma-separated e.g. 'PRINCE2,Agile' */
+  certifications: varchar("certifications", { length: 255 }),
+  /** Goal timeline: '1_month' | '3_months' | '6_months' | '12_months' | 'no_rush' */
+  goalTimeline: varchar("goalTimeline", { length: 32 }),
+
   /** Unique referral code for this user */
   referralCode: varchar("referralCode", { length: 32 }).unique(),
   /** ID of the user who referred this user (nullable) */

@@ -244,15 +244,46 @@ export const appRouter = router({
 
     // Get user profile
     getProfile: protectedProcedure.query(async ({ ctx }) => {
+      const user = ctx.user as any;
       return {
-        id: ctx.user.id,
-        name: ctx.user.name,
-        email: ctx.user.email,
-        displayName: ctx.user.displayName,
-        role: ctx.user.role,
-        createdAt: ctx.user.createdAt,
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        displayName: user.displayName,
+        role: user.role,
+        createdAt: user.createdAt,
+        currentIndustry: user.currentIndustry ?? null,
+        targetRole: user.targetRole ?? null,
+        certifications: user.certifications ?? null,
+        goalTimeline: user.goalTimeline ?? null,
       };
     }),
+
+    // Update career context captured during onboarding
+    updateCareerContext: protectedProcedure
+      .input(z.object({
+        displayName: z.string().min(2).max(50).trim().regex(/^[a-zA-Z0-9\s'\-\.]+$/, "Name can only contain letters, numbers, spaces, hyphens, apostrophes and periods"),
+        currentIndustry: z.string().max(128).trim().optional(),
+        targetRole: z.string().max(128).trim().optional(),
+        certifications: z.string().max(255).trim().optional(),
+        goalTimeline: z.enum(["1_month", "3_months", "6_months", "12_months", "no_rush"]).optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const dbInstance = await db.getDb();
+        if (!dbInstance) throw new Error("Database unavailable");
+        const { users: usersTable } = await import("../drizzle/schema");
+        const sanitisedName = input.displayName.replace(/<[^>]*>/g, "").trim();
+        await dbInstance.update(usersTable)
+          .set({
+            displayName: sanitisedName,
+            currentIndustry: input.currentIndustry ?? null,
+            targetRole: input.targetRole ?? null,
+            certifications: input.certifications ?? null,
+            goalTimeline: input.goalTimeline ?? null,
+          })
+          .where(eq(usersTable.id, ctx.user.id));
+        return { success: true };
+      }),
   }),
 
   stripe: stripeRouter,
