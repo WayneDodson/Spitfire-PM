@@ -2,7 +2,7 @@ import { useParams, useLocation, Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, BookOpen, CheckCircle2, Clock, PlayCircle } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle2, Clock, PlayCircle, Lock, Trophy, Brain } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 
 export default function Level() {
@@ -105,54 +105,76 @@ export default function Level() {
           </div>
 
           {/* Lessons List */}
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold mb-4">Lessons</h2>
-            {lessons.map((lesson) => {
+          <div className="space-y-3">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold">Lessons</h2>
+              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-full bg-green-500" /> Mastered</span>
+                <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded-full bg-primary/40" /> Read</span>
+                <span className="flex items-center gap-1"><Lock className="h-3 w-3" /> Locked</span>
+              </div>
+            </div>
+            {lessons.map((lesson, idx) => {
               const isCompleted = progress?.some((p) => p.lessonId === lesson.id && p.completed);
+              const hasMastery = progress?.some((p) => p.lessonId === lesson.id && (p as any).confidenceCheckPassed);
+              // First lesson always unlocked; others require previous mastery
+              const prevLesson = idx > 0 ? lessons[idx - 1] : null;
+              const prevMastered = !prevLesson || progress?.some((p) => p.lessonId === prevLesson.id && (p as any).confidenceCheckPassed);
+              const isLocked = !isCompleted && !prevMastered;
 
               return (
                 <Card
                   key={lesson.id}
-                  className="hover:shadow-lg transition-shadow cursor-pointer"
-                  onClick={() => setLocation(`/lesson/${lesson.id}`)}
+                  className={`transition-shadow ${
+                    isLocked
+                      ? "opacity-60 cursor-not-allowed"
+                      : "hover:shadow-md cursor-pointer"
+                  }`}
+                  onClick={() => !isLocked && setLocation(`/lesson/${lesson.id}`)}
                 >
-                  <CardHeader>
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary font-bold">
-                            {lesson.lessonNumber}
-                          </div>
-                          <div>
-                            <CardTitle className="text-lg">{lesson.title}</CardTitle>
-                            <div className="flex items-center gap-4 mt-1">
-                              <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                                <Clock className="h-4 w-4" />
-                                <span>{lesson.estimatedMinutes} min</span>
-                              </div>
-                              {isCompleted && (
-                                <div className="flex items-center gap-1 text-sm text-green-600 dark:text-green-400">
-                                  <CheckCircle2 className="h-4 w-4" />
-                                  <span>Completed</span>
-                                </div>
-                              )}
-                            </div>
+                  <CardHeader className="py-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <div className={`flex items-center justify-center w-9 h-9 rounded-full text-sm font-bold flex-shrink-0 ${
+                          hasMastery
+                            ? "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300"
+                            : isCompleted
+                            ? "bg-primary/20 text-primary"
+                            : isLocked
+                            ? "bg-muted text-muted-foreground"
+                            : "bg-primary/10 text-primary"
+                        }`}>
+                          {hasMastery ? <CheckCircle2 className="h-4 w-4" /> : isLocked ? <Lock className="h-4 w-4" /> : lesson.lessonNumber}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-base leading-tight">{lesson.title}</p>
+                          <div className="flex items-center gap-3 mt-0.5">
+                            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                              <Clock className="h-3 w-3" />
+                              {lesson.estimatedMinutes} min
+                            </span>
+                            {lesson.partNumber && (
+                              <span className="text-xs px-1.5 py-0.5 bg-primary/10 text-primary rounded-full">Part {lesson.partNumber === 1 ? 'A' : 'B'}</span>
+                            )}
+                            {hasMastery && (
+                              <span className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
+                                <Brain className="h-3 w-3" /> Mastered
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
-                      <Button size="sm">
-                        {isCompleted ? (
-                          <>
-                            <BookOpen className="mr-2 h-4 w-4" />
-                            Review
-                          </>
-                        ) : (
-                          <>
-                            <PlayCircle className="mr-2 h-4 w-4" />
-                            Start
-                          </>
-                        )}
-                      </Button>
+                      {!isLocked && (
+                        <Button size="sm" variant={hasMastery ? "outline" : "default"} className="flex-shrink-0">
+                          {hasMastery ? (
+                            <><BookOpen className="mr-1.5 h-3.5 w-3.5" />Review</>
+                          ) : isCompleted ? (
+                            <><Brain className="mr-1.5 h-3.5 w-3.5" />Check</>  
+                          ) : (
+                            <><PlayCircle className="mr-1.5 h-3.5 w-3.5" />Start</>
+                          )}
+                        </Button>
+                      )}
                     </div>
                   </CardHeader>
                 </Card>
@@ -160,21 +182,47 @@ export default function Level() {
             })}
           </div>
 
-          {/* Knowledge Checks Notice */}
-          {levelId === 1 && (
-            <Card className="mt-8 border-primary/50 bg-primary/5">
-              <CardHeader>
-                <CardTitle className="text-lg">📝 Knowledge Checks</CardTitle>
-                <CardDescription>
-                  This level includes 2 knowledge checks to test your understanding:
-                  <ul className="list-disc list-inside mt-2 space-y-1">
-                    <li>Knowledge Check 1: After Lesson 6</li>
-                    <li>Knowledge Check 2: After Lesson 12</li>
-                  </ul>
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          )}
+          {/* Confidence Check notice */}
+          <Card className="mt-8 border-primary/20 bg-primary/5">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Brain className="h-5 w-5 text-primary" />
+                Mastery-Based Progression
+              </CardTitle>
+              <CardDescription>
+                Each lesson has a Confidence Check. You must pass it to unlock the next lesson.
+                This ensures you genuinely understand each concept before building on it.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          {/* Level Assessment CTA — shows when all lessons are mastered */}
+          {(() => {
+            const masteredCount = progress?.filter((p) => (p as any).confidenceCheckPassed).length || 0;
+            const allMastered = masteredCount >= totalLessons && totalLessons > 0;
+            return allMastered ? (
+              <Card className="mt-8 border-primary/50 bg-gradient-to-br from-primary/10 to-accent/10">
+                <CardHeader>
+                  <CardTitle className="text-xl flex items-center gap-2">
+                    <Trophy className="h-6 w-6 text-primary" />
+                    All Lessons Mastered!
+                  </CardTitle>
+                  <CardDescription className="text-base">
+                    You've passed every confidence check in Level {levelId}. Take the 5-question
+                    Level Assessment to prove your knowledge and unlock the next level.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button asChild size="lg" className="w-full sm:w-auto">
+                    <Link href={`/level/${levelId}/assessment`}>
+                      <Trophy className="mr-2 h-4 w-4" />
+                      Take Level {levelId} Assessment
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : null;
+          })()}
 
           {/* Practice Scenarios - Shows after completing all lessons */}
           {levelId === 1 && progressPercent === 100 && (

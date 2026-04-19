@@ -78,6 +78,13 @@
       "when": 1776590590615,
       "tag": "0010_milky_stingray",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1776602082241,
+      "tag": "0011_burly_the_executioner",
+      "breakpoints": true
     }
   ]
 }

@@ -1,9 +1,10 @@
 /**
- * FocusResetOverlay — PM Simulate Performance Reset System
+ * FocusResetOverlay — Spitfire PM Performance Reset System
  *
  * Triggered every 20 minutes of active platform use.
- * Phase 1: 50-second guided break (movement prompts, breathing)
- * Phase 2: 10-second return countdown with identity-reinforcement messaging
+ * Phase 1: Emotional check-in (how are you feeling right now?)
+ * Phase 2: 50-second guided break (movement prompts, breathing)
+ * Phase 3: 10-second return countdown with identity-reinforcement messaging
  *
  * Design principles:
  * - Full-screen, premium, executive coaching aesthetic
@@ -14,25 +15,96 @@
 import { useState, useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
 
-// ─── Return countdown messages (rotating) ────────────────────────────────────
+// ─── Emotional states ─────────────────────────────────────────────────────────
+
+const EMOTIONAL_STATES = [
+  {
+    id: "focused",
+    icon: "🎯",
+    label: "Focused",
+    response:
+      "That focus is your edge. You're building the mental habits that set PMs apart. Keep that energy — and take 60 seconds to protect it.",
+  },
+  {
+    id: "overwhelmed",
+    icon: "😤",
+    label: "Overwhelmed",
+    response:
+      "Feeling overwhelmed is a sign you're pushing your limits — that's exactly where growth happens. Take this break. Breathe. You're more capable than you realise.",
+  },
+  {
+    id: "tired",
+    icon: "😴",
+    label: "Tired",
+    response:
+      "Fatigue is part of the process. Every PM you admire has pushed through sessions like this. Stand up, move your body, and come back refreshed.",
+  },
+  {
+    id: "confident",
+    icon: "💪",
+    label: "Confident",
+    response:
+      "That confidence is earned. You're showing up, doing the work, and building real skills. Lock that feeling in — then come back and build on it.",
+  },
+  {
+    id: "frustrated",
+    icon: "😠",
+    label: "Frustrated",
+    response:
+      "Frustration means you care. The best PMs are the ones who refuse to accept 'good enough'. Use this break to reset — then channel that drive back into your learning.",
+  },
+  {
+    id: "motivated",
+    icon: "🚀",
+    label: "Motivated",
+    response:
+      "Motivation is fuel — and you're running hot. Use this 60-second reset to convert that energy into sustainable momentum. The best sessions happen after a reset.",
+  },
+];
+
+// ─── Return countdown messages ────────────────────────────────────────────────
 
 const RETURN_MESSAGES = [
-  { headline: "You're building proof.", sub: "Back to progress in:" },
-  { headline: "Discipline creates confidence.", sub: "Return stronger in:" },
-  { headline: "Future Project Managers protect their focus.", sub: "Let's continue in:" },
-  { headline: "Every session is evidence.", sub: "Returning to focus in:" },
-  { headline: "Consistency creates career change.", sub: "Back to your journey in:" },
-  { headline: "High performers create systems.", sub: "Your system continues in:" },
+  {
+    headline: "You're building proof.",
+    sub: "Every session is evidence of who you're becoming.",
+    cta: "Back to progress in:",
+  },
+  {
+    headline: "Discipline creates confidence.",
+    sub: "You showed up today. That already puts you ahead.",
+    cta: "Return stronger in:",
+  },
+  {
+    headline: "Future Project Managers protect their focus.",
+    sub: "This break is part of the system. You're doing it right.",
+    cta: "Let's continue in:",
+  },
+  {
+    headline: "Every session is evidence.",
+    sub: "The PM you want to be is built one lesson at a time.",
+    cta: "Returning to focus in:",
+  },
+  {
+    headline: "Consistency creates career change.",
+    sub: "You're not just learning — you're transforming.",
+    cta: "Back to your journey in:",
+  },
+  {
+    headline: "High performers create systems.",
+    sub: "You're not just studying PM. You're becoming one.",
+    cta: "Your system continues in:",
+  },
 ];
 
 // ─── Break movement prompts ───────────────────────────────────────────────────
 
 const MOVEMENT_PROMPTS = [
-  { icon: "🧍", text: "Stand up" },
-  { icon: "💪", text: "Shake your arms" },
-  { icon: "🤲", text: "Move your fingers" },
-  { icon: "🪑", text: "Reset your posture" },
-  { icon: "🌬️", text: "Breathe deeply" },
+  { icon: "🧍", text: "Stand up", sub: "Get your blood moving" },
+  { icon: "💪", text: "Shake your arms", sub: "Release the tension" },
+  { icon: "🤲", text: "Move your fingers", sub: "Reset your hands" },
+  { icon: "🪑", text: "Reset your posture", sub: "Sit tall, breathe deep" },
+  { icon: "🌬️", text: "Breathe deeply", sub: "In for 4, out for 6" },
 ];
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -43,6 +115,8 @@ interface FocusResetOverlayProps {
   skipsRemaining: number;
 }
 
+type OverlayPhase = "checkin" | "break" | "countdown";
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function FocusResetOverlay({
@@ -50,32 +124,37 @@ export default function FocusResetOverlay({
   onSkip,
   skipsRemaining,
 }: FocusResetOverlayProps) {
-  const BREAK_DURATION = 50; // seconds of guided break
-  const COUNTDOWN_DURATION = 10; // seconds of return countdown
+  const BREAK_DURATION = 50;
+  const COUNTDOWN_DURATION = 10;
   const TOTAL = BREAK_DURATION + COUNTDOWN_DURATION;
 
+  const [phase, setPhase] = useState<OverlayPhase>("checkin");
+  const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [messageIndex] = useState(() =>
     Math.floor(Math.random() * RETURN_MESSAGES.length)
   );
   const [activePrompt, setActivePrompt] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const [showResponse, setShowResponse] = useState(false);
 
-  const isBreakPhase = elapsed < BREAK_DURATION;
-  const isCountdownPhase = elapsed >= BREAK_DURATION && elapsed < TOTAL;
-  const countdownValue = TOTAL - elapsed; // 10 down to 1
+  const isBreakPhase = phase === "break" && elapsed < BREAK_DURATION;
+  const isCountdownPhase = phase === "countdown" || (phase === "break" && elapsed >= BREAK_DURATION);
+  const countdownValue = Math.max(0, TOTAL - elapsed);
 
   // Cycle through movement prompts every 10 seconds during break phase
   useEffect(() => {
-    if (isBreakPhase) {
+    if (phase === "break" && elapsed < BREAK_DURATION) {
       const promptIndex = Math.floor(elapsed / 10) % MOVEMENT_PROMPTS.length;
       setActivePrompt(promptIndex);
     }
-  }, [elapsed, isBreakPhase]);
+  }, [elapsed, phase]);
 
-  // Main timer
+  // Main timer — only runs during break phase
   useEffect(() => {
+    if (phase !== "break" && phase !== "countdown") return;
     if (completed) return;
+
     const interval = setInterval(() => {
       setElapsed((prev) => {
         if (prev >= TOTAL - 1) {
@@ -87,23 +166,40 @@ export default function FocusResetOverlay({
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [completed, TOTAL]);
+  }, [phase, completed, TOTAL]);
+
+  // Transition from break to countdown
+  useEffect(() => {
+    if (phase === "break" && elapsed >= BREAK_DURATION) {
+      setPhase("countdown");
+    }
+  }, [elapsed, phase]);
 
   // Auto-complete when timer finishes
   useEffect(() => {
     if (completed) {
-      const timeout = setTimeout(onComplete, 800);
+      const timeout = setTimeout(onComplete, 1000);
       return () => clearTimeout(timeout);
     }
   }, [completed, onComplete]);
 
+  const handleEmotionSelect = (emotionId: string) => {
+    setSelectedEmotion(emotionId);
+    setShowResponse(true);
+  };
+
+  const handleStartBreak = () => {
+    setPhase("break");
+  };
+
   const breakProgress = Math.min((elapsed / BREAK_DURATION) * 100, 100);
   const message = RETURN_MESSAGES[messageIndex];
+  const selectedEmotionData = EMOTIONAL_STATES.find((e) => e.id === selectedEmotion);
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-[#04080f] flex flex-col items-center justify-center">
+    <div className="fixed inset-0 z-[9999] bg-[#04080f] flex flex-col items-center justify-center overflow-hidden">
       {/* Subtle background gradient */}
-      <div className="absolute inset-0 bg-gradient-radial from-cyan-500/5 via-transparent to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(6,182,212,0.04)_0%,transparent_70%)] pointer-events-none" />
 
       {/* Top label */}
       <div className="absolute top-8 left-0 right-0 flex justify-center">
@@ -115,10 +211,66 @@ export default function FocusResetOverlay({
         </div>
       </div>
 
-      {isBreakPhase ? (
-        /* ── Break Phase ─────────────────────────────────────────────────── */
+      {/* ── Phase 1: Emotional Check-In ──────────────────────────────────── */}
+      {phase === "checkin" && (
+        <div className="flex flex-col items-center text-center space-y-8 px-6 max-w-xl w-full">
+          <div className="space-y-3">
+            <p className="text-white/30 text-sm font-medium uppercase tracking-widest">
+              20 minutes of focused learning
+            </p>
+            <h1 className="text-3xl md:text-4xl font-black text-white leading-tight">
+              How are you feeling<br />
+              <span className="text-cyan-400">right now?</span>
+            </h1>
+            <p className="text-white/40 text-sm max-w-sm mx-auto">
+              Your mentor wants to know. Be honest — this shapes your break.
+            </p>
+          </div>
+
+          {!showResponse ? (
+            <div className="grid grid-cols-3 gap-3 w-full max-w-sm">
+              {EMOTIONAL_STATES.map((emotion) => (
+                <button
+                  key={emotion.id}
+                  onClick={() => handleEmotionSelect(emotion.id)}
+                  className="flex flex-col items-center gap-2 p-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-500/40 rounded-2xl transition-all duration-200 group"
+                >
+                  <span className="text-3xl group-hover:scale-110 transition-transform duration-200">
+                    {emotion.icon}
+                  </span>
+                  <span className="text-white/60 text-xs font-medium">{emotion.label}</span>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="w-full max-w-lg space-y-6">
+              {/* Mentor response */}
+              <div className="bg-white/5 border border-cyan-500/20 rounded-2xl p-6 text-left space-y-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{selectedEmotionData?.icon}</span>
+                  <span className="text-cyan-400 text-sm font-semibold uppercase tracking-wide">
+                    Your Mentor Says
+                  </span>
+                </div>
+                <p className="text-white/80 text-base leading-relaxed">
+                  {selectedEmotionData?.response}
+                </p>
+              </div>
+
+              <button
+                onClick={handleStartBreak}
+                className="w-full py-4 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 hover:border-cyan-500/60 rounded-2xl text-cyan-300 font-bold text-base transition-all duration-200"
+              >
+                Start my 60-second reset →
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Phase 2: Break ───────────────────────────────────────────────── */}
+      {phase === "break" && elapsed < BREAK_DURATION && (
         <div className="flex flex-col items-center text-center space-y-10 px-6 max-w-lg">
-          {/* Main instruction */}
           <div className="space-y-2">
             <p className="text-white/30 text-sm font-medium uppercase tracking-widest">
               Take 60 seconds
@@ -130,30 +282,24 @@ export default function FocusResetOverlay({
           </div>
 
           {/* Active movement prompt */}
-          <div className="w-full bg-white/5 border border-white/10 rounded-2xl p-8 space-y-4">
+          <div className="w-full bg-white/5 border border-white/10 rounded-2xl p-8 space-y-3">
             <span className="text-5xl">{MOVEMENT_PROMPTS[activePrompt].icon}</span>
             <p className="text-2xl font-bold text-white">
               {MOVEMENT_PROMPTS[activePrompt].text}
             </p>
+            <p className="text-white/40 text-sm">{MOVEMENT_PROMPTS[activePrompt].sub}</p>
           </div>
 
-          {/* All prompts as dots */}
+          {/* Prompt progress dots */}
           <div className="flex items-center gap-3">
-            {MOVEMENT_PROMPTS.map((p, i) => (
+            {MOVEMENT_PROMPTS.map((_, i) => (
               <div
                 key={i}
                 className={cn(
-                  "flex items-center gap-2 transition-all duration-300",
-                  i === activePrompt ? "opacity-100" : "opacity-25"
+                  "w-2 h-2 rounded-full transition-all duration-300",
+                  i === activePrompt ? "bg-cyan-400 scale-125" : "bg-white/20"
                 )}
-              >
-                <div
-                  className={cn(
-                    "w-2 h-2 rounded-full transition-all",
-                    i === activePrompt ? "bg-cyan-400 scale-125" : "bg-white/30"
-                  )}
-                />
-              </div>
+              />
             ))}
           </div>
 
@@ -171,28 +317,23 @@ export default function FocusResetOverlay({
             </div>
           </div>
 
-          {/* Supporting copy */}
           <p className="text-white/30 text-sm italic max-w-sm">
             Your body affects your mind. Reset now so you can return stronger.
           </p>
         </div>
-      ) : (
-        /* ── Countdown Phase ─────────────────────────────────────────────── */
+      )}
+
+      {/* ── Phase 3: Countdown ───────────────────────────────────────────── */}
+      {(phase === "countdown" || (phase === "break" && elapsed >= BREAK_DURATION)) && (
         <div className="flex flex-col items-center text-center space-y-8 px-6">
-          {/* Identity message */}
           <div className="space-y-2">
-            <p className="text-cyan-400 text-lg font-bold">{message.headline}</p>
-            <p className="text-white/40 text-sm">{message.sub}</p>
+            <p className="text-cyan-400 text-xl font-bold">{message.headline}</p>
+            <p className="text-white/50 text-sm max-w-xs mx-auto">{message.sub}</p>
+            <p className="text-white/30 text-xs mt-2">{message.cta}</p>
           </div>
 
           {/* Big countdown number */}
-          <div
-            className={cn(
-              "relative w-40 h-40 flex items-center justify-center",
-              "rounded-full border-2 border-cyan-500/30"
-            )}
-          >
-            {/* Animated ring */}
+          <div className="relative w-40 h-40 flex items-center justify-center rounded-full border-2 border-cyan-500/30">
             <svg
               className="absolute inset-0 w-full h-full -rotate-90"
               viewBox="0 0 160 160"
@@ -224,18 +365,15 @@ export default function FocusResetOverlay({
                 countdownValue <= 3 && "text-cyan-400 scale-110"
               )}
             >
-              {countdownValue}
+              {completed ? "✓" : countdownValue}
             </span>
           </div>
 
-          {/* Let's go message at 0 */}
-          {completed && (
+          {completed ? (
             <p className="text-2xl font-black text-cyan-400 animate-pulse">
-              Let's go.
+              Let's go. You've got this.
             </p>
-          )}
-
-          {!completed && (
+          ) : (
             <p className="text-white/30 text-sm">
               Prepare to focus. Your next session begins now.
             </p>
@@ -245,12 +383,14 @@ export default function FocusResetOverlay({
 
       {/* Bottom controls */}
       <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-4">
-        <button
-          onClick={onComplete}
-          className="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white/40 hover:text-white/70 text-sm transition-all"
-        >
-          Continue early
-        </button>
+        {phase !== "checkin" && (
+          <button
+            onClick={onComplete}
+            className="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white/40 hover:text-white/70 text-sm transition-all"
+          >
+            Continue early
+          </button>
+        )}
         {skipsRemaining > 0 && (
           <button
             onClick={onSkip}

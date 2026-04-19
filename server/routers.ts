@@ -7,7 +7,7 @@ import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
 import * as gamification from "./gamification";
-import { getTrialStatus, recordLessonCompletion, recordSimulationCompletion, STRIPE_PRICES } from "./trial";
+import { getTrialStatus, recordLessonCompletion, recordSimulationCompletion, recordCheckCompletion, STRIPE_PRICES } from "./trial";
 import { achievements, userAchievements, userStats, xpTransactions } from "../drizzle/schema";
 import { eq, desc, sql } from "drizzle-orm";
 
@@ -169,6 +169,13 @@ export const appRouter = router({
         return await db.getLessonById(input.lessonId);
       }),
 
+    // Check if user can access a specific lesson (mastery lock + trial + subscription)
+    canAccess: protectedProcedure
+      .input(z.object({ lessonId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        return await db.canAccessLesson(ctx.user.id, input.lessonId);
+      }),
+
     // Mark lesson as completed
     markLessonComplete: protectedProcedure
       .input(z.object({ lessonId: z.number() }))
@@ -187,10 +194,24 @@ export const appRouter = router({
             .where(eq(userStats.userId, ctx.user.id));
         }
         
+        // Record for trial engagement
+        await recordLessonCompletion(ctx.user.id);
+        
         // Check for achievements
         await gamification.checkAchievements(ctx.user.id);
         
         return result;
+      }),
+
+    // Save user's reflection response for a lesson
+    saveReflection: protectedProcedure
+      .input(z.object({
+        lessonId: z.number(),
+        response: z.enum(["yes", "almost", "need_more_practice"]),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        await db.saveReflection(ctx.user.id, input.lessonId, input.response);
+        return { success: true };
       }),
 
     // Get user's lesson progress for a level
@@ -202,21 +223,50 @@ export const appRouter = router({
   }),
 
   knowledgeChecks: router({
-    // Get knowledge checks for a specific lesson
+    // Get knowledge checks for a specific lesson (legacy — by level + afterLessonNumber)
     getByLesson: publicProcedure
       .input(z.object({ levelId: z.number(), afterLessonNumber: z.number() }))
       .query(async ({ input }) => {
         return await db.getKnowledgeChecksByLesson(input.levelId, input.afterLessonNumber);
       }),
 
+    // Get the single confidence check for a specific lesson ID
+    getByLessonId: publicProcedure
+      .input(z.object({ lessonId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getKnowledgeCheckByLessonId(input.lessonId);
+      }),
+
+    // Get the 5 end-of-level assessment questions for a level
+    getAssessmentForLevel: publicProcedure
+      .input(z.object({ levelId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getAssessmentForLevel(input.levelId);
+      }),
+
     // Submit answer and get feedback
+    // If correct and it's a confidence check (not assessment), marks the lesson as passed
     submitAnswer: protectedProcedure
       .input(z.object({
         checkId: z.number(),
         selectedAnswerIndex: z.number(),
+        lessonId: z.number().optional(), // provide for confidence checks to trigger mastery gate
       }))
       .mutation(async ({ input, ctx }) => {
-        return await db.submitKnowledgeCheckAnswer(ctx.user.id, input.checkId, input.selectedAnswerIndex);
+        const result = await db.submitKnowledgeCheckAnswer(ctx.user.id, input.checkId, input.selectedAnswerIndex);
+        
+        if (result.isCorrect) {
+          // If a lessonId is provided, mark the confidence check as passed (mastery gate)
+          if (input.lessonId) {
+            await db.markConfidenceCheckPassed(ctx.user.id, input.lessonId);
+          }
+          // Award XP for passing a confidence check
+          await gamification.awardXP(ctx.user.id, 15, 'Passed confidence check', 'quiz', input.checkId);
+          // Record for trial engagement
+          await recordCheckCompletion(ctx.user.id);
+        }
+        
+        return result;
       }),
 
     // Get user's attempts for a level

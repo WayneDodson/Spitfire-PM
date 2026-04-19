@@ -341,6 +341,172 @@ export async function getUserKnowledgeCheckAttempts(userId: number, levelId: num
 }
 
 /**
+ * Get the single confidence check question for a specific lesson
+ */
+export async function getKnowledgeCheckByLessonId(lessonId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const { knowledgeChecks } = await import("../drizzle/schema");
+  const result = await db
+    .select()
+    .from(knowledgeChecks)
+    .where(and(eq(knowledgeChecks.lessonId, lessonId), eq(knowledgeChecks.isLevelAssessment, false)))
+    .limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+/**
+ * Get the 5 end-of-level assessment questions for a level
+ */
+export async function getAssessmentForLevel(levelId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { knowledgeChecks } = await import("../drizzle/schema");
+  return await db
+    .select()
+    .from(knowledgeChecks)
+    .where(and(eq(knowledgeChecks.levelId, levelId), eq(knowledgeChecks.isLevelAssessment, true)))
+    .orderBy(knowledgeChecks.id);
+}
+
+/**
+ * Mark the confidence check for a lesson as passed.
+ * Creates the progress row if it doesn't exist.
+ */
+export async function markConfidenceCheckPassed(userId: number, lessonId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const { userLessonProgress } = await import("../drizzle/schema");
+
+  const existing = await db
+    .select()
+    .from(userLessonProgress)
+    .where(and(eq(userLessonProgress.userId, userId), eq(userLessonProgress.lessonId, lessonId)))
+    .limit(1);
+
+  const now = new Date();
+  if (existing.length > 0) {
+    await db
+      .update(userLessonProgress)
+      .set({ confidenceCheckPassed: true, confidenceCheckPassedAt: now })
+      .where(and(eq(userLessonProgress.userId, userId), eq(userLessonProgress.lessonId, lessonId)));
+  } else {
+    await db.insert(userLessonProgress).values({
+      userId,
+      lessonId,
+      completed: true,
+      completedAt: now,
+      confidenceCheckPassed: true,
+      confidenceCheckPassedAt: now,
+    });
+  }
+}
+
+/**
+ * Save the user's reflection response for a lesson.
+ */
+export async function saveReflection(
+  userId: number,
+  lessonId: number,
+  response: "yes" | "almost" | "need_more_practice"
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const { userLessonProgress } = await import("../drizzle/schema");
+
+  const existing = await db
+    .select()
+    .from(userLessonProgress)
+    .where(and(eq(userLessonProgress.userId, userId), eq(userLessonProgress.lessonId, lessonId)))
+    .limit(1);
+
+  if (existing.length > 0) {
+    await db
+      .update(userLessonProgress)
+      .set({ reflectionResponse: response })
+      .where(and(eq(userLessonProgress.userId, userId), eq(userLessonProgress.lessonId, lessonId)));
+  } else {
+    await db.insert(userLessonProgress).values({
+      userId,
+      lessonId,
+      completed: false,
+      reflectionResponse: response,
+    });
+  }
+}
+
+/** Trial lesson limit — first 6 lessons of Level 1 only */
+export const TRIAL_LESSON_LIMIT = 6;
+
+/**
+ * Check whether a user can access a specific lesson.
+ * Enforces: level access, trial restriction, and mastery lock.
+ */
+export async function canAccessLesson(
+  userId: number,
+  lessonId: number
+): Promise<{ canAccess: boolean; reason?: string }> {
+  const db = await getDb();
+  if (!db) return { canAccess: false, reason: "Database unavailable" };
+
+  const { lessons: lessonsTable, userLessonProgress, users: usersTable, subscriptions } = await import("../drizzle/schema");
+
+  // Get the lesson
+  const [lesson] = await db.select().from(lessonsTable).where(eq(lessonsTable.id, lessonId)).limit(1);
+  if (!lesson) return { canAccess: false, reason: "Lesson not found" };
+
+  // Get user
+  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId)).limit(1);
+  if (!user) return { canAccess: false, reason: "User not found" };
+
+  // Check subscription status
+  const [sub] = await db
+    .select()
+    .from(subscriptions)
+    .where(and(eq(subscriptions.userId, userId), eq(subscriptions.status, "active")))
+    .limit(1);
+  const hasSubscription = !!sub;
+
+  // Trial restriction: Level 1 only, first TRIAL_LESSON_LIMIT lessons
+  if (!hasSubscription && lesson.levelId === 1 && lesson.lessonNumber > TRIAL_LESSON_LIMIT) {
+    return { canAccess: false, reason: "trial_limit" };
+  }
+
+  // Level access check for levels 2+
+  if (!hasSubscription && lesson.levelId > 1) {
+    return { canAccess: false, reason: "subscription_required" };
+  }
+
+  // Mastery lock: lesson 1 is always accessible; all others require previous lesson's confidence check
+  if (lesson.lessonNumber > 1) {
+    // Find the previous lesson in the same level
+    const [prevLesson] = await db
+      .select()
+      .from(lessonsTable)
+      .where(and(eq(lessonsTable.levelId, lesson.levelId), eq(lessonsTable.lessonNumber, lesson.lessonNumber - 1)))
+      .limit(1);
+
+    if (prevLesson) {
+      const [prevProgress] = await db
+        .select()
+        .from(userLessonProgress)
+        .where(and(eq(userLessonProgress.userId, userId), eq(userLessonProgress.lessonId, prevLesson.id)))
+        .limit(1);
+
+      if (!prevProgress || !prevProgress.confidenceCheckPassed) {
+        return { canAccess: false, reason: "mastery_lock" };
+      }
+    }
+  }
+
+  return { canAccess: true };
+}
+
+/**
  * Update user's display name
  */
 export async function updateUserDisplayName(userId: number, displayName: string) {

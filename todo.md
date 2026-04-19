@@ -305,3 +305,52 @@
 - [x] Update password-reset.test.ts to cover special character requirement
 - [x] Create test user: username=user, password=Edenbridge1! (hashed)
 - [x] Update admin password to 1jV1v15ta03! (hashed)
+
+## Lesson Redesign — Mastery-Based Learning
+
+### Phase 1: Schema
+- [x] Add parentLessonId (nullable) to lessons table — tracks which original lesson each micro-lesson came from
+- [x] Add partNumber (1 or 2) to lessons table — Part A / Part B of split
+- [x] Add isLevelAssessment boolean to knowledgeChecks — distinguishes end-of-level 5-question assessment from per-lesson confidence checks
+- [x] Add reflectionResponse enum to userLessonProgress — (yes/almost/need_more_practice)
+- [x] Add confidenceCheckPassed boolean to userLessonProgress — mastery gate
+- [x] Run pnpm db:push
+
+### Phase 2: AI-Generate Split Lessons
+- [x] Split all 84 existing lessons into 168 micro-lessons (Part A + Part B, 8-12 min each)
+- [x] Update estimatedMinutes to 8-12 for all lessons
+- [x] Renumber lessonNumber 1-24 per level
+
+### Phase 3: AI-Generate Confidence Check Questions
+- [x] Generate 1 confidence check question per lesson (168 total)
+- [x] Use supportive reinforcement messaging (not exam language)
+
+### Phase 4: AI-Generate End-of-Level Assessments
+- [x] Generate 5 assessment questions per level (35 total)
+- [x] Mark as isLevelAssessment = true
+- [x] Industry-standard, interview-relevant questions
+
+### Phase 5: Backend Mastery Lock
+- [x] Enforce: lesson viewed + confidence check passed = next lesson unlocked
+- [x] Restrict trial to first 6 lessons of Level 1 only (was all 12)
+- [x] Add reflection response saving endpoint
+
+### Phase 6: Frontend Lesson Flow UI
+- [x] Lesson content → Confidence Check → Reinforcement → Reflection → Unlock next
+- [x] Mastery lock visual state (locked/unlocked/completed)
+- [x] Supportive wrong-answer messaging
+- [x] Positive correct-answer reinforcement
+
+### Phase 7: End-of-Level Assessment UI
+- [x] 5-question assessment at end of each level
+- [x] Must pass to complete level
+- [x] Visual: Lesson Complete → Confidence Check Passed → Next Lesson Unlocked
+
+### Phase 8: Reset Break Upgrade
+- [x] Stronger identity-based mentor messaging
+- [x] Emotional check-in (Focused/Overwhelmed/Tired/Confident/Frustrated/Motivated)
+
+### Phase 9: Tests & Checkpoint
+- [x] Run all tests (81 passing)
+- [x] Verify mastery lock flow end-to-end
+- [x] Save checkpoint

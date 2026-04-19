@@ -156,13 +156,17 @@ export type InsertSubscription = typeof subscriptions.$inferInsert;
 export const lessons = mysqlTable("lessons", {
   id: int("id").autoincrement().primaryKey(),
   levelId: int("levelId").notNull(),
-  /** Lesson number within the level (1-12) */
+  /** Lesson number within the level (1-24 after split) */
   lessonNumber: int("lessonNumber").notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   /** Main lesson content in markdown */
   content: text("content").notNull(),
-  /** Estimated minutes to complete */
-  estimatedMinutes: int("estimatedMinutes").default(30).notNull(),
+  /** Estimated minutes to complete — target 8-12 after split */
+  estimatedMinutes: int("estimatedMinutes").default(10).notNull(),
+  /** ID of the original lesson this was split from (null for original/unsplit lessons) */
+  parentLessonId: int("parentLessonId"),
+  /** Part number within a split lesson pair: 1 = Part A, 2 = Part B, null = not split */
+  partNumber: int("partNumber"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -176,8 +180,10 @@ export type InsertLesson = typeof lessons.$inferInsert;
 export const knowledgeChecks = mysqlTable("knowledgeChecks", {
   id: int("id").autoincrement().primaryKey(),
   levelId: int("levelId").notNull(),
-  /** Which lesson this check appears after (6 or 12 for Level 1) */
+  /** Which lesson this check appears after (1-24 per level) */
   afterLessonNumber: int("afterLessonNumber").notNull(),
+  /** ID of the lesson this check belongs to (direct reference after split) */
+  lessonId: int("lessonId"),
   question: text("question").notNull(),
   /** JSON array of answer options */
   options: text("options").notNull(),
@@ -185,6 +191,10 @@ export const knowledgeChecks = mysqlTable("knowledgeChecks", {
   correctAnswerIndex: int("correctAnswerIndex").notNull(),
   /** Explanation shown after answering */
   explanation: text("explanation").notNull(),
+  /** Supportive message shown when user answers correctly */
+  reinforcementMessage: varchar("reinforcementMessage", { length: 255 }),
+  /** true = end-of-level 5-question assessment; false/null = per-lesson confidence check */
+  isLevelAssessment: boolean("isLevelAssessment").default(false).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
@@ -200,6 +210,11 @@ export const userLessonProgress = mysqlTable("userLessonProgress", {
   lessonId: int("lessonId").notNull(),
   completed: boolean("completed").default(false).notNull(),
   completedAt: timestamp("completedAt"),
+  /** Whether the user passed the confidence check for this lesson (mastery gate) */
+  confidenceCheckPassed: boolean("confidenceCheckPassed").default(false).notNull(),
+  confidenceCheckPassedAt: timestamp("confidenceCheckPassedAt"),
+  /** User's self-reflection: could they explain this to a hiring manager? */
+  reflectionResponse: mysqlEnum("reflectionResponse", ["yes", "almost", "need_more_practice"]),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
