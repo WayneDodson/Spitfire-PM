@@ -417,14 +417,13 @@ export default function Home() {
                   </li>
                 ))}
               </ul>
-              <Button
-                variant="outline"
-                className="border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/5"
-                onClick={() => setLocation("/login")}
+              <a
+                href="mailto:support@spitfireitsolutions.com?subject=B2B%20Enquiry%20%E2%80%94%20Spitfire%20PM"
+                className="inline-flex items-center gap-2 border border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/5 transition-colors rounded-md px-4 py-2 text-sm font-medium"
               >
                 Enquire about B2B access
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+                <ArrowRight className="h-4 w-4" />
+              </a>
             </div>
             <div className="bg-gradient-to-br from-cyan-500/10 to-blue-600/10 border border-cyan-400/20 rounded-2xl p-8 space-y-5">
               {[
@@ -474,14 +473,20 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t border-white/5 py-10 px-6">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2 text-white/40 text-sm">
             <div className="w-5 h-5 rounded bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
               <Target className="h-3 w-3 text-white" />
             </div>
-            PM Simulate · UK Career Transition Platform
+            Spitfire PM &middot; UK Career Transition Platform
           </div>
-          <div className="flex gap-6 text-white/30 text-sm">
+          <div className="flex flex-wrap justify-center gap-6 text-white/30 text-sm">
+            <a
+              href="mailto:support@spitfireitsolutions.com"
+              className="hover:text-cyan-400 transition-colors"
+            >
+              support@spitfireitsolutions.com
+            </a>
             <button onClick={() => setLocation("/login")} className="hover:text-white/60 transition-colors">
               Sign In
             </button>

@@ -291,3 +291,10 @@
 - [x] Build /forgot-password page
 - [x] Build /reset-password page
 - [x] Add "Forgot password?" link to Login page
+
+## Email & Branding Configuration
+- [x] Update FROM_EMAIL to "Spitfire PM <support@spitfireitsolutions.com>"
+- [x] Update APP_URL to https://www.spitfire-pm.com
+- [x] Add reply-to header (support@spitfireitsolutions.com) to all outbound emails
+- [x] Add contact email to website footer
+- [x] Add contact email to homepage B2B / contact section
