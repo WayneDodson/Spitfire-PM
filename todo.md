@@ -373,3 +373,11 @@
 - [x] Frontend: Profile page (/profile) — account info card, subscription card, change password card
 - [x] Frontend: Add /profile route to App.tsx
 - [x] Frontend: Add Profile link/icon to Dashboard header (user name + User icon button)
+
+## Lesson Content Rendering Fix
+- [x] Audit Lesson.tsx to see how lesson content is rendered (raw text vs markdown)
+- [x] Add @source directive for streamdown to index.css (was missing — caused raw markdown display)
+- [x] Add @plugin "@tailwindcss/typography" to index.css (was missing — prose classes had no effect)
+- [x] Fix @source path to correct relative path (../../node_modules)
+- [x] Update prose wrapper in Lesson.tsx with consistent heading/text sizing for dark theme
+- [x] Verify fix: 81 tests passing, 0 TypeScript errors

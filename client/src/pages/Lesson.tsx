@@ -325,7 +325,7 @@ export default function Lesson() {
         {(phase === "reading" || phase === "complete") && (
           <>
             <Card className="p-8 mb-8">
-              <div className="prose prose-slate dark:prose-invert max-w-none">
+              <div className="prose prose-slate dark:prose-invert max-w-none prose-headings:font-bold prose-headings:text-foreground prose-p:text-foreground/90 prose-p:leading-relaxed prose-li:text-foreground/90 prose-strong:text-foreground prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-h1:mt-6 prose-h2:mt-5 prose-h3:mt-4 prose-p:mt-3 prose-ul:mt-3 prose-ol:mt-3">
                 <Streamdown>{lesson.content}</Streamdown>
               </div>
             </Card>
