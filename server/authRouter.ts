@@ -206,10 +206,11 @@ router.post("/login", async (req: Request, res: Response) => {
 
     // Determine if the identifier looks like an email or a username
     const isEmail = identifier.includes("@");
+    // Username lookup is case-insensitive — store and compare in lowercase
     const [user] = await db
       .select()
       .from(users)
-      .where(isEmail ? eq(users.email, identifier.toLowerCase()) : eq(users.username, identifier))
+      .where(isEmail ? eq(users.email, identifier.toLowerCase()) : eq(users.username, identifier.toLowerCase()))
       .limit(1);
 
     // Always run bcrypt.compare to prevent timing attacks that reveal whether
