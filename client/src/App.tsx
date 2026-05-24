@@ -26,6 +26,9 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import LevelAssessment from "./pages/LevelAssessment";
 import Profile from "./pages/Profile";
+import QualificationPrep from "./pages/QualificationPrep";
+import QualificationModules from "./pages/QualificationModules";
+import ApmModule from "./pages/ApmModule";
 import { TrialBanner } from "./components/TrialBanner";
 import { FounderAccessModal } from "./components/FounderAccessModal";
 import FocusResetProvider from "./components/FocusResetProvider";
@@ -106,6 +109,9 @@ function Router() {
       <Route path="/level/:levelId/assessment" component={LevelAssessment} />
       <Route path="/profile" component={Profile} />
       <Route path="/admin/cancellations" component={AdminCancellations} />
+      <Route path="/qualification-prep" component={QualificationPrep} />
+      <Route path="/qualification-prep/:qualId" component={QualificationModules} />
+      <Route path="/qualification-prep/:qualId/:moduleId" component={ApmModule} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

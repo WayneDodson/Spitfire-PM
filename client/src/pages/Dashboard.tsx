@@ -713,6 +713,54 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* Qualification Prep */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-2xl font-black">Qualification Prep</h3>
+                <p className="text-white/40 text-sm mt-0.5">
+                  Study for APM PFQ and PMQ with full module content and practice quizzes.
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => setLocation("/qualification-prep")}
+                className="border-white/20 text-white/60 hover:text-white bg-transparent"
+              >
+                View All
+                <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div
+                className="bg-emerald-500/[0.05] border border-emerald-500/20 rounded-xl p-5 flex items-center gap-4 cursor-pointer hover:border-emerald-400/40 transition-colors"
+                onClick={() => setLocation("/qualification-prep/pfq")}
+              >
+                <div className="w-10 h-10 bg-emerald-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Award className="h-5 w-5 text-emerald-400" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-semibold text-emerald-200">PFQ — Project Fundamentals</p>
+                  <p className="text-white/40 text-sm">Foundation level · 4 modules · ~12 hours</p>
+                </div>
+                <ChevronRight className="h-4 w-4 text-emerald-400/40 ml-auto" />
+              </div>
+              <div
+                className="bg-blue-500/[0.05] border border-blue-500/20 rounded-xl p-5 flex items-center gap-4 cursor-pointer hover:border-blue-400/40 transition-colors"
+                onClick={() => setLocation("/qualification-prep/pmq")}
+              >
+                <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Shield className="h-5 w-5 text-blue-400" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-semibold text-blue-200">PMQ — Project Management</p>
+                  <p className="text-white/40 text-sm">Practitioner level · 4 modules · ~20 hours</p>
+                </div>
+                <ChevronRight className="h-4 w-4 text-blue-400/40 ml-auto" />
+              </div>
+            </div>
+          </div>
+
           {/* Resources */}
           <div className="space-y-4">
             <h3 className="text-xl font-bold">Reference Materials</h3>

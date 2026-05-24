@@ -454,3 +454,73 @@ export const reEngagementOptIns = mysqlTable("reEngagementOptIns", {
 });
 export type ReEngagementOptIn = typeof reEngagementOptIns.$inferSelect;
 export type InsertReEngagementOptIn = typeof reEngagementOptIns.$inferInsert;
+
+/**
+ * APM Qualifications — PFQ and PMQ top-level qualification definitions
+ */
+export const apmQualifications = mysqlTable("apmQualifications", {
+  id: varchar("id", { length: 32 }).primaryKey(), // e.g. 'pfq', 'pmq'
+  title: varchar("title", { length: 255 }).notNull(),
+  subtitle: varchar("subtitle", { length: 255 }),
+  level: varchar("level", { length: 64 }).notNull(), // e.g. 'Foundation', 'Practitioner'
+  description: text("description"),
+  /** Approximate study hours */
+  estimatedHours: int("estimatedHours").notNull(),
+  /** Display order */
+  orderIndex: int("orderIndex").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ApmQualification = typeof apmQualifications.$inferSelect;
+export type InsertApmQualification = typeof apmQualifications.$inferInsert;
+
+/**
+ * APM Modules — individual study modules within each qualification
+ */
+export const apmModules = mysqlTable("apmModules", {
+  id: varchar("id", { length: 32 }).primaryKey(), // e.g. 'pfq-1', 'pmq-3'
+  qualificationId: varchar("qualificationId", { length: 32 }).notNull(),
+  /** Module number within the qualification */
+  moduleNumber: int("moduleNumber").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  /** Estimated duration string e.g. '45 min' */
+  duration: varchar("duration", { length: 32 }),
+  /** Brief intro paragraph shown on module card */
+  intro: text("intro"),
+  /** Full study content — JSON array of {heading, body} sections */
+  sections: text("sections").notNull(),
+  /** Key terms glossary — JSON array of {t, d} objects */
+  terms: text("terms"),
+  /** Quiz questions — JSON array of {q, opts, ans} objects */
+  quiz: text("quiz").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ApmModule = typeof apmModules.$inferSelect;
+export type InsertApmModule = typeof apmModules.$inferInsert;
+
+/**
+ * APM Module Progress — tracks each user's quiz attempts per module
+ */
+export const apmModuleProgress = mysqlTable("apmModuleProgress", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  moduleId: varchar("moduleId", { length: 32 }).notNull(),
+  qualificationId: varchar("qualificationId", { length: 32 }).notNull(),
+  /** Best quiz score achieved (0 to total questions) */
+  bestScore: int("bestScore").default(0).notNull(),
+  /** Total questions in the quiz */
+  totalQuestions: int("totalQuestions").notNull(),
+  /** Whether the user has passed (>=55%) */
+  passed: boolean("passed").default(false).notNull(),
+  /** Number of attempts made */
+  attempts: int("attempts").default(0).notNull(),
+  /** When the module was first started */
+  startedAt: timestamp("startedAt").defaultNow().notNull(),
+  /** When the user first passed */
+  passedAt: timestamp("passedAt"),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ApmModuleProgress = typeof apmModuleProgress.$inferSelect;
+export type InsertApmModuleProgress = typeof apmModuleProgress.$inferInsert;

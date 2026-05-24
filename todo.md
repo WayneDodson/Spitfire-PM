@@ -394,3 +394,33 @@
 - [x] Write and run script to replace all literal \\n with real newlines across all 168 lessons
 - [x] Verify lesson content renders correctly after fix (hex 0A0A confirmed real newlines)
 - [x] Run tests and save checkpoint
+
+## APM Qualification Prep Integration
+- [ ] Update `user` account: password = Abuyog79, role = admin
+- [ ] Add qualifications table (PFQ, PMQ)
+- [ ] Add apm_modules table (8 modules with content, terms, quiz questions)
+- [ ] Add apm_module_progress table (userId, moduleId, quizScore, passed, completedAt)
+- [ ] Run pnpm db:push
+- [ ] Seed PFQ (4 modules) and PMQ (4 modules) content from apm-academy.jsx
+- [ ] Build tRPC procedures: getQualifications, getModulesByQual, getModule, saveModuleProgress
+- [ ] Add "Qualification Prep" section to Dashboard
+- [ ] Build /qualification-prep page (PFQ / PMQ cards)
+- [ ] Build /qualification-prep/:qualId page (module list with progress)
+- [ ] Build /qualification-prep/:qualId/:moduleId page (study content + quiz)
+- [ ] Wire quiz pass/fail with 55% threshold and retry support
+- [ ] Add routes to App.tsx
+- [ ] Run tests and save checkpoint
+
+## APM Qualification Prep Integration (May 2026)
+- [x] Update user account password to Abuyog79 and role to admin
+- [x] Add apmQualifications, apmModules, apmModuleProgress tables to Drizzle schema
+- [x] Push schema to database
+- [x] Seed 2 qualifications (PFQ, PMQ) and 8 modules from apm-academy.jsx
+- [x] Build apmRouter with getQualifications, getModulesByQualification, getModule, saveProgress procedures
+- [x] Register apmRouter in main appRouter
+- [x] Add Qualification Prep section to Dashboard.tsx (PFQ/PMQ cards)
+- [x] Build QualificationPrep landing page (/qualification-prep)
+- [x] Build QualificationModules page (/qualification-prep/:qualId)
+- [x] Build ApmModule page with study/terms/quiz tabs (/qualification-prep/:qualId/:moduleId)
+- [x] Register all 3 new routes in App.tsx
+- [x] All 81 tests passing

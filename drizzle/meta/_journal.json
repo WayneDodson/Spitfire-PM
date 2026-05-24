@@ -85,6 +85,13 @@
       "when": 1776602082241,
       "tag": "0011_burly_the_executioner",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1779608350804,
+      "tag": "0012_keen_blade",
+      "breakpoints": true
     }
   ]
 }
