@@ -102,10 +102,10 @@ export default function Lesson() {
       ? allLessons?.[currentIndex + 1]
       : null;
 
-  // Check if next lesson is locked
+  // Check if next lesson is locked — enabled as soon as we know the next lesson
   const { data: nextLessonAccess } = trpc.lessons.canAccess.useQuery(
     { lessonId: nextLesson?.id || 0 },
-    { enabled: isAuthenticated && !!nextLesson && phase === "complete" }
+    { enabled: isAuthenticated && !!nextLesson }
   );
 
   const handleFinishReading = async () => {
@@ -128,7 +128,15 @@ export default function Lesson() {
   const handleReflectionSubmit = async () => {
     if (!selectedReflection) return;
     await saveReflection.mutateAsync({ lessonId, response: selectedReflection });
-    setPhase("complete");
+    // Invalidate progress so the next lesson's access check reflects the newly passed check
+    await utils.lessons.getMyLessonProgress.invalidate();
+    // Navigate forward immediately — don't stop at the "complete" phase
+    if (nextLesson) {
+      setLocation(`/lesson/${nextLesson.id}`);
+    } else {
+      // Last lesson in the level — go to dashboard
+      setLocation("/dashboard");
+    }
   };
 
   const handleNextLesson = () => {
