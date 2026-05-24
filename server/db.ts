@@ -465,6 +465,11 @@ export async function canAccessLesson(
   const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId)).limit(1);
   if (!user) return { canAccess: false, reason: "User not found" };
 
+  // Admin users and founder access users have unrestricted access
+  if (user.role === 'admin' || user.founderAccessEarned) {
+    return { canAccess: true };
+  }
+
   // Check subscription status
   const [sub] = await db
     .select()
