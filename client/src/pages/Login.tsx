@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Eye, EyeOff, BookOpen } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, BookOpen, Loader2 } from "lucide-react";
 import { Link } from "wouter";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -44,7 +44,6 @@ export default function Login() {
     const handleGoogleError = (e: Event) => {
       const detail = (e as CustomEvent).detail;
       toast.error(detail || "Google sign-in failed");
-      setGoogleLoading(false);
     };
 
     window.addEventListener("google-auth-success", handleGoogleSuccess);
