@@ -170,9 +170,11 @@ function DashboardLayoutContent({
               </button>
               {!isCollapsed ? (
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className="font-semibold tracking-tight truncate">
-                    Navigation
-                  </span>
+                  <img
+                    src="/manus-storage/spitfire-pm-logo_8b0682d2.png"
+                    alt="Spitfire PM"
+                    className="h-8 w-auto object-contain"
+                  />
                 </div>
               ) : null}
             </div>

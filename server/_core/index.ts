@@ -4,6 +4,7 @@ import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
+import { registerStorageProxy } from "./storageProxy";
 import authRouter from "../authRouter";
 import { handleStripeWebhook } from "../routers/stripe";
 import { appRouter } from "../routers";
@@ -159,6 +160,9 @@ async function startServer() {
 
   // ─── Custom auth routes ──────────────────────────────────────────────────────
   app.use("/api/auth", authRouter);
+
+  // ─── Storage proxy ──────────────────────────────────────────────────────────
+  registerStorageProxy(app);
 
   // ─── Legacy Manus OAuth callback ────────────────────────────────────────────
   registerOAuthRoutes(app);

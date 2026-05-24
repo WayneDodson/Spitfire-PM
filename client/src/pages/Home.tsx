@@ -250,10 +250,11 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#06090f]/95 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
-              <Target className="h-4 w-4 text-white" />
-            </div>
-            <span className="font-black text-lg tracking-tight">Spitfire PM</span>
+            <img
+              src="/manus-storage/spitfire-pm-logo_8b0682d2.png"
+              alt="Spitfire PM"
+              className="h-10 w-auto object-contain"
+            />
             <span className="hidden sm:inline text-xs text-cyan-400 border border-cyan-400/30 rounded-full px-2.5 py-0.5 font-medium">
               UK Career Transition
             </span>
@@ -852,13 +853,12 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-8 mb-8">
             <div className="flex items-center gap-3">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
-                <Target className="h-3.5 w-3.5 text-white" />
-              </div>
-              <div>
-                <span className="font-black text-base">Spitfire PM</span>
-                <span className="text-white/30 text-xs ml-2">UK Career Transition Platform</span>
-              </div>
+              <img
+                src="/manus-storage/spitfire-pm-logo_8b0682d2.png"
+                alt="Spitfire PM"
+                className="h-9 w-auto object-contain"
+              />
+              <span className="text-white/30 text-xs">UK Career Transition Platform</span>
             </div>
             <div className="flex flex-wrap justify-center gap-6 text-white/30 text-sm">
               <a href="mailto:support@spitfireitsolutions.com" className="hover:text-cyan-400 transition-colors">

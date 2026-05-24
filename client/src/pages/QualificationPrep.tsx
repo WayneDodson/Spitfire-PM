@@ -161,11 +161,12 @@ function ApmLanding() {
         {/* Top bar */}
         <header className="flex items-center justify-between px-6 md:px-12 pt-7 flex-shrink-0">
           <div className="flex items-center gap-3">
-            {/* Logo mark */}
-            <div className="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center">
-              <Award className="h-4 w-4 text-cyan-400" />
-            </div>
-            <span className="text-white font-bold tracking-tight text-lg">APM Academy</span>
+            <img
+              src="/manus-storage/spitfire-pm-logo_8b0682d2.png"
+              alt="Spitfire PM"
+              className="h-10 w-auto object-contain"
+            />
+            <span className="text-white/50 text-sm font-medium">APM Academy</span>
           </div>
           <Button
             onClick={() => setLocation("/login")}
