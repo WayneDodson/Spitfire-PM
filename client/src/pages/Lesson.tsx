@@ -20,7 +20,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
 import { ConfidenceCheck } from "@/components/ConfidenceCheck";
 
-type LessonPhase = "reading" | "confidence_check" | "reflection" | "complete";
+type LessonPhase = "reading" | "confidence_check" | "reflection" | "complete" | "level_complete";
 
 const REFLECTION_OPTIONS = [
   {
@@ -60,6 +60,7 @@ export default function Lesson() {
     { levelId: lesson?.levelId || 1 },
     { enabled: !!lesson }
   );
+  const { data: allLevels } = trpc.levels.getAll.useQuery();
   const { data: progress, refetch: refetchProgress } = trpc.lessons.getMyLessonProgress.useQuery(
     { levelId: lesson?.levelId || 1 },
     { enabled: !!lesson && isAuthenticated }
@@ -134,8 +135,9 @@ export default function Lesson() {
     if (nextLesson) {
       setLocation(`/lesson/${nextLesson.id}`);
     } else {
-      // Last lesson in the level — go to dashboard
-      setLocation("/dashboard");
+      // Last lesson in the level — show level complete celebration
+      setPhase("level_complete");
+      window.scrollTo(0, 0);
     }
   };
 
@@ -503,6 +505,54 @@ export default function Lesson() {
           </>
         )}
 
+        {/* ── PHASE: LEVEL COMPLETE ─────────────────────────────────────── */}
+        {phase === "level_complete" && (
+          <div className="flex flex-col items-center justify-center py-12 text-center space-y-8">
+            <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center">
+              <Trophy className="h-12 w-12 text-green-400" />
+            </div>
+            <div className="space-y-3">
+              <h2 className="text-4xl font-black text-green-400">Level Complete!</h2>
+              <p className="text-xl text-muted-foreground max-w-md">
+                You've completed all lessons in{" "}
+                <span className="font-bold text-foreground">
+                  {allLevels?.find((l) => l.id === lesson?.levelId)?.title || "this level"}
+                </span>
+                .
+              </p>
+              <p className="text-muted-foreground text-sm">
+                Your progress has been saved. Ready to take on the next challenge?
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm">
+              {(() => {
+                const currentLevel = allLevels?.find((l) => l.id === lesson?.levelId);
+                const nextLevel = allLevels?.find((l) => l.orderIndex === (currentLevel?.orderIndex || 0) + 1);
+                if (nextLevel) {
+                  return (
+                    <Button
+                      size="lg"
+                      className="flex-1 bg-green-500 hover:bg-green-400 text-black font-bold"
+                      onClick={() => setLocation(`/level/${nextLevel.id}`)}
+                    >
+                      <ArrowRight className="mr-2 h-5 w-5" />
+                      Start Level {nextLevel.orderIndex}
+                    </Button>
+                  );
+                }
+                return null;
+              })()}
+              <Button
+                size="lg"
+                variant="outline"
+                className="flex-1"
+                onClick={() => setLocation("/dashboard")}
+              >
+                Back to Dashboard
+              </Button>
+            </div>
+          </div>
+        )}
         {/* Progress bar */}
         {progressDots && (
           <div className="mt-8 p-4 bg-muted/50 rounded-lg">

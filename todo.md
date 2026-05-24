@@ -424,3 +424,6 @@
 - [x] Build ApmModule page with study/terms/quiz tabs (/qualification-prep/:qualId/:moduleId)
 - [x] Register all 3 new routes in App.tsx
 - [x] All 81 tests passing
+- [x] Fix Level 1 → Level 2 transition bug: userProgress not updated when lessons completed, causing dashboard to show Level 1 as "Start Level" and redirect back to lesson 1
+- [x] Add Level Complete celebration screen in Lesson.tsx with "Start Level N" CTA
+- [x] Backfill userProgress for Jenny (userId 240002) who completed Level 1 without a progress entry

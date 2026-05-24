@@ -236,7 +236,7 @@ export async function markLessonComplete(userId: number, lessonId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  const { userLessonProgress } = await import("../drizzle/schema");
+  const { userLessonProgress, lessons: lessonsTable } = await import("../drizzle/schema");
   
   const existing = await db
     .select()
@@ -255,6 +255,34 @@ export async function markLessonComplete(userId: number, lessonId: number) {
       lessonId,
       completed: true,
       completedAt: new Date(),
+    });
+  }
+
+  // Update level-level progress (progressPercent + completed flag)
+  const [lesson] = await db.select().from(lessonsTable).where(eq(lessonsTable.id, lessonId)).limit(1);
+  if (lesson) {
+    const levelId = lesson.levelId;
+    // Count total lessons in this level
+    const allLevelLessons = await db
+      .select({ id: lessonsTable.id })
+      .from(lessonsTable)
+      .where(eq(lessonsTable.levelId, levelId));
+    const totalCount = allLevelLessons.length;
+    // Count completed lessons for this user in this level
+    const completedRows = await db
+      .select({ lessonId: userLessonProgress.lessonId })
+      .from(userLessonProgress)
+      .innerJoin(lessonsTable, and(eq(lessonsTable.id, userLessonProgress.lessonId), eq(lessonsTable.levelId, levelId)))
+      .where(and(eq(userLessonProgress.userId, userId), eq(userLessonProgress.completed, true)));
+    const completedCount = completedRows.length;
+    const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+    const isLevelComplete = completedCount >= totalCount;
+    await upsertUserProgress({
+      userId,
+      levelId,
+      completed: isLevelComplete,
+      progressPercent,
+      completedAt: isLevelComplete ? new Date() : undefined,
     });
   }
 
