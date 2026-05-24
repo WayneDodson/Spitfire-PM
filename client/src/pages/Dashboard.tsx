@@ -172,6 +172,8 @@ export default function Dashboard() {
     const progress = userProgress?.find((p: any) => p.levelId === level.id);
     if (progress?.completed) return "completed";
     if (progress && !progress.completed) return "in_progress";
+    // Admin users and founder access users bypass all level locks
+    if (user?.role === "admin" || (user as any)?.founderAccessEarned) return "unlocked";
     // Trial expired — block all levels until subscription
     if (!hasActiveSubscription && trialStatus?.trialExpired) return "trial_expired";
     if (level.accessType === "free") return "unlocked";
@@ -526,7 +528,7 @@ export default function Dashboard() {
           )}
 
           {/* Referral section */}
-          {!hasActiveSubscription && (
+          {!hasActiveSubscription && user?.role !== "admin" && !(user as any)?.founderAccessEarned && (
             <div className="bg-gradient-to-r from-cyan-500/5 to-blue-600/5 border border-cyan-400/20 rounded-2xl p-6">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-start gap-4">
@@ -572,7 +574,7 @@ export default function Dashboard() {
                   Each level builds the proof you need to get hired.
                 </p>
               </div>
-              {!hasActiveSubscription && completedLevels >= 1 && (
+              {!hasActiveSubscription && completedLevels >= 1 && user?.role !== "admin" && !(user as any)?.founderAccessEarned && (
                 <Button
                   onClick={() => setLocation("/subscribe")}
                   className="bg-cyan-500 hover:bg-cyan-400 text-black font-bold gap-2"
