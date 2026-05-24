@@ -53,7 +53,7 @@
       };
 
       // Initialize Google Identity Services once the script loads
-      window.addEventListener('load', function() {
+      function initGoogleSignIn() {
         if (typeof google !== 'undefined' && google.accounts) {
           google.accounts.id.initialize({
             client_id: '%VITE_GOOGLE_CLIENT_ID%',
@@ -61,8 +61,22 @@
             auto_select: false,
             cancel_on_tap_outside: true,
           });
+          // Render the button into the placeholder div if it exists
+          var container = document.getElementById('google-signin-button');
+          if (container) {
+            google.accounts.id.renderButton(container, {
+              theme: 'outline',
+              size: 'large',
+              width: container.offsetWidth || 400,
+              text: 'continue_with',
+              shape: 'rectangular',
+            });
+          }
         }
-      });
+      }
+      // Try on load, and also expose for React to call after mount
+      window.addEventListener('load', initGoogleSignIn);
+      window.initGoogleSignIn = initGoogleSignIn;
     </script>
   </head>
 

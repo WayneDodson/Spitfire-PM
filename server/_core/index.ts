@@ -120,10 +120,10 @@ async function startServer() {
     skip: (req) => req.path === "/api/health",
   });
 
-  // Auth login/Google: 10 attempts per 15 minutes per IP (brute-force protection)
+  // Auth login/Google: 50 attempts per 15 minutes per IP (brute-force protection)
   const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 10,
+    max: 50,
     standardHeaders: "draft-7",
     legacyHeaders: false,
     message: { error: "Too many authentication attempts. Please wait 15 minutes before trying again." },
