@@ -428,3 +428,4 @@
 - [x] Add Level Complete celebration screen in Lesson.tsx with "Start Level N" CTA
 - [x] Backfill userProgress for Jenny (userId 240002) who completed Level 1 without a progress entry
 - [x] Audit Level 2 (Waterfall) confidence check questions - removed all 24 Scrum/Agile questions and replaced with Waterfall-specific questions matched to each lesson topic
+- [x] Full audit of all 168 per-lesson questions across all 7 levels - 154 mismatched questions identified and replaced with topic-correct questions
