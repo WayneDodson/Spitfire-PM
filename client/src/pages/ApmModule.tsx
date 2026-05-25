@@ -12,7 +12,9 @@ import {
   Loader2,
   RotateCcw,
   ChevronRight,
+  Download,
 } from "lucide-react";
+import { generateQuizPDF } from "@/lib/generateQuizPDF";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
@@ -58,6 +60,10 @@ export default function ApmModule() {
   const { data: module, isLoading } = trpc.apm.getModule.useQuery(
     { moduleId },
     { enabled: isAuthenticated && !!moduleId }
+  );
+  const { data: qualifications } = trpc.apm.getQualifications.useQuery(
+    undefined,
+    { enabled: isAuthenticated }
   );
 
   // Shuffle questions once when module data first loads
@@ -392,8 +398,8 @@ export default function ApmModule() {
             )}
 
             {/* Bottom navigation — visible after submitting so user doesn't have to scroll up */}
-            {submitted && (
-              <div className="flex gap-3 pt-2 border-t border-white/10">
+            {submitted && score !== null && (
+              <div className="flex flex-wrap gap-3 pt-2 border-t border-white/10">
                 <Button
                   variant="outline"
                   onClick={handleRetry}
@@ -401,6 +407,24 @@ export default function ApmModule() {
                 >
                   <RotateCcw className="h-4 w-4 mr-1.5" />
                   Retry Quiz
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    const qualName = qualifications?.find(q => q.id === qualId)?.title ?? qualId.toUpperCase();
+                    generateQuizPDF({
+                      qualificationName: qualName,
+                      moduleName: `Module ${module.moduleNumber}: ${module.title}`,
+                      score,
+                      totalQuestions: quiz.length,
+                      quiz,
+                      selectedAnswers,
+                    });
+                  }}
+                  className="border-cyan-500/40 text-cyan-400 hover:text-white hover:border-cyan-400 bg-transparent"
+                >
+                  <Download className="h-4 w-4 mr-1.5" />
+                  Download Results PDF
                 </Button>
                 <Button
                   onClick={() => setLocation(`/qualification-prep/${qualId}`)}
