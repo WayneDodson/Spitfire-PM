@@ -15,8 +15,10 @@ import {
   Route,
   ClipboardCheck,
   X,
+  Download,
 } from "lucide-react";
 import { useState } from "react";
+import { generateFullQuestionBankPDF } from "@/lib/generateFullQuestionBankPDF";
 
 // ─────────────────────────────────────────────
 // Register Interest Modal (pure UI, no backend)
@@ -255,12 +257,30 @@ function ApmLanding() {
 // Post-login content (unchanged)
 // ─────────────────────────────────────────────
 function AuthenticatedQualificationPrep() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [, setLocation] = useLocation();
+  const [pdfLoading, setPdfLoading] = useState(false);
+  const utils = trpc.useUtils();
 
   const { data: qualifications, isLoading } = trpc.apm.getQualifications.useQuery(undefined, {
     enabled: isAuthenticated,
   });
+
+  async function handleDownloadFullPDF() {
+    setPdfLoading(true);
+    try {
+      const data = await utils.adminQuestions.getAllQuestionsForPDF.fetch();
+      generateFullQuestionBankPDF({
+        userName: user?.displayName ?? undefined,
+        levelSections: data.levelSections,
+        qualSections: data.qualSections,
+      });
+    } catch (err) {
+      console.error("Failed to generate PDF", err);
+    } finally {
+      setPdfLoading(false);
+    }
+  }
 
   if (isLoading) {
     return (
@@ -391,6 +411,31 @@ function AuthenticatedQualificationPrep() {
           </div>
         </div>
 
+        {/* Full Question Bank Download */}
+        <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-4">
+            <div className="w-11 h-11 bg-cyan-400/10 rounded-xl flex items-center justify-center flex-shrink-0">
+              <Download className="h-5 w-5 text-cyan-400" />
+            </div>
+            <div>
+              <h3 className="font-bold text-white">Full Question Bank PDF</h3>
+              <p className="text-white/50 text-sm mt-0.5">
+                Download every question &amp; answer from all levels, PFQ and PMQ modules in one printable PDF.
+              </p>
+            </div>
+          </div>
+          <Button
+            onClick={handleDownloadFullPDF}
+            disabled={pdfLoading}
+            className="flex-shrink-0 bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-6"
+          >
+            {pdfLoading ? (
+              <><Loader2 className="h-4 w-4 animate-spin mr-2" />Generating…</>
+            ) : (
+              <><Download className="h-4 w-4 mr-2" />Download PDF</>
+            )}
+          </Button>
+        </div>
         {/* How it works */}
         <div className="space-y-3">
           <h2 className="text-lg font-bold">How Qualification Prep Works</h2>

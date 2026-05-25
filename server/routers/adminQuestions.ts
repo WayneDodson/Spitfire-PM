@@ -195,4 +195,83 @@ export const adminQuestionsRouter = router({
         .where(eq(apmModules.qualificationId, input.qualificationId))
         .orderBy(asc(apmModules.moduleNumber));
     }),
+
+  /**
+   * Get ALL questions from the entire site for the Full Question Bank PDF.
+   * Returns level knowledge checks (per-lesson + assessments) and APM module quizzes.
+   */
+  getAllQuestionsForPDF: adminProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) throw new Error("DB unavailable");
+
+    // Level questions
+    const allLevels = await db
+      .select({ id: levels.id, title: levels.title, orderIndex: levels.orderIndex })
+      .from(levels)
+      .orderBy(asc(levels.orderIndex));
+
+    const allLessons = await db
+      .select({ id: lessons.id, title: lessons.title, levelId: lessons.levelId, lessonNumber: lessons.lessonNumber })
+      .from(lessons)
+      .orderBy(asc(lessons.lessonNumber));
+
+    const allChecks = await db
+      .select()
+      .from(knowledgeChecks)
+      .orderBy(asc(knowledgeChecks.levelId), asc(knowledgeChecks.afterLessonNumber), asc(knowledgeChecks.id));
+
+    const lessonMap: Record<number, { title: string; levelId: number; lessonNumber: number }> = {};
+    for (const l of allLessons) lessonMap[l.id] = { title: l.title, levelId: l.levelId, lessonNumber: l.lessonNumber };
+
+    const levelSections = allLevels.map((lv) => {
+      const perLesson = allChecks
+        .filter((c) => c.levelId === lv.id && !c.isLevelAssessment)
+        .map((c) => ({
+          id: c.id,
+          question: c.question,
+          options: (typeof c.options === "string" ? JSON.parse(c.options) : c.options) as string[],
+          correctAnswerIndex: c.correctAnswerIndex,
+          explanation: c.explanation,
+          lessonTitle: c.lessonId ? (lessonMap[c.lessonId]?.title ?? null) : null,
+          afterLessonNumber: c.afterLessonNumber,
+        }));
+      const assessment = allChecks
+        .filter((c) => c.levelId === lv.id && c.isLevelAssessment)
+        .map((c) => ({
+          id: c.id,
+          question: c.question,
+          options: (typeof c.options === "string" ? JSON.parse(c.options) : c.options) as string[],
+          correctAnswerIndex: c.correctAnswerIndex,
+          explanation: c.explanation,
+          lessonTitle: null as string | null,
+          afterLessonNumber: c.afterLessonNumber,
+        }));
+      return { levelId: lv.id, levelTitle: lv.title, perLesson, assessment };
+    });
+
+    // APM qualification questions
+    const quals = await db
+      .select({ id: apmQualifications.id, title: apmQualifications.title, orderIndex: apmQualifications.orderIndex })
+      .from(apmQualifications)
+      .orderBy(asc(apmQualifications.orderIndex));
+
+    const allModules = await db
+      .select()
+      .from(apmModules)
+      .orderBy(asc(apmModules.qualificationId), asc(apmModules.moduleNumber));
+
+    const qualSections = quals.map((q) => {
+      const mods = allModules
+        .filter((m) => m.qualificationId === q.id)
+        .map((m) => ({
+          moduleId: m.id,
+          moduleNumber: m.moduleNumber,
+          title: m.title,
+          questions: (typeof m.quiz === "string" ? JSON.parse(m.quiz) : m.quiz) as Array<{ q: string; opts: string[]; ans: number }>,
+        }));
+      return { qualId: q.id, qualTitle: q.title, modules: mods };
+    });
+
+    return { levelSections, qualSections };
+  }),
 });

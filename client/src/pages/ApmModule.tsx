@@ -45,7 +45,7 @@ function fireConfetti() {
 
 export default function ApmModule() {
   const { qualId, moduleId } = useParams<{ qualId: string; moduleId: string }>();
-  const { isAuthenticated, loading: authLoading } = useAuth();
+  const { isAuthenticated, loading: authLoading, user } = useAuth();
   const [, setLocation] = useLocation();
 
   const [activeTab, setActiveTab] = useState<Tab>("study");
@@ -415,6 +415,7 @@ export default function ApmModule() {
                     generateQuizPDF({
                       qualificationName: qualName,
                       moduleName: `Module ${module.moduleNumber}: ${module.title}`,
+                      userName: (user as any)?.displayName ?? (user as any)?.name ?? undefined,
                       score,
                       totalQuestions: quiz.length,
                       quiz,

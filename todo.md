@@ -439,3 +439,7 @@
 - [x] Expand PMQ section from 4 modules (4h) to 14 modules (21h) covering all 24 APM PMQ learning objectives
 - [x] Expand PFQ section to 10 modules covering all APM PFQ learning outcomes (~13 hours, 100 quiz questions)
 - [x] Add downloadable PDF results report after completing PFQ/PMQ module quizzes (shows all questions, user answers, correct answers, explanations)
+- [ ] Add user name to quiz results PDF header
+- [ ] Build Full Question Bank PDF with every question and answer from the entire site
+- [x] Add user name to quiz results PDF header
+- [x] Full Question Bank PDF: download every question and answer from all levels and APM modules
