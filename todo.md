@@ -437,3 +437,4 @@
 - [x] Shuffle level assessment answer options to fix option-A bias
 - [x] Build /admin/questions editor page for all levels and APM modules
 - [x] Expand PMQ section from 4 modules (4h) to 14 modules (21h) covering all 24 APM PMQ learning objectives
+- [x] Expand PFQ section to 10 modules covering all APM PFQ learning outcomes (~13 hours, 100 quiz questions)
