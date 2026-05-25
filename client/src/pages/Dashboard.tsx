@@ -27,6 +27,7 @@ import {
   ArrowRight,
   Shield,
   Brain,
+  Pencil,
 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
@@ -221,15 +222,26 @@ export default function Dashboard() {
                   Achievements
                 </Button>
                 {user?.role === "admin" && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setLocation("/admin/cancellations")}
-                    className="text-rose-400/70 hover:text-rose-300"
-                  >
-                    <Shield className="h-4 w-4 mr-1.5" />
-                    Admin
-                  </Button>
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setLocation("/admin/cancellations")}
+                      className="text-rose-400/70 hover:text-rose-300"
+                    >
+                      <Shield className="h-4 w-4 mr-1.5" />
+                      Admin
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setLocation("/admin/questions")}
+                      className="text-amber-400/70 hover:text-amber-300"
+                    >
+                      <Pencil className="h-4 w-4 mr-1.5" />
+                      Questions
+                    </Button>
+                  </>
                 )}
                 <Button
                   variant="ghost"

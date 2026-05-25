@@ -432,3 +432,7 @@
 - [x] PFQ quiz: shuffle questions on every retry so order changes each attempt
 - [x] PFQ quiz: fire confetti celebration burst when user passes a module
 - [x] PFQ quiz: add Back to Modules + Retry Quiz buttons at the bottom of the results page
+- [ ] Shuffle level assessment question answer options (fix option-A bias)
+- [ ] Build /admin/questions editor page for viewing and editing all questions
+- [x] Shuffle level assessment answer options to fix option-A bias
+- [x] Build /admin/questions editor page for all levels and APM modules

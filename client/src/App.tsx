@@ -21,6 +21,7 @@ import Frameworks from "./pages/Frameworks";
 import Subscription from "./pages/Subscription";
 import VerifyEmail from "./pages/VerifyEmail";
 import AdminCancellations from "./pages/AdminCancellations";
+import AdminQuestions from "./pages/AdminQuestions";
 import MindsetHub from "./pages/MindsetHub";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
@@ -109,6 +110,7 @@ function Router() {
       <Route path="/level/:levelId/assessment" component={LevelAssessment} />
       <Route path="/profile" component={Profile} />
       <Route path="/admin/cancellations" component={AdminCancellations} />
+      <Route path="/admin/questions" component={AdminQuestions} />
       <Route path="/qualification-prep" component={QualificationPrep} />
       <Route path="/qualification-prep/:qualId" component={QualificationModules} />
       <Route path="/qualification-prep/:qualId/:moduleId" component={ApmModule} />
