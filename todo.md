@@ -429,3 +429,6 @@
 - [x] Backfill userProgress for Jenny (userId 240002) who completed Level 1 without a progress entry
 - [x] Audit Level 2 (Waterfall) confidence check questions - removed all 24 Scrum/Agile questions and replaced with Waterfall-specific questions matched to each lesson topic
 - [x] Full audit of all 168 per-lesson questions across all 7 levels - 154 mismatched questions identified and replaced with topic-correct questions
+- [x] PFQ quiz: shuffle questions on every retry so order changes each attempt
+- [x] PFQ quiz: fire confetti celebration burst when user passes a module
+- [x] PFQ quiz: add Back to Modules + Retry Quiz buttons at the bottom of the results page

@@ -13,10 +13,33 @@ import {
   RotateCcw,
   ChevronRight,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
+import confetti from "canvas-confetti";
 
 type Tab = "study" | "terms" | "quiz";
+
+type QuizItem = { q: string; opts: string[]; ans: number; explanation?: string };
+
+/** Fisher-Yates shuffle — returns a new array, does not mutate the original */
+function shuffleQuiz(quiz: QuizItem[]): QuizItem[] {
+  const arr = [...quiz];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function fireConfetti() {
+  const end = Date.now() + 2500;
+  const colors = ["#34d399", "#06b6d4", "#a78bfa", "#fbbf24", "#f472b6"];
+  (function frame() {
+    confetti({ particleCount: 4, angle: 60, spread: 60, origin: { x: 0 }, colors });
+    confetti({ particleCount: 4, angle: 120, spread: 60, origin: { x: 1 }, colors });
+    if (Date.now() < end) requestAnimationFrame(frame);
+  })();
+}
 
 export default function ApmModule() {
   const { qualId, moduleId } = useParams<{ qualId: string; moduleId: string }>();
@@ -27,6 +50,8 @@ export default function ApmModule() {
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState<number | null>(null);
+  const [shuffledQuiz, setShuffledQuiz] = useState<QuizItem[]>([]);
+  const confettiFired = useRef(false);
 
   const utils = trpc.useUtils();
 
@@ -34,6 +59,14 @@ export default function ApmModule() {
     { moduleId },
     { enabled: isAuthenticated && !!moduleId }
   );
+
+  // Shuffle questions once when module data first loads
+  useEffect(() => {
+    if (module?.quiz && module.quiz.length > 0) {
+      setShuffledQuiz(shuffleQuiz(module.quiz));
+      confettiFired.current = false;
+    }
+  }, [module?.id]);
 
   const saveProgress = trpc.apm.saveProgress.useMutation({
     onSuccess: () => {
@@ -43,9 +76,10 @@ export default function ApmModule() {
     },
   });
 
+  const quiz = shuffledQuiz.length > 0 ? shuffledQuiz : (module?.quiz ?? []);
+
   const handleSubmitQuiz = () => {
     if (!module) return;
-    const quiz = module.quiz;
     const allAnswered = quiz.every((_, i) => selectedAnswers[i] !== undefined);
     if (!allAnswered) {
       toast.error("Please answer all questions before submitting.");
@@ -65,9 +99,15 @@ export default function ApmModule() {
   };
 
   const handleRetry = () => {
+    // Re-shuffle so question order changes on every retry
+    if (module?.quiz) {
+      setShuffledQuiz(shuffleQuiz(module.quiz));
+    }
     setSelectedAnswers({});
     setSubmitted(false);
     setScore(null);
+    confettiFired.current = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   if (authLoading || isLoading) {
@@ -86,9 +126,15 @@ export default function ApmModule() {
     );
   }
 
-  const passed = score !== null ? score / module.quiz.length >= 0.55 : false;
-  const pct = score !== null ? Math.round((score / module.quiz.length) * 100) : null;
+  const passed = score !== null ? score / quiz.length >= 0.55 : false;
+  const pct = score !== null ? Math.round((score / quiz.length) * 100) : null;
   const alreadyPassed = module.progress?.passed ?? false;
+
+  // Fire confetti once when user passes
+  if (passed && submitted && !confettiFired.current) {
+    confettiFired.current = true;
+    fireConfetti();
+  }
 
   return (
     <div className="min-h-screen bg-[#080e1a] text-white">
@@ -138,7 +184,11 @@ export default function ApmModule() {
               {tab === "study" && <BookOpen className="h-4 w-4 inline mr-1.5 -mt-0.5" />}
               {tab === "terms" && <BookOpen className="h-4 w-4 inline mr-1.5 -mt-0.5" />}
               {tab === "quiz" && <HelpCircle className="h-4 w-4 inline mr-1.5 -mt-0.5" />}
-              {tab === "study" ? "Study Content" : tab === "terms" ? `Key Terms (${module.terms.length})` : `Practice Quiz (${module.quiz.length} Qs)`}
+              {tab === "study"
+                ? "Study Content"
+                : tab === "terms"
+                ? `Key Terms (${module.terms.length})`
+                : `Practice Quiz (${module.quiz.length} Qs)`}
             </button>
           ))}
         </div>
@@ -155,9 +205,7 @@ export default function ApmModule() {
               </div>
             ))}
             <div className="pt-4 border-t border-white/10 flex justify-between items-center">
-              <p className="text-white/40 text-sm">
-                Ready to test your knowledge?
-              </p>
+              <p className="text-white/40 text-sm">Ready to test your knowledge?</p>
               <Button
                 onClick={() => setActiveTab("quiz")}
                 className="bg-cyan-600 hover:bg-cyan-500 text-white font-bold"
@@ -206,22 +254,29 @@ export default function ApmModule() {
                     <XCircle className="h-6 w-6 text-red-400" />
                   )}
                   <div>
-                    <p className={`font-bold text-lg ${passed ? "text-emerald-300" : "text-red-300"}`}>
-                      {passed ? "Passed!" : "Not yet — keep going"}
+                    <p
+                      className={`font-bold text-lg ${
+                        passed ? "text-emerald-300" : "text-red-300"
+                      }`}
+                    >
+                      {passed ? "🎉 Excellent — Module Passed!" : "Not yet — keep going"}
                     </p>
                     <p className="text-white/50 text-sm">
-                      {score} / {module.quiz.length} correct ({pct}%)
+                      {score} / {quiz.length} correct ({pct}%)
                       {!passed && " — 55% required to pass"}
                     </p>
                   </div>
                 </div>
                 <Progress
                   value={pct ?? 0}
-                  className={`h-2 bg-white/10 ${passed ? "[&>div]:bg-emerald-400" : "[&>div]:bg-red-400"}`}
+                  className={`h-2 bg-white/10 ${
+                    passed ? "[&>div]:bg-emerald-400" : "[&>div]:bg-red-400"
+                  }`}
                 />
                 {!passed && (
                   <p className="text-white/50 text-sm mt-3">
-                    Review the study content and key terms, then try again.
+                    Review the study content and key terms, then try again. Questions will be
+                    shuffled on each retry.
                   </p>
                 )}
                 <div className="flex gap-3 mt-4">
@@ -247,7 +302,7 @@ export default function ApmModule() {
             )}
 
             {/* Questions */}
-            {module.quiz.map((q, qi) => {
+            {quiz.map((q, qi) => {
               const selected = selectedAnswers[qi];
               const isCorrect = submitted ? selected === q.ans : null;
 
@@ -280,7 +335,8 @@ export default function ApmModule() {
                           : "border-white/10 bg-white/[0.02] text-white/70 hover:border-white/20 hover:text-white";
                       } else {
                         if (isAnswer) {
-                          optClass += "border-emerald-500/50 bg-emerald-500/10 text-emerald-300";
+                          optClass +=
+                            "border-emerald-500/50 bg-emerald-500/10 text-emerald-300";
                         } else if (isSelected && !isAnswer) {
                           optClass += "border-red-500/50 bg-red-500/10 text-red-300";
                         } else {
@@ -324,14 +380,40 @@ export default function ApmModule() {
               );
             })}
 
+            {/* Submit button (before submission) */}
             {!submitted && (
               <Button
                 onClick={handleSubmitQuiz}
                 className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3"
-                disabled={Object.keys(selectedAnswers).length < module.quiz.length}
+                disabled={Object.keys(selectedAnswers).length < quiz.length}
               >
                 Submit Answers
               </Button>
+            )}
+
+            {/* Bottom navigation — visible after submitting so user doesn't have to scroll up */}
+            {submitted && (
+              <div className="flex gap-3 pt-2 border-t border-white/10">
+                <Button
+                  variant="outline"
+                  onClick={handleRetry}
+                  className="border-white/20 text-white/60 hover:text-white bg-transparent"
+                >
+                  <RotateCcw className="h-4 w-4 mr-1.5" />
+                  Retry Quiz
+                </Button>
+                <Button
+                  onClick={() => setLocation(`/qualification-prep/${qualId}`)}
+                  className={`flex-1 font-bold text-white ${
+                    passed
+                      ? "bg-emerald-600 hover:bg-emerald-500"
+                      : "bg-white/10 hover:bg-white/20"
+                  }`}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Back to Modules
+                </Button>
+              </div>
             )}
           </div>
         )}
