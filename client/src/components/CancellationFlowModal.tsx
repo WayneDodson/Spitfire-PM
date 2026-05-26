@@ -229,20 +229,20 @@ export function CancellationFlowModal({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && handleClose()}>
-      <DialogContent className="max-w-lg bg-[#0d1117] border border-white/10 text-white p-0 overflow-hidden">
+      <DialogContent className="max-w-lg bg-[#0d1117] border border-border text-white p-0 overflow-hidden">
 
         {/* ── Step 1: Why are you leaving? ─────────────────────────────── */}
         {step === 1 && (
           <div className="p-8">
             <div className="flex items-start justify-between mb-6">
               <div>
-                <p className="text-xs text-white/40 uppercase tracking-widest mb-1">Before you go</p>
+                <p className="text-xs text-foreground/40 uppercase tracking-widest mb-1">Before you go</p>
                 <h2 className="text-2xl font-black">What's stopping you right now?</h2>
-                <p className="text-white/50 text-sm mt-2">
+                <p className="text-foreground/50 text-sm mt-2">
                   Your answer helps us understand — and might help us support you better.
                 </p>
               </div>
-              <button onClick={handleClose} className="text-white/30 hover:text-white/60 mt-1">
+              <button onClick={handleClose} className="text-foreground/30 hover:text-foreground/60 mt-1">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -255,7 +255,7 @@ export function CancellationFlowModal({
                   className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-all ${
                     selectedReason === r.value
                       ? "border-cyan-400/60 bg-cyan-400/10 text-white"
-                      : "border-white/10 bg-white/[0.02] text-white/60 hover:border-white/20 hover:text-white/80"
+                      : "border-border bg-muted/50 text-foreground/60 hover:border-border/70 hover:text-foreground/80"
                   }`}
                 >
                   {r.label}
@@ -268,7 +268,7 @@ export function CancellationFlowModal({
                 value={customReason}
                 onChange={(e) => setCustomReason(e.target.value)}
                 placeholder="Tell us a bit more…"
-                className="mb-4 bg-white/5 border-white/10 text-white placeholder:text-white/30 resize-none"
+                className="mb-4 bg-white/5 border-border text-foreground placeholder:text-foreground/30 resize-none"
                 rows={3}
               />
             )}
@@ -291,7 +291,7 @@ export function CancellationFlowModal({
               <Button
                 variant="ghost"
                 onClick={handleClose}
-                className="text-white/40 hover:text-white/60"
+                className="text-foreground/40 hover:text-foreground/60"
               >
                 Keep membership
               </Button>
@@ -306,13 +306,13 @@ export function CancellationFlowModal({
               <div className="w-12 h-12 bg-cyan-400/10 rounded-2xl flex items-center justify-center mb-4">
                 <Phone className="h-6 w-6 text-cyan-400" />
               </div>
-              <button onClick={handleClose} className="text-white/30 hover:text-white/60">
+              <button onClick={handleClose} className="text-foreground/30 hover:text-foreground/60">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             <h2 className="text-2xl font-black mb-2">Free PM Career Clarity Call</h2>
-            <p className="text-white/60 text-sm mb-6 leading-relaxed">
+            <p className="text-foreground/60 text-sm mb-6 leading-relaxed">
               Before you leave, would a free conversation with an experienced Project Manager help you move forward?
             </p>
 
@@ -322,16 +322,16 @@ export function CancellationFlowModal({
                 { icon: TrendingUp, text: "You are closer than you think. Confidence often arrives after capability." },
                 { icon: Heart, text: "Let's make sure you're leaving for the right reason — not because self-doubt is winning." },
               ].map(({ icon: Icon, text }) => (
-                <div key={text} className="flex items-start gap-3 text-sm text-white/60">
+                <div key={text} className="flex items-start gap-3 text-sm text-foreground/60">
                   <Icon className="h-4 w-4 text-cyan-400 flex-shrink-0 mt-0.5" />
                   <span>{text}</span>
                 </div>
               ))}
             </div>
 
-            <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4 mb-6">
-              <p className="text-xs text-white/40 uppercase tracking-widest mb-2">What you'll get</p>
-              <ul className="space-y-1.5 text-sm text-white/70">
+            <div className="bg-muted/60 border border-border rounded-xl p-4 mb-6">
+              <p className="text-xs text-foreground/40 uppercase tracking-widest mb-2">What you'll get</p>
+              <ul className="space-y-1.5 text-sm text-foreground/70">
                 <li className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-green-400 flex-shrink-0" /> A 30-minute call with an experienced PM</li>
                 <li className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-green-400 flex-shrink-0" /> Honest advice on your specific situation</li>
                 <li className="flex items-center gap-2"><CheckCircle2 className="h-3.5 w-3.5 text-green-400 flex-shrink-0" /> No sales pitch — just genuine guidance</li>
@@ -350,7 +350,7 @@ export function CancellationFlowModal({
               <Button
                 variant="ghost"
                 onClick={() => setStep(4)}
-                className="w-full text-white/40 hover:text-white/60 text-sm"
+                className="w-full text-foreground/40 hover:text-foreground/60 text-sm"
               >
                 No thanks — continue with cancellation
               </Button>
@@ -365,18 +365,18 @@ export function CancellationFlowModal({
               <div>
                 <p className="text-xs text-cyan-400 uppercase tracking-widest mb-1">Free Mentor Call</p>
                 <h2 className="text-2xl font-black">Tell us what you need</h2>
-                <p className="text-white/50 text-sm mt-1">
+                <p className="text-foreground/50 text-sm mt-1">
                   The more you share, the more we can prepare to genuinely help you.
                 </p>
               </div>
-              <button onClick={handleClose} className="text-white/30 hover:text-white/60">
+              <button onClick={handleClose} className="text-foreground/30 hover:text-foreground/60">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             {/* Help topics */}
             <div className="mb-5">
-              <p className="text-sm font-semibold text-white/80 mb-3">What would you like help with?</p>
+              <p className="text-sm font-semibold text-foreground/80 mb-3">What would you like help with?</p>
               <div className="flex flex-wrap gap-2">
                 {HELP_TOPICS.map((topic) => (
                   <button
@@ -385,7 +385,7 @@ export function CancellationFlowModal({
                     className={`px-3 py-1.5 rounded-full text-xs border transition-all ${
                       selectedTopics.includes(topic)
                         ? "border-cyan-400/60 bg-cyan-400/10 text-cyan-300"
-                        : "border-white/10 bg-white/[0.02] text-white/50 hover:border-white/20 hover:text-white/70"
+                        : "border-border bg-muted/50 text-foreground/50 hover:border-border/70 hover:text-foreground/70"
                     }`}
                   >
                     {topic}
@@ -396,43 +396,43 @@ export function CancellationFlowModal({
 
             {/* Main question */}
             <div className="mb-4">
-              <label className="text-sm font-semibold text-white/80 block mb-2">
+              <label className="text-sm font-semibold text-foreground/80 block mb-2">
                 What's the main question you want answered? <span className="text-red-400">*</span>
               </label>
               <Textarea
                 value={mainQuestion}
                 onChange={(e) => setMainQuestion(e.target.value)}
                 placeholder="Tell us where you are, what you're struggling with, and what clarity you're hoping for…"
-                className="bg-white/5 border-white/10 text-white placeholder:text-white/30 resize-none"
+                className="bg-white/5 border-border text-foreground placeholder:text-foreground/30 resize-none"
                 rows={4}
               />
-              <p className="text-xs text-white/30 mt-1">{mainQuestion.length} / 2000 characters</p>
+              <p className="text-xs text-foreground/30 mt-1">{mainQuestion.length} / 2000 characters</p>
             </div>
 
             {/* Current situation */}
             <div className="mb-4">
-              <label className="text-sm font-semibold text-white/80 block mb-2">
+              <label className="text-sm font-semibold text-foreground/80 block mb-2">
                 Where are you in your career transition right now?
               </label>
               <Textarea
                 value={currentSituation}
                 onChange={(e) => setCurrentSituation(e.target.value)}
                 placeholder="e.g. I've been in the NHS for 8 years and I'm trying to move into a PM role…"
-                className="bg-white/5 border-white/10 text-white placeholder:text-white/30 resize-none"
+                className="bg-white/5 border-border text-foreground placeholder:text-foreground/30 resize-none"
                 rows={3}
               />
             </div>
 
             {/* Desired outcome */}
             <div className="mb-6">
-              <label className="text-sm font-semibold text-white/80 block mb-2">
+              <label className="text-sm font-semibold text-foreground/80 block mb-2">
                 What outcome are you hoping for from this call?
               </label>
               <Textarea
                 value={desiredOutcome}
                 onChange={(e) => setDesiredOutcome(e.target.value)}
                 placeholder="e.g. I want to understand what's actually holding me back from getting interviews…"
-                className="bg-white/5 border-white/10 text-white placeholder:text-white/30 resize-none"
+                className="bg-white/5 border-border text-foreground placeholder:text-foreground/30 resize-none"
                 rows={3}
               />
             </div>
@@ -449,7 +449,7 @@ export function CancellationFlowModal({
               <Button
                 variant="ghost"
                 onClick={() => setStep(4)}
-                className="text-white/40 hover:text-white/60"
+                className="text-foreground/40 hover:text-foreground/60"
               >
                 Skip
               </Button>
@@ -466,7 +466,7 @@ export function CancellationFlowModal({
                 <div className="text-center mb-6">
                   <div className="text-5xl mb-4">🎉</div>
                   <h2 className="text-2xl font-black mb-2">You did it.</h2>
-                  <p className="text-white/60 text-sm leading-relaxed">
+                  <p className="text-foreground/60 text-sm leading-relaxed">
                     This is exactly what this platform exists for. Congratulations on your new PM role — you've earned every bit of it.
                   </p>
                 </div>
@@ -493,7 +493,7 @@ export function CancellationFlowModal({
                 </div>
 
                 <h2 className="text-2xl font-black mb-2">Before you go…</h2>
-                <p className="text-white/60 text-sm mb-6 leading-relaxed">
+                <p className="text-foreground/60 text-sm mb-6 leading-relaxed">
                   Would you mind if we checked in with you in 3 months to see how your Project Management journey is going?
                 </p>
 
@@ -503,15 +503,15 @@ export function CancellationFlowModal({
                     { icon: TrendingUp, text: "Your progress still matters. You are closer than you think." },
                     { icon: Sparkles, text: "Sometimes confidence arrives after capability — not before." },
                   ].map(({ icon: Icon, text }) => (
-                    <div key={text} className="flex items-start gap-3 text-sm text-white/50">
-                      <Icon className="h-4 w-4 text-white/30 flex-shrink-0 mt-0.5" />
+                    <div key={text} className="flex items-start gap-3 text-sm text-foreground/50">
+                      <Icon className="h-4 w-4 text-foreground/30 flex-shrink-0 mt-0.5" />
                       <span>{text}</span>
                     </div>
                   ))}
                 </div>
 
-                <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4 mb-6">
-                  <p className="text-white/60 text-sm leading-relaxed">
+                <div className="bg-muted/60 border border-border rounded-xl p-4 mb-6">
+                  <p className="text-foreground/60 text-sm leading-relaxed">
                     Your goal matters. Sometimes the right next step is timing, confidence, or simply the right opportunity appearing.
                     We'd love the chance to support you again if you still want to make Project Management your next career move.
                   </p>
@@ -530,13 +530,13 @@ export function CancellationFlowModal({
                     variant="ghost"
                     onClick={() => handleFarewell(false)}
                     disabled={isSubmitting}
-                    className="w-full text-white/40 hover:text-white/60 text-sm"
+                    className="w-full text-foreground/40 hover:text-foreground/60 text-sm"
                   >
                     {isSubmitting ? "Completing…" : "No thanks — I'd prefer not to be contacted"}
                   </Button>
                 </div>
 
-                <p className="text-xs text-white/20 text-center mt-4">
+                <p className="text-xs text-foreground/20 text-center mt-4">
                   Your progress will still be here when you're ready.
                 </p>
               </>

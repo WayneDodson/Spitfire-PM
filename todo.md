@@ -454,8 +454,14 @@
 - [x] Add /pricing to homepage navigation and internal links
 
 ## Accessibility & Branding Fixes (May 2026)
-- [ ] Rename "Founder" to "Loyalty" across all user-facing UI text
-- [ ] Update "no card needed" copy to "no payment needed" / "no payment required"
-- [ ] Fix colour contrast: increase opacity on text-white/40, text-white/30, text-red-400/60
-- [ ] Add <main> landmark to homepage
-- [ ] Remove user-scalable=no / maximum-scale=1 from viewport meta tag
+- [x] Rename "Founder" to "Loyalty" across all user-facing UI text
+- [x] Update "no card needed" copy to "no payment needed" / "no payment required"
+- [x] Fix colour contrast: increase opacity on text-white/40, text-white/30, text-red-400/60
+- [x] Add <main> landmark to homepage
+- [x] Remove user-scalable=no / maximum-scale=1 from viewport meta tag
+
+## Full Site-Wide Theme Toggle (May 2026)
+- [ ] Audit all pages for hardcoded dark colours
+- [ ] Update CSS variables for clean light mode
+- [ ] Refactor Home.tsx to semantic theme tokens
+- [ ] Refactor all remaining pages and components

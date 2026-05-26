@@ -47,6 +47,24 @@
 }
 
 :root {
+  /* ── Spitfire PM custom properties (default: dark) ── */
+  --sp-page-bg: #06090f;
+  --sp-page-bg-alt: #080c14;
+  --sp-nav-bg: rgba(6,9,15,0.95);
+  --sp-section-alt: rgba(255,255,255,0.01);
+  --sp-card-bg: rgba(255,255,255,0.04);
+  --sp-card-border: rgba(255,255,255,0.07);
+  --sp-text-primary: #ffffff;
+  --sp-text-secondary: rgba(255,255,255,0.70);
+  --sp-text-muted: rgba(255,255,255,0.50);
+  --sp-text-faint: rgba(255,255,255,0.35);
+  --sp-divider: rgba(255,255,255,0.05);
+  --sp-input-bg: rgba(255,255,255,0.05);
+  --sp-input-border: rgba(255,255,255,0.10);
+  --sp-overlay-bg: rgba(6,9,15,0.97);
+  --sp-red-bg: rgba(127,29,29,0.30);
+  --sp-cyan-bg: rgba(8,145,178,0.10);
+  --sp-cyan-text: #22d3ee;
   --primary: oklch(0.75 0.18 240);
   --primary-foreground: oklch(0.98 0.01 240);
   --sidebar-primary: oklch(0.7 0.18 240);
@@ -83,6 +101,24 @@
 }
 
 .dark {
+  /* ── Spitfire PM dark mode custom properties ── */
+  --sp-page-bg: #06090f;
+  --sp-page-bg-alt: #080c14;
+  --sp-nav-bg: rgba(6,9,15,0.95);
+  --sp-section-alt: rgba(255,255,255,0.01);
+  --sp-card-bg: rgba(255,255,255,0.04);
+  --sp-card-border: rgba(255,255,255,0.07);
+  --sp-text-primary: #ffffff;
+  --sp-text-secondary: rgba(255,255,255,0.70);
+  --sp-text-muted: rgba(255,255,255,0.50);
+  --sp-text-faint: rgba(255,255,255,0.35);
+  --sp-divider: rgba(255,255,255,0.05);
+  --sp-input-bg: rgba(255,255,255,0.05);
+  --sp-input-border: rgba(255,255,255,0.10);
+  --sp-overlay-bg: rgba(6,9,15,0.97);
+  --sp-red-bg: rgba(127,29,29,0.30);
+  --sp-cyan-bg: rgba(8,145,178,0.10);
+  --sp-cyan-text: #22d3ee;
   --primary: oklch(0.75 0.18 240);
   --primary-foreground: oklch(0.98 0.01 240);
   --sidebar-primary: oklch(0.7 0.18 240);
@@ -118,6 +154,24 @@
 }
 
 .light {
+  /* ── Spitfire PM light mode overrides ── */
+  --sp-page-bg: #f8fafc;
+  --sp-page-bg-alt: #f1f5f9;
+  --sp-nav-bg: rgba(248,250,252,0.97);
+  --sp-section-alt: rgba(0,0,0,0.02);
+  --sp-card-bg: #ffffff;
+  --sp-card-border: rgba(0,0,0,0.08);
+  --sp-text-primary: #0f172a;
+  --sp-text-secondary: rgba(15,23,42,0.70);
+  --sp-text-muted: rgba(15,23,42,0.50);
+  --sp-text-faint: rgba(15,23,42,0.35);
+  --sp-divider: rgba(0,0,0,0.07);
+  --sp-input-bg: rgba(0,0,0,0.04);
+  --sp-input-border: rgba(0,0,0,0.12);
+  --sp-overlay-bg: rgba(248,250,252,0.97);
+  --sp-red-bg: rgba(254,226,226,0.6);
+  --sp-cyan-bg: rgba(207,250,254,0.5);
+  --sp-cyan-text: #0284c7;
   --primary: oklch(0.55 0.20 240);
   --primary-foreground: oklch(0.98 0.01 240);
   --sidebar-primary: oklch(0.55 0.20 240);
@@ -171,7 +225,93 @@
   }
 }
 
+/* ── Spitfire PM: global light-mode overrides for hardcoded dark colours ──
+   These rules fire when html.light is active, overriding the hardcoded
+   dark hex values that appear throughout the JSX without needing JSX edits.
+   Specificity is kept low — use !important only where Tailwind JIT wins.
+── */
+html.light {
+  /* Page-level backgrounds */
+  background-color: var(--sp-page-bg);
+  color: var(--sp-text-primary);
+}
+
+/* Tailwind bg-[#06090f] and bg-[#080c14] — main page backgrounds */
+html.light .\[\&\>\*\]\:bg-\[\#06090f\],
+html.light [style*="background-color: rgb(6, 9, 15)"],
+html.light [style*="background: rgb(6, 9, 15)"] {
+  background-color: var(--sp-page-bg) !important;
+}
+
+/* Override min-h-screen wrappers that use sp-page (already done) */
+html.light .sp-page {
+  background-color: var(--sp-page-bg);
+  color: var(--sp-text-primary);
+}
+
+/* bg-white/[0.01] bg-white/[0.015] bg-white/[0.02] — section tints */
+html.light [class*="bg-white/["] {
+  background-color: var(--sp-section-alt) !important;
+}
+
+/* bg-[#0b1119] — card surfaces */
+html.light [class*="bg-\[\#0b1119\]"] {
+  background-color: var(--sp-card-bg) !important;
+  border-color: var(--sp-card-border) !important;
+}
+
+/* border-white/5 border-white/8 border-white/10 — subtle borders */
+html.light [class*="border-white/"] {
+  border-color: var(--sp-card-border) !important;
+}
+
+/* text-white/20 text-white/30 text-white/40 text-white/50 text-white/60 text-white/70 — muted text */
+html.light [class*="text-white/2"],
+html.light [class*="text-white/3"],
+html.light [class*="text-white/4"],
+html.light [class*="text-white/5"],
+html.light [class*="text-white/6"],
+html.light [class*="text-white/7"] {
+  color: var(--sp-text-muted) !important;
+}
+
+/* text-white (full opacity) — primary text */
+html.light .text-white {
+  color: var(--sp-text-primary) !important;
+}
+
+/* Preserve white text on coloured buttons and badges */
+html.light .bg-cyan-500 .text-white,
+html.light .bg-primary .text-white,
+html.light button.bg-cyan-500,
+html.light button.bg-primary,
+html.light [class*="bg-cyan-"] .text-white,
+html.light [class*="bg-blue-"] .text-white {
+  color: #ffffff !important;
+}
+
+/* Footer and nav backgrounds */
+html.light footer,
+html.light .sp-nav {
+  background-color: var(--sp-nav-bg);
+  border-color: var(--sp-divider);
+}
+
 @layer components {
+  /* ── Spitfire PM theme-aware utility classes ── */
+  .sp-page { background-color: var(--sp-page-bg); color: var(--sp-text-primary); }
+  .sp-nav { background-color: var(--sp-nav-bg); border-color: var(--sp-divider); }
+  .sp-section-alt { background-color: var(--sp-section-alt); }
+  .sp-card { background-color: var(--sp-card-bg); border-color: var(--sp-card-border); }
+  .sp-text-primary { color: var(--sp-text-primary); }
+  .sp-text-secondary { color: var(--sp-text-secondary); }
+  .sp-text-muted { color: var(--sp-text-muted); }
+  .sp-text-faint { color: var(--sp-text-faint); }
+  .sp-divider { border-color: var(--sp-divider); }
+  .sp-input { background-color: var(--sp-input-bg); border-color: var(--sp-input-border); }
+  .sp-overlay { background-color: var(--sp-overlay-bg); }
+  .sp-cyan-text { color: var(--sp-cyan-text); }
+
   /* ── Lesson prose: uniform heading sizes regardless of H1/H2/H3 in content ── */
   .lesson-prose h1,
   .lesson-prose h2 {

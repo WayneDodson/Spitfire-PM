@@ -157,25 +157,25 @@ export default function MindsetHub() {
   const totalHabits = DAILY_HABITS.length;
 
   return (
-    <div className="min-h-screen bg-[#060d1a] text-white">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="border-b border-white/5 bg-[#080c14]/90 backdrop-blur-md sticky top-0 z-40">
+      <header className="border-b border-border bg-background/90 backdrop-blur-md sticky top-0 z-40">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate("/dashboard")}
-              className="text-white/40 hover:text-white transition-colors"
+              className="text-foreground/40 hover:text-white transition-colors"
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center">
-                <Brain className="h-3.5 w-3.5 text-white" />
+                <Brain className="h-3.5 w-3.5 text-foreground" />
               </div>
               <span className="font-bold text-base">Mindset Hub</span>
             </div>
           </div>
-          <span className="text-xs text-white/30 hidden sm:block">
+          <span className="text-xs text-foreground/30 hidden sm:block">
             Identity · Discipline · Focus · Consistency
           </span>
         </div>
@@ -193,7 +193,7 @@ export default function MindsetHub() {
             This platform does not just<br />
             <span className="text-violet-400">teach Project Management.</span>
           </h1>
-          <p className="text-xl text-white/50 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-foreground/50 max-w-2xl mx-auto leading-relaxed">
             It helps you become the type of person who successfully transitions into a PM career.
             That means changing habits, identity, focus, and daily behaviour — not just knowledge.
           </p>
@@ -205,7 +205,7 @@ export default function MindsetHub() {
             <h2 className="text-2xl md:text-3xl font-black">
               Is your daily behaviour helping you become a Project Manager?
             </h2>
-            <p className="text-white/60 text-lg leading-relaxed">
+            <p className="text-foreground/60 text-lg leading-relaxed">
               Career change does not happen by accident. It happens through repeated action,
               focus, discipline, and intentional daily choices.
             </p>
@@ -221,11 +221,11 @@ export default function MindsetHub() {
                   className="flex items-center gap-3 bg-red-500/5 border border-red-500/15 rounded-xl p-4"
                 >
                   <div className="w-2 h-2 rounded-full bg-red-400 flex-shrink-0" />
-                  <span className="text-white/60 text-sm">{item.label}</span>
+                  <span className="text-foreground/60 text-sm">{item.label}</span>
                 </div>
               ))}
             </div>
-            <p className="text-white/80 font-semibold text-lg">
+            <p className="text-foreground/80 font-semibold text-lg">
               These are not character flaws. They are environmental defaults.
               <span className="text-violet-400"> You can redesign your environment.</span>
             </p>
@@ -234,12 +234,12 @@ export default function MindsetHub() {
 
         {/* ── Identity Affirmation Rotator ─────────────────────────────────── */}
         <section className="text-center space-y-6">
-          <h2 className="text-2xl font-black text-white/90">Your Daily Affirmation</h2>
-          <div className="relative bg-[#0d1526] border border-white/8 rounded-2xl p-10 max-w-2xl mx-auto">
-            <div className="absolute top-4 right-4 text-white/20">
+          <h2 className="text-2xl font-black text-foreground/90">Your Daily Affirmation</h2>
+          <div className="relative bg-card border border-border rounded-2xl p-10 max-w-2xl mx-auto">
+            <div className="absolute top-4 right-4 text-foreground/20">
               <Star className="h-5 w-5" />
             </div>
-            <blockquote className="text-xl md:text-2xl font-bold text-white leading-relaxed mb-4">
+            <blockquote className="text-xl md:text-2xl font-bold text-foreground leading-relaxed mb-4">
               "{IDENTITY_STATEMENTS[activeQuote].quote}"
             </blockquote>
             <p className="text-violet-400 text-sm font-medium tracking-widest uppercase">
@@ -249,7 +249,7 @@ export default function MindsetHub() {
           <Button
             onClick={nextQuote}
             variant="outline"
-            className="border-white/10 text-white/50 hover:text-white bg-transparent gap-2"
+            className="border-border text-foreground/50 hover:text-white bg-transparent gap-2"
           >
             <RefreshCw className="h-4 w-4" />
             Next affirmation
@@ -265,7 +265,7 @@ export default function MindsetHub() {
               </div>
               <h2 className="text-2xl font-black">Social Feed Awareness</h2>
             </div>
-            <p className="text-white/50 text-lg max-w-2xl">
+            <p className="text-foreground/50 text-lg max-w-2xl">
               Your social media feeds train your mind. What you repeatedly consume becomes what
               you repeatedly think about. Your feed should support your future — not distract from it.
             </p>
@@ -275,20 +275,20 @@ export default function MindsetHub() {
             {FEED_ACTIONS.map((item, i) => (
               <div
                 key={i}
-                className="flex items-start gap-4 bg-[#0d1526] border border-white/5 rounded-xl p-5 hover:border-blue-500/20 transition-colors"
+                className="flex items-start gap-4 bg-card border border-border rounded-xl p-5 hover:border-blue-500/20 transition-colors"
               >
                 <span className="text-2xl flex-shrink-0 mt-0.5">{item.icon}</span>
                 <div className="space-y-1 flex-1">
-                  <p className="text-white/80 font-medium">{item.action}</p>
+                  <p className="text-foreground/80 font-medium">{item.action}</p>
                   <p className="text-blue-400/70 text-sm">{item.impact}</p>
                 </div>
-                <ChevronRight className="h-4 w-4 text-white/20 flex-shrink-0 mt-1" />
+                <ChevronRight className="h-4 w-4 text-foreground/20 flex-shrink-0 mt-1" />
               </div>
             ))}
           </div>
 
           <div className="bg-blue-500/5 border border-blue-500/15 rounded-xl p-6 text-center">
-            <p className="text-white/70 text-lg italic">
+            <p className="text-foreground/70 text-lg italic">
               "Your future is often hidden inside your daily habits.
               <span className="text-blue-300"> What you repeatedly consume becomes what you repeatedly think about.</span>"
             </p>
@@ -304,7 +304,7 @@ export default function MindsetHub() {
               </div>
               <h2 className="text-2xl font-black">20-Minute Energy Reset System</h2>
             </div>
-            <p className="text-white/50 text-lg max-w-2xl">
+            <p className="text-foreground/50 text-lg max-w-2xl">
               Every 20 minutes of focused learning, the platform triggers a 1-minute performance reset.
               This is not a distraction. It is a performance tool used by elite athletes, surgeons, and executives.
             </p>
@@ -330,11 +330,11 @@ export default function MindsetHub() {
             ].map((item, i) => (
               <div
                 key={i}
-                className="bg-[#0d1526] border border-white/5 rounded-xl p-6 space-y-3"
+                className="bg-card border border-border rounded-xl p-6 space-y-3"
               >
                 <span className="text-3xl">{item.icon}</span>
-                <h3 className="font-bold text-white">{item.title}</h3>
-                <p className="text-white/50 text-sm leading-relaxed">{item.body}</p>
+                <h3 className="font-bold text-foreground">{item.title}</h3>
+                <p className="text-foreground/50 text-sm leading-relaxed">{item.body}</p>
               </div>
             ))}
           </div>
@@ -343,14 +343,14 @@ export default function MindsetHub() {
             <p className="text-cyan-400 text-sm font-semibold uppercase tracking-widest">
               When your reset timer triggers
             </p>
-            <div className="space-y-2 text-white/80 text-lg">
+            <div className="space-y-2 text-foreground/80 text-lg">
               <p>Stand up.</p>
               <p>Shake your arms.</p>
               <p>Move your fingers.</p>
               <p>Reset your posture.</p>
               <p>Breathe deeply.</p>
             </div>
-            <p className="text-white/50 italic">
+            <p className="text-foreground/50 italic">
               Your body affects your mind. Reset now so you can return stronger.
             </p>
           </div>
@@ -365,7 +365,7 @@ export default function MindsetHub() {
               </div>
               <h2 className="text-2xl font-black">60-Minute Hydration System</h2>
             </div>
-            <p className="text-white/50 text-lg max-w-2xl">
+            <p className="text-foreground/50 text-lg max-w-2xl">
               Every 60 minutes, the platform reminds you to hydrate. Not as a wellness prompt —
               as a performance habit. Dehydration reduces cognitive performance by up to 15%.
               High performers protect their energy.
@@ -381,10 +381,10 @@ export default function MindsetHub() {
             ].map((item, i) => (
               <div
                 key={i}
-                className="bg-[#0d1526] border border-sky-500/10 rounded-xl p-5 flex items-center gap-4"
+                className="bg-card border border-sky-500/10 rounded-xl p-5 flex items-center gap-4"
               >
                 <span className="text-2xl font-black text-sky-400">{item.stat}</span>
-                <span className="text-white/60 text-sm">{item.label}</span>
+                <span className="text-foreground/60 text-sm">{item.label}</span>
               </div>
             ))}
           </div>
@@ -399,7 +399,7 @@ export default function MindsetHub() {
               </div>
               <h2 className="text-2xl font-black">The Four Pillars of Habit Change</h2>
             </div>
-            <p className="text-white/50 text-lg max-w-2xl">
+            <p className="text-foreground/50 text-lg max-w-2xl">
               Most people fail career transitions not because they lack intelligence — but because
               they rely on motivation instead of systems. These four pillars replace motivation with structure.
             </p>
@@ -425,9 +425,9 @@ export default function MindsetHub() {
                 >
                   <div className="flex items-center gap-3">
                     <Icon className="h-5 w-5" />
-                    <h3 className="font-bold text-white">{pillar.title}</h3>
+                    <h3 className="font-bold text-foreground">{pillar.title}</h3>
                   </div>
-                  <p className="text-white/60 text-sm leading-relaxed">{pillar.body}</p>
+                  <p className="text-foreground/60 text-sm leading-relaxed">{pillar.body}</p>
                 </div>
               );
             })}
@@ -439,7 +439,7 @@ export default function MindsetHub() {
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <h2 className="text-2xl font-black">Today's Performance Checklist</h2>
-              <p className="text-white/40 text-sm">
+              <p className="text-foreground/40 text-sm">
                 {completedCount} of {totalHabits} completed today
               </p>
             </div>
@@ -467,8 +467,8 @@ export default function MindsetHub() {
                 className={cn(
                   "w-full flex items-center gap-4 p-4 rounded-xl border text-left transition-all duration-200",
                   checkedHabits.has(i)
-                    ? "bg-green-500/5 border-green-500/20 text-white/80"
-                    : "bg-[#0d1526] border-white/5 text-white/60 hover:border-white/15 hover:text-white/80"
+                    ? "bg-green-500/5 border-green-500/20 text-foreground/80"
+                    : "bg-card border-border text-foreground/60 hover:border-border/60 hover:text-foreground/80"
                 )}
               >
                 <div
@@ -476,11 +476,11 @@ export default function MindsetHub() {
                     "w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all",
                     checkedHabits.has(i)
                       ? "bg-green-500 border-green-500"
-                      : "border-white/20"
+                      : "border-border/70"
                   )}
                 >
                   {checkedHabits.has(i) && (
-                    <CheckCircle2 className="h-3 w-3 text-white" />
+                    <CheckCircle2 className="h-3 w-3 text-foreground" />
                   )}
                 </div>
                 <span className={cn("text-sm font-medium", checkedHabits.has(i) && "line-through opacity-60")}>
@@ -490,7 +490,7 @@ export default function MindsetHub() {
             ))}
           </div>
 
-          <p className="text-white/30 text-xs text-center">
+          <p className="text-foreground/30 text-xs text-center">
             This checklist resets daily. Consistency — not perfection — is the goal.
           </p>
         </section>
@@ -503,13 +503,13 @@ export default function MindsetHub() {
           <p className="text-xl text-violet-300 font-bold">
             You are living like someone preparing for leadership.
           </p>
-          <p className="text-white/50 max-w-xl mx-auto">
+          <p className="text-foreground/50 max-w-xl mx-auto">
             Every session, every reset, every glass of water, every lesson completed —
             is evidence. Evidence that you are already becoming the person who gets the job.
           </p>
           <Button
             onClick={() => navigate("/dashboard")}
-            className="bg-violet-600 hover:bg-violet-500 text-white font-bold px-8 py-3 rounded-xl gap-2"
+            className="bg-violet-600 hover:bg-violet-500 text-foreground font-bold px-8 py-3 rounded-xl gap-2"
           >
             Return to your journey
             <ChevronRight className="h-4 w-4" />

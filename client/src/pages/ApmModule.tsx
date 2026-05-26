@@ -126,7 +126,7 @@ export default function ApmModule() {
 
   if (!module) {
     return (
-      <div className="min-h-screen bg-[#080e1a] flex items-center justify-center text-white/50">
+      <div className="min-h-screen bg-[#080e1a] flex items-center justify-center text-foreground/50">
         Module not found.
       </div>
     );
@@ -149,7 +149,7 @@ export default function ApmModule() {
         <div>
           <button
             onClick={() => setLocation(`/qualification-prep/${qualId}`)}
-            className="flex items-center gap-1.5 text-white/40 hover:text-white text-sm mb-6 transition-colors"
+            className="flex items-center gap-1.5 text-foreground/40 hover:text-white text-sm mb-6 transition-colors"
           >
             <ChevronLeft className="h-4 w-4" />
             Back to modules
@@ -157,7 +157,7 @@ export default function ApmModule() {
 
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs text-white/40 uppercase tracking-widest mb-1">
+              <p className="text-xs text-foreground/40 uppercase tracking-widest mb-1">
                 Module {module.moduleNumber} · {module.duration}
               </p>
               <h1 className="text-3xl font-black">{module.title}</h1>
@@ -171,12 +171,12 @@ export default function ApmModule() {
           </div>
 
           {module.intro && (
-            <p className="text-white/60 mt-3 leading-relaxed">{module.intro}</p>
+            <p className="text-foreground/60 mt-3 leading-relaxed">{module.intro}</p>
           )}
         </div>
 
         {/* Tab nav */}
-        <div className="flex border-b border-white/10">
+        <div className="flex border-b border-border">
           {(["study", "terms", "quiz"] as Tab[]).map((tab) => (
             <button
               key={tab}
@@ -184,7 +184,7 @@ export default function ApmModule() {
               className={`px-5 py-3 text-sm font-semibold capitalize transition-colors border-b-2 -mb-px ${
                 activeTab === tab
                   ? "border-cyan-400 text-cyan-400"
-                  : "border-transparent text-white/40 hover:text-white"
+                  : "border-transparent text-foreground/40 hover:text-white"
               }`}
             >
               {tab === "study" && <BookOpen className="h-4 w-4 inline mr-1.5 -mt-0.5" />}
@@ -204,14 +204,14 @@ export default function ApmModule() {
           <div className="space-y-8">
             {module.sections.map((section, i) => (
               <div key={i} className="space-y-3">
-                <h2 className="text-xl font-bold text-white">{section.heading}</h2>
-                <div className="text-white/70 leading-relaxed whitespace-pre-line text-[0.95rem]">
+                <h2 className="text-xl font-bold text-foreground">{section.heading}</h2>
+                <div className="text-foreground/70 leading-relaxed whitespace-pre-line text-[0.95rem]">
                   {section.body}
                 </div>
               </div>
             ))}
-            <div className="pt-4 border-t border-white/10 flex justify-between items-center">
-              <p className="text-white/40 text-sm">Ready to test your knowledge?</p>
+            <div className="pt-4 border-t border-border flex justify-between items-center">
+              <p className="text-foreground/40 text-sm">Ready to test your knowledge?</p>
               <Button
                 onClick={() => setActiveTab("quiz")}
                 className="bg-cyan-600 hover:bg-cyan-500 text-white font-bold"
@@ -227,15 +227,15 @@ export default function ApmModule() {
         {activeTab === "terms" && (
           <div className="space-y-3">
             {module.terms.length === 0 && (
-              <p className="text-white/40 text-sm">No key terms for this module.</p>
+              <p className="text-foreground/40 text-sm">No key terms for this module.</p>
             )}
             {module.terms.map((term, i) => (
               <div
                 key={i}
-                className="bg-white/[0.03] border border-white/10 rounded-xl p-4"
+                className="bg-muted/60 border border-border rounded-xl p-4"
               >
                 <p className="font-semibold text-cyan-300 mb-1">{term.t}</p>
-                <p className="text-white/60 text-sm leading-relaxed">{term.d}</p>
+                <p className="text-foreground/60 text-sm leading-relaxed">{term.d}</p>
               </div>
             ))}
           </div>
@@ -267,7 +267,7 @@ export default function ApmModule() {
                     >
                       {passed ? "🎉 Excellent — Module Passed!" : "Not yet — keep going"}
                     </p>
-                    <p className="text-white/50 text-sm">
+                    <p className="text-foreground/50 text-sm">
                       {score} / {quiz.length} correct ({pct}%)
                       {!passed && " — 55% required to pass"}
                     </p>
@@ -280,7 +280,7 @@ export default function ApmModule() {
                   }`}
                 />
                 {!passed && (
-                  <p className="text-white/50 text-sm mt-3">
+                  <p className="text-foreground/50 text-sm mt-3">
                     Review the study content and key terms, then try again. Questions will be
                     shuffled on each retry.
                   </p>
@@ -289,7 +289,7 @@ export default function ApmModule() {
                   <Button
                     variant="outline"
                     onClick={handleRetry}
-                    className="border-white/20 text-white/60 hover:text-white bg-transparent"
+                    className="border-border/70 text-foreground/60 hover:text-white bg-transparent"
                   >
                     <RotateCcw className="h-4 w-4 mr-1.5" />
                     Retry Quiz
@@ -297,7 +297,7 @@ export default function ApmModule() {
                   {passed && (
                     <Button
                       onClick={() => setLocation(`/qualification-prep/${qualId}`)}
-                      className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
+                      className="bg-emerald-600 hover:bg-emerald-500 text-foreground font-bold"
                     >
                       Back to Modules
                       <ChevronRight className="h-4 w-4 ml-1" />
@@ -315,16 +315,16 @@ export default function ApmModule() {
               return (
                 <div
                   key={qi}
-                  className={`bg-white/[0.03] border rounded-xl p-5 space-y-4 ${
+                  className={`bg-muted/60 border rounded-xl p-5 space-y-4 ${
                     submitted
                       ? isCorrect
                         ? "border-emerald-500/30"
                         : "border-red-500/30"
-                      : "border-white/10"
+                      : "border-border"
                   }`}
                 >
-                  <p className="font-semibold text-white leading-snug">
-                    <span className="text-white/40 mr-2">{qi + 1}.</span>
+                  <p className="font-semibold text-foreground leading-snug">
+                    <span className="text-foreground/40 mr-2">{qi + 1}.</span>
                     {q.q}
                   </p>
                   <div className="space-y-2">
@@ -338,7 +338,7 @@ export default function ApmModule() {
                       if (!submitted) {
                         optClass += isSelected
                           ? "border-cyan-400/60 bg-cyan-400/10 text-white"
-                          : "border-white/10 bg-white/[0.02] text-white/70 hover:border-white/20 hover:text-white";
+                          : "border-border bg-muted/50 text-foreground/70 hover:border-border/70 hover:text-white";
                       } else {
                         if (isAnswer) {
                           optClass +=
@@ -346,7 +346,7 @@ export default function ApmModule() {
                         } else if (isSelected && !isAnswer) {
                           optClass += "border-red-500/50 bg-red-500/10 text-red-300";
                         } else {
-                          optClass += "border-white/10 bg-white/[0.02] text-white/40";
+                          optClass += "border-border bg-muted/50 text-foreground/40";
                         }
                       }
 
@@ -360,7 +360,7 @@ export default function ApmModule() {
                           }
                           className={optClass}
                         >
-                          <span className="font-mono text-white/40 mr-2">
+                          <span className="font-mono text-foreground/40 mr-2">
                             {String.fromCharCode(65 + oi)}.
                           </span>
                           {opt}
@@ -369,13 +369,13 @@ export default function ApmModule() {
                     })}
                   </div>
                   {submitted && (
-                    <p className="text-xs text-white/40">
+                    <p className="text-xs text-foreground/40">
                       {isCorrect ? (
                         <span className="text-emerald-400">✓ Correct</span>
                       ) : (
                         <span className="text-red-400">
                           ✗ Incorrect — correct answer:{" "}
-                          <span className="text-white/60">
+                          <span className="text-foreground/60">
                             {String.fromCharCode(65 + q.ans)}. {q.opts[q.ans]}
                           </span>
                         </span>
@@ -399,11 +399,11 @@ export default function ApmModule() {
 
             {/* Bottom navigation — visible after submitting so user doesn't have to scroll up */}
             {submitted && score !== null && (
-              <div className="flex flex-wrap gap-3 pt-2 border-t border-white/10">
+              <div className="flex flex-wrap gap-3 pt-2 border-t border-border">
                 <Button
                   variant="outline"
                   onClick={handleRetry}
-                  className="border-white/20 text-white/60 hover:text-white bg-transparent"
+                  className="border-border/70 text-foreground/60 hover:text-white bg-transparent"
                 >
                   <RotateCcw className="h-4 w-4 mr-1.5" />
                   Retry Quiz
@@ -429,7 +429,7 @@ export default function ApmModule() {
                 </Button>
                 <Button
                   onClick={() => setLocation(`/qualification-prep/${qualId}`)}
-                  className={`flex-1 font-bold text-white ${
+                  className={`flex-1 font-bold text-foreground ${
                     passed
                       ? "bg-emerald-600 hover:bg-emerald-500"
                       : "bg-white/10 hover:bg-white/20"

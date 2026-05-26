@@ -84,7 +84,7 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#080c14] flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -111,59 +111,59 @@ export default function Profile() {
   const daysRemaining = trialData?.daysRemaining ?? 0;
 
   return (
-    <div className="min-h-screen bg-[#080c14] text-white">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="border-b border-white/5 bg-[#080c14]/90 backdrop-blur-md sticky top-0 z-50">
+      <header className="border-b border-border bg-background/90 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center gap-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setLocation("/dashboard")}
-            className="text-white/60 hover:text-white"
+            className="text-foreground/60 hover:text-white"
           >
             <ArrowLeft className="h-4 w-4 mr-1.5" />
             Back to Dashboard
           </Button>
           <Separator orientation="vertical" className="h-5 bg-white/10" />
-          <h1 className="font-semibold text-white">My Profile</h1>
+          <h1 className="font-semibold text-foreground">My Profile</h1>
         </div>
       </header>
 
       <div className="max-w-4xl mx-auto px-6 py-10 space-y-6">
 
         {/* Account Information */}
-        <Card className="bg-white/5 border-white/10">
+        <Card className="bg-white/5 border-border">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-white">
+            <CardTitle className="flex items-center gap-2 text-foreground">
               <User className="h-5 w-5 text-cyan-400" />
               Account Information
             </CardTitle>
-            <CardDescription className="text-white/50">Your account details and login method.</CardDescription>
+            <CardDescription className="text-foreground/50">Your account details and login method.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <p className="text-xs text-white/40 uppercase tracking-wide">Display Name</p>
-                <p className="text-white font-medium">{(user as any).displayName || (user as any).name || "—"}</p>
+                <p className="text-xs text-foreground/40 uppercase tracking-wide">Display Name</p>
+                <p className="text-foreground font-medium">{(user as any).displayName || (user as any).name || "—"}</p>
               </div>
               <div className="space-y-1">
-                <p className="text-xs text-white/40 uppercase tracking-wide">Username</p>
-                <p className="text-white font-medium">{(user as any).username || "—"}</p>
+                <p className="text-xs text-foreground/40 uppercase tracking-wide">Username</p>
+                <p className="text-foreground font-medium">{(user as any).username || "—"}</p>
               </div>
               <div className="space-y-1">
-                <p className="text-xs text-white/40 uppercase tracking-wide flex items-center gap-1">
+                <p className="text-xs text-foreground/40 uppercase tracking-wide flex items-center gap-1">
                   <Mail className="h-3 w-3" /> Email
                 </p>
-                <p className="text-white font-medium">{(user as any).email || "—"}</p>
+                <p className="text-foreground font-medium">{(user as any).email || "—"}</p>
               </div>
               <div className="space-y-1">
-                <p className="text-xs text-white/40 uppercase tracking-wide flex items-center gap-1">
+                <p className="text-xs text-foreground/40 uppercase tracking-wide flex items-center gap-1">
                   <Calendar className="h-3 w-3" /> Member Since
                 </p>
-                <p className="text-white font-medium">{memberSince}</p>
+                <p className="text-foreground font-medium">{memberSince}</p>
               </div>
               <div className="space-y-1">
-                <p className="text-xs text-white/40 uppercase tracking-wide">Login Method</p>
+                <p className="text-xs text-foreground/40 uppercase tracking-wide">Login Method</p>
                 <div className="flex items-center gap-2">
                   <Badge
                     variant="outline"
@@ -179,7 +179,7 @@ export default function Profile() {
               </div>
               {(user as any).role === "admin" && (
                 <div className="space-y-1">
-                  <p className="text-xs text-white/40 uppercase tracking-wide">Role</p>
+                  <p className="text-xs text-foreground/40 uppercase tracking-wide">Role</p>
                   <Badge variant="outline" className="border-rose-400/30 text-rose-300 bg-rose-400/10">
                     <Shield className="h-3 w-3 mr-1" /> Admin
                   </Badge>
@@ -190,13 +190,13 @@ export default function Profile() {
         </Card>
 
         {/* Subscription Status */}
-        <Card className="bg-white/5 border-white/10">
+        <Card className="bg-white/5 border-border">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-white">
+            <CardTitle className="flex items-center gap-2 text-foreground">
               <CreditCard className="h-5 w-5 text-cyan-400" />
               Subscription
             </CardTitle>
-            <CardDescription className="text-white/50">Your current plan and billing details.</CardDescription>
+            <CardDescription className="text-foreground/50">Your current plan and billing details.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {subLoading ? (
@@ -208,8 +208,8 @@ export default function Profile() {
                 <div className="flex items-center gap-3 p-4 bg-cyan-400/10 border border-cyan-400/20 rounded-xl">
                   <CheckCircle2 className="h-5 w-5 text-cyan-400 flex-shrink-0" />
                   <div>
-                    <p className="font-semibold text-white">Active Subscription</p>
-                    <p className="text-sm text-white/60">
+                    <p className="font-semibold text-foreground">Active Subscription</p>
+                    <p className="text-sm text-foreground/60">
                       {sub?.cancelAtPeriodEnd
                         ? `Cancels on ${renewalDate}`
                         : renewalDate
@@ -229,7 +229,7 @@ export default function Profile() {
                   size="sm"
                   onClick={handleManageBilling}
                   disabled={portalMutation.isPending}
-                  className="border-white/20 text-white/70 hover:text-white hover:border-white/40 bg-transparent"
+                  className="border-border/70 text-foreground/70 hover:text-white hover:border-white/40 bg-transparent"
                 >
                   <ExternalLink className="h-4 w-4 mr-1.5" />
                   {portalMutation.isPending ? "Opening…" : "Manage Billing"}
@@ -240,8 +240,8 @@ export default function Profile() {
                 <div className="flex items-center gap-3 p-4 bg-amber-400/10 border border-amber-400/20 rounded-xl">
                   <Crown className="h-5 w-5 text-amber-400 flex-shrink-0" />
                   <div>
-                    <p className="font-semibold text-white">Free Trial Active</p>
-                    <p className="text-sm text-white/60">
+                    <p className="font-semibold text-foreground">Free Trial Active</p>
+                    <p className="text-sm text-foreground/60">
                       {daysRemaining} day{daysRemaining !== 1 ? "s" : ""} remaining — access to first 6 lessons of Level 1
                     </p>
                   </div>
@@ -249,7 +249,7 @@ export default function Profile() {
                 <Button
                   size="sm"
                   onClick={() => setLocation("/subscribe")}
-                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white border-0"
+                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-foreground border-0"
                 >
                   <Crown className="h-4 w-4 mr-1.5" />
                   Upgrade to Full Access
@@ -260,25 +260,25 @@ export default function Profile() {
                 <div className="flex items-center gap-3 p-4 bg-rose-400/10 border border-rose-400/20 rounded-xl">
                   <AlertCircle className="h-5 w-5 text-rose-400 flex-shrink-0" />
                   <div>
-                    <p className="font-semibold text-white">Trial Expired</p>
-                    <p className="text-sm text-white/60">Subscribe to regain access to all course materials.</p>
+                    <p className="font-semibold text-foreground">Trial Expired</p>
+                    <p className="text-sm text-foreground/60">Subscribe to regain access to all course materials.</p>
                   </div>
                 </div>
                 <Button
                   size="sm"
                   onClick={() => setLocation("/subscribe")}
-                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white border-0"
+                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-foreground border-0"
                 >
                   <Crown className="h-4 w-4 mr-1.5" />
                   Subscribe Now
                 </Button>
               </div>
             ) : (
-              <div className="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-xl">
-                <AlertCircle className="h-5 w-5 text-white/40 flex-shrink-0" />
+              <div className="flex items-center gap-3 p-4 bg-white/5 border border-border rounded-xl">
+                <AlertCircle className="h-5 w-5 text-foreground/40 flex-shrink-0" />
                 <div>
-                  <p className="font-semibold text-white">No Active Subscription</p>
-                  <p className="text-sm text-white/60">Subscribe to access all 7 levels and 168 lessons.</p>
+                  <p className="font-semibold text-foreground">No Active Subscription</p>
+                  <p className="text-sm text-foreground/60">Subscribe to access all 7 levels and 168 lessons.</p>
                 </div>
               </div>
             )}
@@ -287,13 +287,13 @@ export default function Profile() {
 
         {/* Change Password — only for email/password users */}
         {isEmailUser && (
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-white/5 border-border">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
+              <CardTitle className="flex items-center gap-2 text-foreground">
                 <Lock className="h-5 w-5 text-cyan-400" />
                 Change Password
               </CardTitle>
-              <CardDescription className="text-white/50">
+              <CardDescription className="text-foreground/50">
                 Must include uppercase, lowercase, a number, and a special character.
               </CardDescription>
             </CardHeader>
@@ -301,7 +301,7 @@ export default function Profile() {
               <form onSubmit={handleChangePassword} className="space-y-4 max-w-md">
                 {/* Current Password */}
                 <div className="space-y-1.5">
-                  <Label htmlFor="currentPassword" className="text-white/70">Current Password</Label>
+                  <Label htmlFor="currentPassword" className="text-foreground/70">Current Password</Label>
                   <div className="relative">
                     <Input
                       id="currentPassword"
@@ -309,13 +309,13 @@ export default function Profile() {
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
                       required
-                      className="bg-white/5 border-white/10 text-white placeholder:text-white/30 pr-10"
+                      className="bg-white/5 border-border text-foreground placeholder:text-foreground/30 pr-10"
                       placeholder="Enter current password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowCurrent(!showCurrent)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground/70"
                     >
                       {showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -324,7 +324,7 @@ export default function Profile() {
 
                 {/* New Password */}
                 <div className="space-y-1.5">
-                  <Label htmlFor="newPassword" className="text-white/70">New Password</Label>
+                  <Label htmlFor="newPassword" className="text-foreground/70">New Password</Label>
                   <div className="relative">
                     <Input
                       id="newPassword"
@@ -332,13 +332,13 @@ export default function Profile() {
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       required
-                      className="bg-white/5 border-white/10 text-white placeholder:text-white/30 pr-10"
+                      className="bg-white/5 border-border text-foreground placeholder:text-foreground/30 pr-10"
                       placeholder="Enter new password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowNew(!showNew)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground/70"
                     >
                       {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -347,7 +347,7 @@ export default function Profile() {
 
                 {/* Confirm New Password */}
                 <div className="space-y-1.5">
-                  <Label htmlFor="confirmPassword" className="text-white/70">Confirm New Password</Label>
+                  <Label htmlFor="confirmPassword" className="text-foreground/70">Confirm New Password</Label>
                   <div className="relative">
                     <Input
                       id="confirmPassword"
@@ -355,13 +355,13 @@ export default function Profile() {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       required
-                      className="bg-white/5 border-white/10 text-white placeholder:text-white/30 pr-10"
+                      className="bg-white/5 border-border text-foreground placeholder:text-foreground/30 pr-10"
                       placeholder="Confirm new password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirm(!showConfirm)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground/70"
                     >
                       {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -379,7 +379,7 @@ export default function Profile() {
                 <Button
                   type="submit"
                   disabled={changePasswordMutation.isPending}
-                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white border-0"
+                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-foreground border-0"
                 >
                   {changePasswordMutation.isPending ? "Updating…" : "Update Password"}
                 </Button>
@@ -390,15 +390,15 @@ export default function Profile() {
 
         {/* Social login — password change not available */}
         {!isEmailUser && (
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-white/5 border-border">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
-                <Lock className="h-5 w-5 text-white/40" />
+              <CardTitle className="flex items-center gap-2 text-foreground">
+                <Lock className="h-5 w-5 text-foreground/40" />
                 Password
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-white/50">
+              <p className="text-sm text-foreground/50">
                 You signed in with {(user as any).authProvider === "google" ? "Google" : "OAuth"}. Password management is handled by your login provider.
               </p>
             </CardContent>

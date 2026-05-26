@@ -148,7 +148,7 @@ export default function Subscription() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-[#060d1a] flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
       </div>
     );
@@ -158,13 +158,13 @@ export default function Subscription() {
   if (subscription?.hasSubscription && subscription?.subscription?.status === 'active') {
     return (
       <>
-        <div className="min-h-screen bg-[#060d1a] flex items-center justify-center px-4">
+        <div className="min-h-screen bg-background flex items-center justify-center px-4">
           <div className="max-w-md w-full text-center space-y-6">
             <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto">
               <CheckCircle2 className="h-10 w-10 text-green-400" />
             </div>
-            <h1 className="text-3xl font-black text-white">You are a Member</h1>
-            <p className="text-white/50">
+            <h1 className="text-3xl font-black text-foreground">You are a Member</h1>
+            <p className="text-foreground/50">
               Full access is active. Continue your PM career transition journey.
             </p>
             <div className="flex gap-3 justify-center">
@@ -179,14 +179,14 @@ export default function Subscription() {
                 variant="outline"
                 onClick={() => portalMutation.mutate({ returnUrl: window.location.origin + "/dashboard" })}
                 disabled={portalMutation.isPending}
-                className="border-white/20 text-white/60 hover:text-white bg-transparent"
+                className="border-border/70 text-foreground/60 hover:text-white bg-transparent"
               >
                 Manage Billing
               </Button>
             </div>
             <button
               onClick={() => setShowCancellationFlow(true)}
-              className="text-xs text-white/20 hover:text-white/40 transition-colors mt-2"
+              className="text-xs text-foreground/20 hover:text-foreground/40 transition-colors mt-2"
             >
               Cancel membership
             </button>
@@ -211,17 +211,17 @@ export default function Subscription() {
   }
 
   return (
-    <div className="min-h-screen bg-[#060d1a] text-white">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <div className="border-b border-white/5 px-4 py-4">
+      <div className="border-b border-border px-4 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <button
             onClick={() => navigate(isAuthenticated ? "/dashboard" : "/")}
-              className="text-white/60 hover:text-white/80 text-sm transition-colors"
+              className="text-foreground/60 hover:text-foreground/80 text-sm transition-colors"
           >
             ← Back
           </button>
-          <span className="text-white/30 text-xs">Secure checkout powered by Stripe</span>
+          <span className="text-foreground/30 text-xs">Secure checkout powered by Stripe</span>
         </div>
       </div>
 
@@ -248,7 +248,7 @@ export default function Subscription() {
               </>
             )}
           </h1>
-          <p className="text-white/40 text-lg max-w-xl mx-auto">
+          <p className="text-foreground/40 text-lg max-w-xl mx-auto">
             {founderEarned
               ? "Your consistency during the free trial unlocked PM Readiness Member Pricing. This is what commitment looks like."
               : "People do not buy courses. They buy confidence, career progression, and proof of readiness."}
@@ -265,8 +265,8 @@ export default function Subscription() {
               founderEarned ? "cursor-pointer" : "cursor-default",
               selectedTier === "founder" && founderEarned
                 ? "border-cyan-500/60 bg-cyan-950/20 ring-1 ring-cyan-500/30"
-                : "border-white/10 bg-white/[0.02]",
-              founderEarned && selectedTier !== "founder" && "hover:border-white/20",
+                : "border-border bg-muted/50",
+              founderEarned && selectedTier !== "founder" && "hover:border-border/70",
               !founderEarned && "opacity-55"
             )}
             onClick={() => founderEarned && setSelectedTier("founder")}
@@ -279,7 +279,7 @@ export default function Subscription() {
               </div>
             ) : (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <span className="bg-white/10 text-white/40 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1 whitespace-nowrap">
+                <span className="bg-white/10 text-foreground/40 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1 whitespace-nowrap">
                   <Lock className="h-3 w-3" /> Earned by Consistency
                 </span>
               </div>
@@ -293,13 +293,13 @@ export default function Subscription() {
                 </span>
               </div>
               <div className="flex items-end gap-1">
-                <span className="text-4xl font-black text-white">£19</span>
-                <span className="text-white/40 mb-1">/month</span>
+                <span className="text-4xl font-black text-foreground">£19</span>
+                <span className="text-foreground/40 mb-1">/month</span>
               </div>
-              <p className="text-xs text-white/30 mt-1">First 6 months · then £39/month</p>
+              <p className="text-xs text-foreground/30 mt-1">First 6 months · then £39/month</p>
             </div>
 
-            <p className="text-sm text-white/50">
+            <p className="text-sm text-foreground/50">
               {founderEarned
                 ? "You proved your commitment. This is your reward."
                 : "Earned by users who demonstrate consistent engagement during the 7-day free trial."}
@@ -319,7 +319,7 @@ export default function Subscription() {
                 Claim Loyalty Access
               </Button>
             ) : (
-              <div className="text-xs text-white/25 text-center py-2">
+              <div className="text-xs text-foreground/25 text-center py-2">
                 Complete the 7-day trial consistently to unlock
               </div>
             )}
@@ -331,7 +331,7 @@ export default function Subscription() {
               "relative rounded-2xl border p-6 cursor-pointer transition-all duration-200 space-y-5",
               selectedTier === "annual"
                 ? "border-amber-500/60 bg-amber-950/20 ring-1 ring-amber-500/30"
-                : "border-white/10 bg-white/[0.02] hover:border-white/20"
+                : "border-border bg-muted/50 hover:border-border/70"
             )}
             onClick={() => setSelectedTier("annual")}
           >
@@ -349,13 +349,13 @@ export default function Subscription() {
                 </span>
               </div>
               <div className="flex items-end gap-1">
-                <span className="text-4xl font-black text-white">£197</span>
-                <span className="text-white/40 mb-1">/year</span>
+                <span className="text-4xl font-black text-foreground">£197</span>
+                <span className="text-foreground/40 mb-1">/year</span>
               </div>
-              <p className="text-xs text-white/30 mt-1">£16.42/month · save £271 vs monthly</p>
+              <p className="text-xs text-foreground/30 mt-1">£16.42/month · save £271 vs monthly</p>
             </div>
 
-            <p className="text-sm text-white/50">
+            <p className="text-sm text-foreground/50">
               For professionals committed to completing their full career transition. The most serious choice.
             </p>
 
@@ -366,7 +366,7 @@ export default function Subscription() {
                 "w-full font-black",
                 selectedTier === "annual"
                   ? "bg-amber-500 hover:bg-amber-400 text-black"
-                  : "bg-white/10 hover:bg-white/15 text-white"
+                  : "bg-white/10 hover:bg-white/15 text-foreground"
               )}
             >
               {checkoutMutation.isPending ? (
@@ -382,26 +382,26 @@ export default function Subscription() {
             className={cn(
               "relative rounded-2xl border p-6 cursor-pointer transition-all duration-200 space-y-5",
               selectedTier === "standard"
-                ? "border-white/30 bg-white/[0.04] ring-1 ring-white/20"
-                : "border-white/10 bg-white/[0.02] hover:border-white/20"
+                ? "border-white/30 bg-muted/70 ring-1 ring-white/20"
+                : "border-border bg-muted/50 hover:border-border/70"
             )}
             onClick={() => setSelectedTier("standard")}
           >
             <div className="pt-2">
               <div className="flex items-center gap-2 mb-1">
-                <TrendingUp className="h-4 w-4 text-white/50" />
-                <span className="text-xs uppercase tracking-widest text-white/30 font-semibold">
+                <TrendingUp className="h-4 w-4 text-foreground/50" />
+                <span className="text-xs uppercase tracking-widest text-foreground/30 font-semibold">
                   Standard Professional
                 </span>
               </div>
               <div className="flex items-end gap-1">
-                <span className="text-4xl font-black text-white">£39</span>
-                <span className="text-white/40 mb-1">/month</span>
+                <span className="text-4xl font-black text-foreground">£39</span>
+                <span className="text-foreground/40 mb-1">/month</span>
               </div>
-              <p className="text-xs text-white/30 mt-1">Full access · cancel anytime</p>
+              <p className="text-xs text-foreground/30 mt-1">Full access · cancel anytime</p>
             </div>
 
-            <p className="text-sm text-white/50">
+            <p className="text-sm text-foreground/50">
               Full platform access. The standard rate for professionals ready to invest in their career transition.
             </p>
 
@@ -412,8 +412,8 @@ export default function Subscription() {
               className={cn(
                 "w-full font-bold bg-transparent",
                 selectedTier === "standard"
-                  ? "border-white/30 text-white hover:bg-white/5"
-                  : "border-white/10 text-white/50 hover:border-white/20 hover:text-white/70"
+                  ? "border-white/30 text-foreground hover:bg-white/5"
+                  : "border-border text-foreground/50 hover:border-border/70 hover:text-foreground/70"
               )}
             >
               {checkoutMutation.isPending ? (
@@ -427,21 +427,21 @@ export default function Subscription() {
         {/* What's included */}
         <div className="space-y-8">
           <div className="text-center">
-            <h2 className="text-2xl font-black text-white">Everything included in every plan</h2>
-            <p className="text-white/40 mt-2">No tiers within tiers. Full access, always.</p>
+            <h2 className="text-2xl font-black text-foreground">Everything included in every plan</h2>
+            <p className="text-foreground/40 mt-2">No tiers within tiers. Full access, always.</p>
           </div>
           <div className="grid sm:grid-cols-2 gap-3 max-w-2xl mx-auto">
             {FEATURES_ALL.map((feature) => (
               <div key={feature} className="flex items-start gap-3">
                 <CheckCircle2 className="h-4 w-4 text-cyan-400 flex-shrink-0 mt-0.5" />
-                <span className="text-sm text-white/60">{feature}</span>
+                <span className="text-sm text-foreground/60">{feature}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Trust signals */}
-        <div className="grid sm:grid-cols-3 gap-6 border-y border-white/5 py-10">
+        <div className="grid sm:grid-cols-3 gap-6 border-y border-border py-10">
           {[
             {
               icon: <Shield className="h-5 w-5 text-cyan-400" />,
@@ -462,8 +462,8 @@ export default function Subscription() {
             <div key={item.title} className="flex gap-4">
               <div className="flex-shrink-0 mt-0.5">{item.icon}</div>
               <div>
-                <p className="text-sm font-semibold text-white/70">{item.title}</p>
-                <p className="text-xs text-white/30 mt-1">{item.desc}</p>
+                <p className="text-sm font-semibold text-foreground/70">{item.title}</p>
+                <p className="text-xs text-foreground/30 mt-1">{item.desc}</p>
               </div>
             </div>
           ))}
@@ -471,27 +471,27 @@ export default function Subscription() {
 
         {/* FAQ */}
         <div className="space-y-4 max-w-2xl mx-auto">
-          <h2 className="text-2xl font-black text-white text-center">Common questions</h2>
+          <h2 className="text-2xl font-black text-foreground text-center">Common questions</h2>
           <div className="space-y-2">
             {FAQS.map((faq, i) => (
               <div
                 key={i}
-                className="border border-white/8 rounded-xl overflow-hidden"
+                className="border border-border rounded-xl overflow-hidden"
               >
                 <button
                   className="w-full flex items-center justify-between px-5 py-4 text-left"
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 >
-                  <span className="text-sm font-semibold text-white/70">{faq.q}</span>
+                  <span className="text-sm font-semibold text-foreground/70">{faq.q}</span>
                   {openFaq === i ? (
-                    <ChevronUp className="h-4 w-4 text-white/30 flex-shrink-0" />
+                    <ChevronUp className="h-4 w-4 text-foreground/30 flex-shrink-0" />
                   ) : (
-                    <ChevronDown className="h-4 w-4 text-white/30 flex-shrink-0" />
+                    <ChevronDown className="h-4 w-4 text-foreground/30 flex-shrink-0" />
                   )}
                 </button>
                 {openFaq === i && (
                   <div className="px-5 pb-4">
-                    <p className="text-sm text-white/40 leading-relaxed">{faq.a}</p>
+                    <p className="text-sm text-foreground/40 leading-relaxed">{faq.a}</p>
                   </div>
                 )}
               </div>
@@ -501,11 +501,11 @@ export default function Subscription() {
 
         {/* Bottom note */}
         <div className="text-center space-y-2 pb-8">
-          <p className="text-white/20 text-sm">
+          <p className="text-foreground/20 text-sm">
             Test payments: use card{" "}
-            <span className="font-mono text-white/30">4242 4242 4242 4242</span>
+            <span className="font-mono text-foreground/30">4242 4242 4242 4242</span>
           </p>
-          <p className="text-white/15 text-xs">
+          <p className="text-foreground/15 text-xs">
             PM Simulate · UK career transition platform · Powered by Stripe
           </p>
         </div>

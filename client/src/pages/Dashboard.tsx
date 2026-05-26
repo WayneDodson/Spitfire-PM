@@ -90,10 +90,10 @@ function ReadinessRing({ value, label, color }: { value: number; label: string; 
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-2xl font-black text-white">{value}</span>
+          <span className="text-2xl font-black text-foreground">{value}</span>
         </div>
       </div>
-      <span className="text-xs text-white/50 text-center leading-tight">{label}</span>
+      <span className="text-xs text-foreground/50 text-center leading-tight">{label}</span>
     </div>
   );
 }
@@ -185,7 +185,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#080c14] flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400" />
       </div>
     );
@@ -200,14 +200,14 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className="min-h-screen bg-[#080c14] text-white">
+      <div className="min-h-screen bg-background text-foreground">
         {/* Header */}
-        <header className="border-b border-white/5 bg-[#080c14]/90 backdrop-blur-md sticky top-0 z-50">
+        <header className="border-b border-border bg-background/90 backdrop-blur-md sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
-                  <Target className="h-3.5 w-3.5 text-white" />
+                  <Target className="h-3.5 w-3.5 text-foreground" />
                 </div>
                 <span className="font-bold text-base">PM Simulate</span>
               </div>
@@ -216,7 +216,7 @@ export default function Dashboard() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setLocation("/achievements")}
-                  className="text-white/60 hover:text-white"
+                  className="text-foreground/60 hover:text-white"
                 >
                   <Award className="h-4 w-4 mr-1.5" />
                   Achievements
@@ -256,7 +256,7 @@ export default function Dashboard() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setLocation("/glossary")}
-                  className="text-white/60 hover:text-white"
+                  className="text-foreground/60 hover:text-white"
                 >
                   <BookOpen className="h-4 w-4 mr-1.5" />
                   Glossary
@@ -265,7 +265,7 @@ export default function Dashboard() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setLocation("/frameworks")}
-                  className="text-white/60 hover:text-white"
+                  className="text-foreground/60 hover:text-white"
                 >
                   <Layers className="h-4 w-4 mr-1.5" />
                   Frameworks
@@ -278,14 +278,14 @@ export default function Dashboard() {
                 onClick={() => setLocation("/profile")}
                 className="text-sm text-right hidden sm:block hover:opacity-80 transition-opacity cursor-pointer"
               >
-                <p className="font-medium text-white">{user?.displayName || user?.name}</p>
-                <p className="text-white/40 text-xs">{user?.email}</p>
+                <p className="font-medium text-foreground">{user?.displayName || user?.name}</p>
+                <p className="text-foreground/40 text-xs">{user?.email}</p>
               </button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setLocation("/profile")}
-                className="text-white/40 hover:text-white"
+                className="text-foreground/40 hover:text-white"
                 title="My Profile"
               >
                 <User className="h-4 w-4" />
@@ -294,7 +294,7 @@ export default function Dashboard() {
                 variant="ghost"
                 size="sm"
                 onClick={() => logout()}
-                className="text-white/40 hover:text-white"
+                className="text-foreground/40 hover:text-white"
                 title="Sign out"
               >
                 <LogOut className="h-4 w-4" />
@@ -315,7 +315,7 @@ export default function Dashboard() {
                   {firstName}
                   {completedLevels > 0 ? ` — you're building proof.` : ` — let's start building proof.`}
                 </h2>
-                <p className="text-white/60 italic text-sm">"{motivationalMsg}"</p>
+                <p className="text-foreground/60 italic text-sm">"{motivationalMsg}"</p>
               </div>
               <div className="flex-shrink-0">
                 <XPProgressBar />
@@ -326,12 +326,12 @@ export default function Dashboard() {
           {/* Readiness + Confidence rings */}
           <div className="grid md:grid-cols-2 gap-5">
             {/* Confidence Score */}
-            <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6">
+            <div className="bg-muted/60 border border-border rounded-2xl p-6">
               <div className="flex items-start justify-between mb-5">
                 <div>
-                  <p className="text-xs text-white/40 uppercase tracking-widest mb-1">Confidence Score</p>
+                  <p className="text-xs text-foreground/40 uppercase tracking-widest mb-1">Confidence Score</p>
                   <h3 className="text-lg font-bold">How ready do you feel?</h3>
-                  <p className="text-white/50 text-sm mt-1">
+                  <p className="text-foreground/50 text-sm mt-1">
                     Built from your simulation performance and progress.
                   </p>
                 </div>
@@ -342,11 +342,11 @@ export default function Dashboard() {
                 <div className="flex-1">
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-white/50">Levels completed</span>
-                      <span className="text-white font-medium">{completedLevels} / {totalLevels}</span>
+                      <span className="text-foreground/50">Levels completed</span>
+                      <span className="text-foreground font-medium">{completedLevels} / {totalLevels}</span>
                     </div>
                     <Progress value={overallProgress} className="h-1.5 bg-white/10" />
-                    <p className="text-xs text-white/30">
+                    <p className="text-xs text-foreground/30">
                       {confidenceScore < 40
                         ? "Keep going — confidence builds with every scenario."
                         : confidenceScore < 70
@@ -359,12 +359,12 @@ export default function Dashboard() {
             </div>
 
             {/* Interview Readiness */}
-            <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6">
+            <div className="bg-muted/60 border border-border rounded-2xl p-6">
               <div className="flex items-start justify-between mb-5">
                 <div>
-                  <p className="text-xs text-white/40 uppercase tracking-widest mb-1">Interview Readiness</p>
+                  <p className="text-xs text-foreground/40 uppercase tracking-widest mb-1">Interview Readiness</p>
                   <h3 className="text-lg font-bold">Before you walk into the room…</h3>
-                  <p className="text-white/50 text-sm mt-1">
+                  <p className="text-foreground/50 text-sm mt-1">
                     Know exactly how prepared you are before the interview.
                   </p>
                 </div>
@@ -395,7 +395,7 @@ export default function Dashboard() {
                           <div className="w-1.5 h-1.5 rounded-full bg-white/20" />
                         )}
                       </div>
-                      <span className={done ? "text-white/70" : "text-white/30"}>{label}</span>
+                      <span className={done ? "text-foreground/70" : "text-foreground/30"}>{label}</span>
                     </div>
                   ))}
                 </div>
@@ -405,27 +405,27 @@ export default function Dashboard() {
 
           {/* Quick stats row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4">
+            <div className="bg-muted/60 border border-border rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <TrendingUp className="h-4 w-4 text-cyan-400" />
-                <p className="text-xs text-white/40 uppercase tracking-widest">Current Level</p>
+                <p className="text-xs text-foreground/40 uppercase tracking-widest">Current Level</p>
               </div>
               <p className="text-2xl font-black">{Math.round(currentLevelPercent)}%</p>
               <Progress value={currentLevelPercent} className="mt-2 h-1 bg-white/10" />
-              <p className="text-xs text-white/30 mt-1.5">
+              <p className="text-xs text-foreground/30 mt-1.5">
                 {currentLevelProgress
                   ? `Level ${levels?.find((l: any) => l.id === currentLevelProgress.levelId)?.orderIndex || 1} progress`
                   : "Start your first level"}
               </p>
             </div>
 
-            <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4">
+            <div className="bg-muted/60 border border-border rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Flame className="h-4 w-4 text-orange-400" />
-                <p className="text-xs text-white/40 uppercase tracking-widest">Momentum</p>
+                <p className="text-xs text-foreground/40 uppercase tracking-widest">Momentum</p>
               </div>
               <p className="text-2xl font-black">{completedLevels > 0 ? `${completedLevels}` : "0"}</p>
-              <p className="text-xs text-white/30 mt-1.5">
+              <p className="text-xs text-foreground/30 mt-1.5">
                 {completedLevels === 0
                   ? "Complete your first level"
                   : completedLevels === 1
@@ -434,24 +434,24 @@ export default function Dashboard() {
               </p>
             </div>
 
-            <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4">
+            <div className="bg-muted/60 border border-border rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Clock className="h-4 w-4 text-blue-400" />
-                <p className="text-xs text-white/40 uppercase tracking-widest">Time Invested</p>
+                <p className="text-xs text-foreground/40 uppercase tracking-widest">Time Invested</p>
               </div>
               <p className="text-2xl font-black">{completedLevels * 6}h</p>
-              <p className="text-xs text-white/30 mt-1.5">
+              <p className="text-xs text-foreground/30 mt-1.5">
                 {42 - completedLevels * 6}h to full readiness
               </p>
             </div>
 
-            <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4">
+            <div className="bg-muted/60 border border-border rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <CreditCard className="h-4 w-4 text-purple-400" />
-                <p className="text-xs text-white/40 uppercase tracking-widest">Access</p>
+                <p className="text-xs text-foreground/40 uppercase tracking-widest">Access</p>
               </div>
               <p className="text-2xl font-black">{hasActiveSubscription ? "Pro" : "Free"}</p>
-              <p className="text-xs text-white/30 mt-1.5">
+              <p className="text-xs text-foreground/30 mt-1.5">
                 {hasActiveSubscription ? "All 7 levels unlocked" : "Upgrade for Levels 3–7"}
               </p>
             </div>
@@ -462,7 +462,7 @@ export default function Dashboard() {
             <div className={`rounded-2xl p-6 border ${
               trialStatus.founderAccessEarned
                 ? 'bg-cyan-950/30 border-cyan-500/40'
-                : 'bg-white/[0.02] border-white/10'
+                : 'bg-muted/50 border-border'
             }`}>
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-start gap-4">
@@ -477,7 +477,7 @@ export default function Dashboard() {
                     {trialStatus.founderAccessEarned ? (
                       <>
                         <h3 className="font-black text-lg text-cyan-400 mb-1">Loyalty Access Earned</h3>
-                        <p className="text-white/60 text-sm">
+                        <p className="text-foreground/60 text-sm">
                           Your consistency during the free trial unlocked PM Readiness Member Pricing at £19/month.
                           Claim it before your trial ends.
                         </p>
@@ -487,7 +487,7 @@ export default function Dashboard() {
                         <h3 className="font-bold text-lg mb-1">
                           Day {trialStatus.dayNumber} of 7 — Free Trial
                         </h3>
-                        <p className="text-white/50 text-sm">
+                        <p className="text-foreground/50 text-sm">
                           Log in consistently and complete lessons to earn Loyalty Access at £19/month.
                           {trialStatus.activeDays >= 3
                             ? " You're building a strong streak — keep going."
@@ -507,7 +507,7 @@ export default function Dashboard() {
                             />
                           ))}
                         </div>
-                        <p className="text-xs text-white/30 mt-1.5">
+                        <p className="text-xs text-foreground/30 mt-1.5">
                           {trialStatus.activeDays} of 7 days active
                           {trialStatus.activeDays >= 5 ? ' — Loyalty Access threshold reached!' : ` — ${5 - trialStatus.activeDays} more days needed for Loyalty Access`}
                         </p>
@@ -528,7 +528,7 @@ export default function Dashboard() {
                     <Button
                       variant="outline"
                       onClick={() => setLocation('/subscribe')}
-                      className="border-white/20 text-white/60 hover:text-white bg-transparent whitespace-nowrap"
+                      className="border-border/70 text-foreground/60 hover:text-white bg-transparent whitespace-nowrap"
                     >
                       View Plans
                       <ChevronRight className="h-4 w-4 ml-1" />
@@ -549,10 +549,10 @@ export default function Dashboard() {
                   </div>
                   <div>
                     <h3 className="font-bold text-lg mb-1">Unlock Level 2 — free</h3>
-                    <p className="text-white/50 text-sm">
+                    <p className="text-foreground/50 text-sm">
                       Share your link with one person making a career change. When they sign up, Level 2 unlocks for you — no payment needed.
                     </p>
-                    <p className="text-xs text-white/30 mt-1.5">
+                    <p className="text-xs text-foreground/30 mt-1.5">
                       You've referred {referralCount} {referralCount === 1 ? "person" : "people"} so far
                       {referralCount >= 1 ? " — Level 2 is unlocked!" : ""}
                     </p>
@@ -563,7 +563,7 @@ export default function Dashboard() {
                     type="text"
                     value={referralLink}
                     readOnly
-                    className="w-56 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white/60 font-mono"
+                    className="w-56 px-3 py-2 bg-white/5 border border-border rounded-lg text-sm text-foreground/60 font-mono"
                   />
                   <Button
                     onClick={copyReferralLink}
@@ -582,7 +582,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-2xl font-black">Your Simulation Path</h3>
-                <p className="text-white/40 text-sm mt-0.5">
+                <p className="text-foreground/40 text-sm mt-0.5">
                   Each level builds the proof you need to get hired.
                 </p>
               </div>
@@ -609,16 +609,16 @@ export default function Dashboard() {
                 return (
                   <div
                     key={level.id}
-                    className={`relative bg-[#0d1420] border rounded-2xl p-6 transition-all ${
+                    className={`relative bg-card border rounded-2xl p-6 transition-all ${
                       isTrialExpired
                         ? "border-amber-500/20 opacity-70"
                         : isLocked
-                        ? "border-white/5 opacity-50"
+                        ? "border-border opacity-50"
                         : isCompleted
                         ? "border-green-500/30 bg-green-500/5"
                         : isInProgress
                         ? "border-cyan-400/30"
-                        : "border-white/10 hover:border-cyan-400/20"
+                        : "border-border hover:border-cyan-400/20"
                     }`}
                   >
                     {/* Status badge */}
@@ -626,25 +626,25 @@ export default function Dashboard() {
                       {isTrialExpired ? (
                         <Crown className="h-5 w-5 text-amber-500/60" />
                       ) : isLocked ? (
-                        <Lock className="h-5 w-5 text-white/20" />
+                        <Lock className="h-5 w-5 text-foreground/20" />
                       ) : isCompleted ? (
                         <CheckCircle2 className="h-5 w-5 text-green-400" />
                       ) : isInProgress ? (
                         <Zap className="h-5 w-5 text-cyan-400" />
                       ) : (
-                        <Star className="h-5 w-5 text-white/20" />
+                        <Star className="h-5 w-5 text-foreground/20" />
                       )}
                     </div>
 
-                    <p className="text-xs text-white/30 uppercase tracking-widest mb-1">
+                    <p className="text-xs text-foreground/30 uppercase tracking-widest mb-1">
                       Level {level.orderIndex}
                     </p>
                     <h4 className="font-bold text-lg mb-2 pr-6">{level.title}</h4>
-                    <p className="text-white/50 text-sm leading-relaxed mb-4 line-clamp-2">
+                    <p className="text-foreground/50 text-sm leading-relaxed mb-4 line-clamp-2">
                       {level.description}
                     </p>
 
-                    <div className="flex items-center gap-3 text-xs text-white/30 mb-4">
+                    <div className="flex items-center gap-3 text-xs text-foreground/30 mb-4">
                       <div className="flex items-center gap-1">
                         <Clock className="h-3.5 w-3.5" />
                         {level.estimatedHours}h
@@ -661,7 +661,7 @@ export default function Dashboard() {
 
                     {isInProgress && progress && (
                       <div className="mb-4 space-y-1.5">
-                        <div className="flex justify-between text-xs text-white/40">
+                        <div className="flex justify-between text-xs text-foreground/40">
                           <span>Progress</span>
                           <span>{progress.progressPercent}%</span>
                         </div>
@@ -674,7 +674,7 @@ export default function Dashboard() {
                         isTrialExpired
                           ? "bg-amber-500 hover:bg-amber-400 text-black"
                           : isLocked
-                          ? "bg-white/5 text-white/20 cursor-not-allowed"
+                          ? "bg-white/5 text-foreground/20 cursor-not-allowed"
                           : isCompleted
                           ? "bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500/20"
                           : "bg-cyan-500 hover:bg-cyan-400 text-black"
@@ -732,14 +732,14 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-2xl font-black">Qualification Prep</h3>
-                <p className="text-white/40 text-sm mt-0.5">
+                <p className="text-foreground/40 text-sm mt-0.5">
                   Study for APM PFQ and PMQ with full module content and practice quizzes.
                 </p>
               </div>
               <Button
                 variant="outline"
                 onClick={() => setLocation("/qualification-prep")}
-                className="border-white/20 text-white/60 hover:text-white bg-transparent"
+                className="border-border/70 text-foreground/60 hover:text-white bg-transparent"
               >
                 View All
                 <ChevronRight className="h-4 w-4 ml-1" />
@@ -755,7 +755,7 @@ export default function Dashboard() {
                 </div>
                 <div className="flex-1">
                   <p className="font-semibold text-emerald-200">PFQ — Project Fundamentals</p>
-                  <p className="text-white/40 text-sm">Foundation level · 4 modules · ~12 hours</p>
+                  <p className="text-foreground/40 text-sm">Foundation level · 4 modules · ~12 hours</p>
                 </div>
                 <ChevronRight className="h-4 w-4 text-emerald-400/40 ml-auto" />
               </div>
@@ -768,7 +768,7 @@ export default function Dashboard() {
                 </div>
                 <div className="flex-1">
                   <p className="font-semibold text-blue-200">PMQ — Project Management</p>
-                  <p className="text-white/40 text-sm">Practitioner level · 4 modules · ~20 hours</p>
+                  <p className="text-foreground/40 text-sm">Practitioner level · 4 modules · ~20 hours</p>
                 </div>
                 <ChevronRight className="h-4 w-4 text-blue-400/40 ml-auto" />
               </div>
@@ -788,12 +788,12 @@ export default function Dashboard() {
                 </div>
                 <div className="flex-1">
                   <p className="font-semibold text-purple-200">Mindset Hub</p>
-                  <p className="text-white/40 text-sm">Social media awareness, habit reinforcement, and identity conditioning for your PM transition</p>
+                  <p className="text-foreground/40 text-sm">Social media awareness, habit reinforcement, and identity conditioning for your PM transition</p>
                 </div>
                 <ChevronRight className="h-4 w-4 text-purple-400/40 ml-auto" />
               </div>
               <div
-                className="bg-white/[0.03] border border-white/10 rounded-xl p-5 flex items-center gap-4 cursor-pointer hover:border-cyan-400/20 transition-colors"
+                className="bg-muted/60 border border-border rounded-xl p-5 flex items-center gap-4 cursor-pointer hover:border-cyan-400/20 transition-colors"
                 onClick={() => setLocation("/glossary")}
               >
                 <div className="w-10 h-10 bg-cyan-400/10 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -801,12 +801,12 @@ export default function Dashboard() {
                 </div>
                 <div>
                   <p className="font-semibold">PM Glossary</p>
-                  <p className="text-white/40 text-sm">60+ essential project management terms</p>
+                  <p className="text-foreground/40 text-sm">60+ essential project management terms</p>
                 </div>
-                <ChevronRight className="h-4 w-4 text-white/20 ml-auto" />
+                <ChevronRight className="h-4 w-4 text-foreground/20 ml-auto" />
               </div>
               <div
-                className="bg-white/[0.03] border border-white/10 rounded-xl p-5 flex items-center gap-4 cursor-pointer hover:border-cyan-400/20 transition-colors"
+                className="bg-muted/60 border border-border rounded-xl p-5 flex items-center gap-4 cursor-pointer hover:border-cyan-400/20 transition-colors"
                 onClick={() => setLocation("/frameworks")}
               >
                 <div className="w-10 h-10 bg-cyan-400/10 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -814,9 +814,9 @@ export default function Dashboard() {
                 </div>
                 <div>
                   <p className="font-semibold">Frameworks Reference</p>
-                  <p className="text-white/40 text-sm">Waterfall, Agile, Scrum, PRINCE2 & more</p>
+                  <p className="text-foreground/40 text-sm">Waterfall, Agile, Scrum, PRINCE2 & more</p>
                 </div>
-                <ChevronRight className="h-4 w-4 text-white/20 ml-auto" />
+                <ChevronRight className="h-4 w-4 text-foreground/20 ml-auto" />
               </div>
             </div>
           </div>

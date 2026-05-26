@@ -106,7 +106,7 @@ export function TrialBanner() {
       "border-b transition-all",
       founderEarned
         ? "bg-gradient-to-r from-cyan-950/60 to-blue-950/60 border-cyan-800/40"
-        : "bg-gradient-to-r from-slate-900/80 to-slate-800/80 border-white/5"
+        : "bg-gradient-to-r from-slate-900/80 to-slate-800/80 border-border"
     )}>
       <div className="max-w-6xl mx-auto px-4 py-2.5">
         <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -115,7 +115,7 @@ export function TrialBanner() {
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5">
               <Flame className={cn("h-4 w-4", founderEarned ? "text-cyan-400" : "text-orange-400")} />
-              <span className={cn("text-sm font-bold", founderEarned ? "text-cyan-300" : "text-white")}>
+              <span className={cn("text-sm font-bold", founderEarned ? "text-cyan-300" : "text-foreground")}>
                 Day {trial.dayNumber} of 7
               </span>
             </div>
@@ -163,11 +163,11 @@ export function TrialBanner() {
                 </span>
               </div>
             ) : isNearFounder ? (
-              <span className="text-xs text-white/50">
+              <span className="text-xs text-foreground/50">
                 {FOUNDER_CLOSE_COPY[founderCloseIdx]}
               </span>
             ) : (
-              <span className="text-xs text-white/40">{motivationalCopy}</span>
+              <span className="text-xs text-foreground/40">{motivationalCopy}</span>
             )}
           </div>
 
@@ -175,19 +175,19 @@ export function TrialBanner() {
           <div className="flex items-center gap-3">
             {!founderEarned && (
               <div className="hidden md:flex items-center gap-2">
-                <span className="text-xs text-white/30">Loyalty Access</span>
+                <span className="text-xs text-foreground/30">Loyalty Access</span>
                 <div className="w-20 h-1.5 bg-white/10 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-cyan-500 rounded-full transition-all duration-700"
                     style={{ width: `${trial.founderProgress}%` }}
                   />
                 </div>
-                <span className="text-xs text-white/40">{trial.founderProgress}%</span>
+                <span className="text-xs text-foreground/40">{trial.founderProgress}%</span>
               </div>
             )}
 
             {trial.daysRemaining > 0 && (
-              <span className="text-xs text-white/30">
+              <span className="text-xs text-foreground/30">
                 {trial.daysRemaining} day{trial.daysRemaining !== 1 ? "s" : ""} free remaining
               </span>
             )}

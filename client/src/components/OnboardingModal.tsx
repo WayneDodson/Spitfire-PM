@@ -114,7 +114,7 @@ export function OnboardingModal({ open, onComplete }: OnboardingModalProps) {
   return (
     <Dialog open={open} onOpenChange={() => {}}>
       <DialogContent
-        className="sm:max-w-lg bg-[#0d1420] border border-white/10 text-white p-0 overflow-hidden"
+        className="sm:max-w-lg bg-card border border-border text-foreground p-0 overflow-hidden"
         onInteractOutside={(e) => e.preventDefault()}
       >
         {/* Progress bar */}
@@ -127,7 +127,7 @@ export function OnboardingModal({ open, onComplete }: OnboardingModalProps) {
 
         <div className="p-8">
           {/* Step indicator */}
-          <p className="text-xs text-white/30 uppercase tracking-widest mb-6">
+          <p className="text-xs text-foreground/30 uppercase tracking-widest mb-6">
             Step {step} of {totalSteps}
           </p>
 
@@ -139,13 +139,13 @@ export function OnboardingModal({ open, onComplete }: OnboardingModalProps) {
                   <Target className="h-6 w-6 text-cyan-400" />
                 </div>
                 <h2 className="text-2xl font-black mb-2">Welcome to PM Simulate</h2>
-                <p className="text-white/50 text-sm leading-relaxed">
+                <p className="text-foreground/50 text-sm leading-relaxed">
                   You've taken the first step. Let's personalise your experience so the platform
                   works for your specific career transition.
                 </p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="displayName" className="text-white/70">
+                <Label htmlFor="displayName" className="text-foreground/70">
                   What should we call you?
                 </Label>
                 <Input
@@ -155,9 +155,9 @@ export function OnboardingModal({ open, onComplete }: OnboardingModalProps) {
                   onChange={(e) => setDisplayName(e.target.value)}
                   maxLength={50}
                   autoFocus
-                  className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-cyan-400/50"
+                  className="bg-white/5 border-border text-foreground placeholder:text-foreground/30 focus:border-cyan-400/50"
                 />
-                <p className="text-xs text-white/30">
+                <p className="text-xs text-foreground/30">
                   This is how we'll address you throughout the platform.
                 </p>
               </div>
@@ -180,7 +180,7 @@ export function OnboardingModal({ open, onComplete }: OnboardingModalProps) {
                   <Briefcase className="h-6 w-6 text-cyan-400" />
                 </div>
                 <h2 className="text-2xl font-black mb-2">Where are you coming from?</h2>
-                <p className="text-white/50 text-sm">
+                <p className="text-foreground/50 text-sm">
                   Your background shapes how we frame scenarios and feedback.
                 </p>
               </div>
@@ -192,7 +192,7 @@ export function OnboardingModal({ open, onComplete }: OnboardingModalProps) {
                     className={`text-left px-3 py-2.5 rounded-lg border text-sm transition-all ${
                       currentIndustry === industry
                         ? "border-cyan-400/60 bg-cyan-400/10 text-white"
-                        : "border-white/10 bg-white/[0.02] text-white/50 hover:border-white/20 hover:text-white/70"
+                        : "border-border bg-muted/50 text-foreground/50 hover:border-border/70 hover:text-foreground/70"
                     }`}
                   >
                     {currentIndustry === industry && (
@@ -206,7 +206,7 @@ export function OnboardingModal({ open, onComplete }: OnboardingModalProps) {
                 <Button
                   variant="ghost"
                   onClick={() => setStep(1)}
-                  className="text-white/40 hover:text-white"
+                  className="text-foreground/40 hover:text-white"
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" />
                   Back
@@ -230,13 +230,13 @@ export function OnboardingModal({ open, onComplete }: OnboardingModalProps) {
                   <GraduationCap className="h-6 w-6 text-cyan-400" />
                 </div>
                 <h2 className="text-2xl font-black mb-2">What's your target?</h2>
-                <p className="text-white/50 text-sm">
+                <p className="text-foreground/50 text-sm">
                   Tell us the role you're aiming for and any training you've already completed.
                 </p>
               </div>
 
               <div className="space-y-3">
-                <Label className="text-white/70 text-sm">Target role</Label>
+                <Label className="text-foreground/70 text-sm">Target role</Label>
                 <div className="grid grid-cols-2 gap-2">
                   {TARGET_ROLES.map((role) => (
                     <button
@@ -245,7 +245,7 @@ export function OnboardingModal({ open, onComplete }: OnboardingModalProps) {
                       className={`text-left px-3 py-2.5 rounded-lg border text-sm transition-all ${
                         targetRole === role
                           ? "border-cyan-400/60 bg-cyan-400/10 text-white"
-                          : "border-white/10 bg-white/[0.02] text-white/50 hover:border-white/20 hover:text-white/70"
+                          : "border-border bg-muted/50 text-foreground/50 hover:border-border/70 hover:text-foreground/70"
                       }`}
                     >
                       {targetRole === role && (
@@ -258,7 +258,7 @@ export function OnboardingModal({ open, onComplete }: OnboardingModalProps) {
               </div>
 
               <div className="space-y-3">
-                <Label className="text-white/70 text-sm">Certifications / training completed</Label>
+                <Label className="text-foreground/70 text-sm">Certifications / training completed</Label>
                 <div className="grid grid-cols-2 gap-2">
                   {CERTIFICATIONS.map((cert) => (
                     <button
@@ -267,7 +267,7 @@ export function OnboardingModal({ open, onComplete }: OnboardingModalProps) {
                       className={`text-left px-3 py-2.5 rounded-lg border text-sm transition-all ${
                         selectedCerts.includes(cert)
                           ? "border-cyan-400/60 bg-cyan-400/10 text-white"
-                          : "border-white/10 bg-white/[0.02] text-white/50 hover:border-white/20 hover:text-white/70"
+                          : "border-border bg-muted/50 text-foreground/50 hover:border-border/70 hover:text-foreground/70"
                       }`}
                     >
                       {selectedCerts.includes(cert) && (
@@ -283,7 +283,7 @@ export function OnboardingModal({ open, onComplete }: OnboardingModalProps) {
                 <Button
                   variant="ghost"
                   onClick={() => setStep(2)}
-                  className="text-white/40 hover:text-white"
+                  className="text-foreground/40 hover:text-white"
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" />
                   Back
@@ -307,7 +307,7 @@ export function OnboardingModal({ open, onComplete }: OnboardingModalProps) {
                   <Clock className="h-6 w-6 text-cyan-400" />
                 </div>
                 <h2 className="text-2xl font-black mb-2">When do you want to be ready?</h2>
-                <p className="text-white/50 text-sm">
+                <p className="text-foreground/50 text-sm">
                   This helps us calibrate your readiness tracker and set realistic milestones.
                 </p>
               </div>
@@ -320,15 +320,15 @@ export function OnboardingModal({ open, onComplete }: OnboardingModalProps) {
                     className={`w-full text-left px-4 py-3 rounded-xl border transition-all ${
                       goalTimeline === value
                         ? "border-cyan-400/60 bg-cyan-400/10"
-                        : "border-white/10 bg-white/[0.02] hover:border-white/20"
+                        : "border-border bg-muted/50 hover:border-border/70"
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className={`font-semibold text-sm ${goalTimeline === value ? "text-white" : "text-white/60"}`}>
+                        <p className={`font-semibold text-sm ${goalTimeline === value ? "text-foreground" : "text-foreground/60"}`}>
                           {label}
                         </p>
-                        <p className="text-xs text-white/30 mt-0.5">{desc}</p>
+                        <p className="text-xs text-foreground/30 mt-0.5">{desc}</p>
                       </div>
                       {goalTimeline === value && (
                         <CheckCircle2 className="h-5 w-5 text-cyan-400 flex-shrink-0" />
@@ -342,7 +342,7 @@ export function OnboardingModal({ open, onComplete }: OnboardingModalProps) {
                 <Button
                   variant="ghost"
                   onClick={() => setStep(3)}
-                  className="text-white/40 hover:text-white"
+                  className="text-foreground/40 hover:text-white"
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" />
                   Back

@@ -74,7 +74,7 @@ export default function QualificationModules() {
         <div>
           <button
             onClick={() => setLocation("/qualification-prep")}
-            className="flex items-center gap-1.5 text-white/40 hover:text-white text-sm mb-6 transition-colors"
+            className="flex items-center gap-1.5 text-foreground/40 hover:text-white text-sm mb-6 transition-colors"
           >
             <ChevronLeft className="h-4 w-4" />
             Back to Qualification Prep
@@ -90,7 +90,7 @@ export default function QualificationModules() {
               </div>
               <h1 className="text-2xl font-black">{meta.label}</h1>
               <div className="mt-3">
-                <div className="flex justify-between text-xs text-white/40 mb-1.5">
+                <div className="flex justify-between text-xs text-foreground/40 mb-1.5">
                   <span>Overall Progress</span>
                   <span>{passedCount} / {totalCount} modules passed</span>
                 </div>
@@ -114,8 +114,8 @@ export default function QualificationModules() {
             return (
               <div
                 key={module.id}
-                className={`bg-white/[0.03] border rounded-xl p-5 flex items-center gap-4 cursor-pointer transition-all hover:border-white/20 ${
-                  passed ? "border-emerald-500/30" : "border-white/10"
+                className={`bg-muted/60 border rounded-xl p-5 flex items-center gap-4 cursor-pointer transition-all hover:border-border/70 ${
+                  passed ? "border-emerald-500/30" : "border-border"
                 }`}
                 onClick={() => setLocation(`/qualification-prep/${qualId}/${module.id}`)}
               >
@@ -124,7 +124,7 @@ export default function QualificationModules() {
                   className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 font-black text-lg ${
                     passed
                       ? "bg-emerald-500/20 text-emerald-400"
-                      : "bg-white/5 text-white/40"
+                      : "bg-white/5 text-foreground/40"
                   }`}
                 >
                   {passed ? <CheckCircle2 className="h-5 w-5" /> : module.moduleNumber}
@@ -135,24 +135,24 @@ export default function QualificationModules() {
                   <p className="font-semibold truncate">{module.title}</p>
                   <div className="flex items-center gap-3 mt-1">
                     {module.duration && (
-                      <span className="flex items-center gap-1 text-xs text-white/40">
+                      <span className="flex items-center gap-1 text-xs text-foreground/40">
                         <Clock className="h-3 w-3" />
                         {module.duration}
                       </span>
                     )}
-                    <span className="flex items-center gap-1 text-xs text-white/40">
+                    <span className="flex items-center gap-1 text-xs text-foreground/40">
                       <HelpCircle className="h-3 w-3" />
                       {module.quizCount} quiz questions
                     </span>
                     {module.termCount > 0 && (
-                      <span className="flex items-center gap-1 text-xs text-white/40">
+                      <span className="flex items-center gap-1 text-xs text-foreground/40">
                         <BookOpen className="h-3 w-3" />
                         {module.termCount} key terms
                       </span>
                     )}
                   </div>
                   {attempted && pct !== null && (
-                    <p className="text-xs mt-1.5 text-white/30">
+                    <p className="text-xs mt-1.5 text-foreground/30">
                       Best score: {pct}%{" "}
                       {passed ? (
                         <span className="text-emerald-400">— Passed</span>
@@ -163,7 +163,7 @@ export default function QualificationModules() {
                   )}
                 </div>
 
-                <ChevronRight className="h-4 w-4 text-white/20 flex-shrink-0" />
+                <ChevronRight className="h-4 w-4 text-foreground/20 flex-shrink-0" />
               </div>
             );
           })}
@@ -173,7 +173,7 @@ export default function QualificationModules() {
           <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-5 text-center">
             <CheckCircle2 className="h-8 w-8 text-emerald-400 mx-auto mb-2" />
             <p className="font-bold text-emerald-300">All modules passed!</p>
-            <p className="text-white/50 text-sm mt-1">
+            <p className="text-foreground/50 text-sm mt-1">
               You've completed all {totalCount} modules for this qualification. You're ready to
               book your exam.
             </p>

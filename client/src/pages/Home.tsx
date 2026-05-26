@@ -208,7 +208,7 @@ function Ticker() {
   const doubled = [...TICKER_ITEMS, ...TICKER_ITEMS];
 
   return (
-    <div ref={ref} className="overflow-hidden border-y border-white/5 bg-white/[0.015] py-4">
+    <div ref={ref} className="overflow-hidden border-y border-border bg-muted/40 py-4">
       <div
         className="flex gap-12 whitespace-nowrap"
         style={{ transform: `translateX(-${offset}px)`, willChange: "transform" }}
@@ -216,7 +216,7 @@ function Ticker() {
         {doubled.map((item, i) => (
           <div key={i} className="flex items-center gap-3 flex-shrink-0">
             <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-            <span className="text-sm text-white/40 font-medium">{item}</span>
+            <span className="text-sm text-foreground/40 font-medium">{item}</span>
           </div>
         ))}
       </div>
@@ -226,10 +226,10 @@ function Ticker() {
 
 function StatCard({ value, label, sub }: { value: string; label: string; sub: string }) {
   return (
-    <div className="border border-white/10 rounded-2xl p-6 bg-white/[0.02] text-center group hover:border-cyan-400/20 transition-colors">
-      <p className="text-5xl font-black text-white mb-1 group-hover:text-cyan-400 transition-colors">{value}</p>
-      <p className="text-white font-semibold text-sm mb-1">{label}</p>
-      <p className="text-white/40 text-xs">{sub}</p>
+    <div className="border border-border rounded-2xl p-6 bg-muted/50 text-center group hover:border-cyan-400/20 transition-colors">
+      <p className="text-5xl font-black text-foreground mb-1 group-hover:text-cyan-400 transition-colors">{value}</p>
+      <p className="text-foreground font-semibold text-sm mb-1">{label}</p>
+      <p className="text-foreground/40 text-xs">{sub}</p>
     </div>
   );
 }
@@ -245,10 +245,10 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#06090f] text-white overflow-x-hidden">
+    <div className="min-h-screen sp-page overflow-x-hidden">
 
       {/* ── Navigation ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#06090f]/95 backdrop-blur-md">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b sp-divider sp-nav backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img
@@ -264,13 +264,13 @@ export default function Home() {
             <ThemeToggle />
             <button
               onClick={scrollToHowItWorks}
-              className="hidden md:block text-sm text-white/50 hover:text-white transition-colors"
+              className="hidden md:block text-sm text-foreground/50 hover:text-white transition-colors"
             >
               How it works
             </button>
             <button
               onClick={() => setLocation("/pricing")}
-              className="hidden md:block text-sm text-white/50 hover:text-white transition-colors"
+              className="hidden md:block text-sm text-foreground/50 hover:text-white transition-colors"
             >
               Pricing
             </button>
@@ -288,7 +288,7 @@ export default function Home() {
                   size="sm"
                   variant="ghost"
                   onClick={() => setLocation("/login")}
-                  className="text-white/60 hover:text-white"
+                  className="text-foreground/60 hover:text-white"
                 >
                   Sign In
                 </Button>
@@ -332,8 +332,8 @@ export default function Home() {
           {/* Headline */}
           <div className="text-center max-w-5xl mx-auto mb-8">
             <h1 className="text-5xl sm:text-6xl md:text-8xl font-black tracking-tight leading-[0.95] mb-2">
-              <span className="block text-white">You've done</span>
-              <span className="block text-white">the courses.</span>
+              <span className="block text-foreground">You've done</span>
+              <span className="block text-foreground">the courses.</span>
               <span className="block mt-2 bg-gradient-to-r from-cyan-400 via-blue-300 to-cyan-400 bg-clip-text text-transparent">
                 Now prove it.
               </span>
@@ -342,10 +342,10 @@ export default function Home() {
 
           {/* Sub */}
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <p className="text-xl md:text-2xl text-white/55 leading-relaxed mb-3">
-              Training teaches theory. <strong className="text-white font-semibold">Simulation proves readiness.</strong>
+            <p className="text-xl md:text-2xl text-foreground/55 leading-relaxed mb-3">
+              Training teaches theory. <strong className="text-foreground font-semibold">Simulation proves readiness.</strong>
             </p>
-            <p className="text-base text-white/35 max-w-xl mx-auto">
+            <p className="text-base text-foreground/35 max-w-xl mx-auto">
               The UK platform for career changers, NHS staff, and internal candidates preparing for
               their first PM role — through real scenarios, not revision.
             </p>
@@ -365,7 +365,7 @@ export default function Home() {
               size="lg"
               variant="outline"
               onClick={scrollToHowItWorks}
-              className="text-lg px-10 py-6 border-white/15 text-white/80 hover:bg-white/5 hover:text-white hover:border-white/30 transition-all"
+              className="text-lg px-10 py-6 border-border/60 text-foreground/80 hover:bg-white/5 hover:text-white hover:border-white/30 transition-all"
             >
               See How It Works
             </Button>
@@ -384,10 +384,10 @@ export default function Home() {
       <Ticker />
 
       {/* ── Trust bar ── */}
-      <section className="border-b border-white/5 bg-white/[0.01] py-5 px-6">
+      <section className="border-b border-border bg-muted/30 py-5 px-6">
         <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-center gap-6 md:gap-12">
           {TRUST_SIGNALS.map((signal) => (
-            <div key={signal} className="flex items-center gap-2 text-sm text-white/45">
+            <div key={signal} className="flex items-center gap-2 text-sm text-foreground/45">
               <CheckCircle2 className="h-3.5 w-3.5 text-cyan-400 flex-shrink-0" />
               {signal}
             </div>
@@ -407,41 +407,41 @@ export default function Home() {
                 </p>
               </div>
               <h2 className="text-4xl md:text-5xl font-black leading-[1.1] mb-8">
-                <span className="text-white/50 italic text-3xl block mb-2">&ldquo;</span>
+                <span className="text-foreground/50 italic text-3xl block mb-2">&ldquo;</span>
                 I&apos;ve studied the theory.
                 <br />
-                <span className="text-white/60">But how do I</span>
+                <span className="text-foreground/60">But how do I</span>
                 <br />
                 <span className="text-cyan-400">prove I&apos;m ready?&rdquo;</span>
               </h2>
-              <p className="text-white/55 text-lg leading-relaxed mb-5">
+              <p className="text-foreground/55 text-lg leading-relaxed mb-5">
                 You&apos;ve done the Google PM course. Maybe PRINCE2. Perhaps a Level 4 or 5 qualification.
                 You understand the frameworks. But when the panel asks{" "}
-                <em className="text-white/80 not-italic font-medium">&ldquo;Tell me about a time you managed a difficult stakeholder&hellip;&rdquo;</em>
+                <em className="text-foreground/80 not-italic font-medium">&ldquo;Tell me about a time you managed a difficult stakeholder&hellip;&rdquo;</em>
               </p>
-              <p className="text-white/55 text-lg leading-relaxed mb-8">
-                You freeze. Because you&apos;ve <em>studied</em> it — but you&apos;ve never <strong className="text-white font-semibold">done</strong> it.
+              <p className="text-foreground/55 text-lg leading-relaxed mb-8">
+                You freeze. Because you&apos;ve <em>studied</em> it — but you&apos;ve never <strong className="text-foreground font-semibold">done</strong> it.
               </p>
-              <p className="text-white font-semibold text-lg border-l-2 border-cyan-400 pl-4">
+              <p className="text-foreground font-semibold text-lg border-l-2 border-cyan-400 pl-4">
                 Spitfire PM closes that gap through simulation — not more revision.
               </p>
             </div>
 
             {/* Before / After */}
             <div className="space-y-3">
-              <p className="text-white/50 text-xs font-semibold uppercase tracking-widest mb-4 ml-1">What changes</p>
+              <p className="text-foreground/50 text-xs font-semibold uppercase tracking-widest mb-4 ml-1">What changes</p>
               {BEFORE_AFTER.map(({ before, after }, i) => (
                 <div
                   key={i}
-                  className="grid grid-cols-2 gap-0 rounded-xl overflow-hidden border border-white/8"
+                  className="grid grid-cols-2 gap-0 rounded-xl overflow-hidden border border-border"
                 >
-                  <div className="bg-red-950/30 border-r border-white/8 px-4 py-3.5">
+                  <div className="bg-red-950/30 border-r border-border px-4 py-3.5">
                     <span className="text-xs text-red-400 font-medium block mb-1">Before</span>
-                    <span className="text-white/50 text-sm">{before}</span>
+                    <span className="text-foreground/50 text-sm">{before}</span>
                   </div>
                   <div className="bg-cyan-950/20 px-4 py-3.5">
                     <span className="text-xs text-cyan-400/70 font-medium block mb-1">After</span>
-                    <span className="text-white text-sm font-medium">{after}</span>
+                    <span className="text-foreground text-sm font-medium">{after}</span>
                   </div>
                 </div>
               ))}
@@ -451,12 +451,12 @@ export default function Home() {
       </section>
 
       {/* ── How It Works ── */}
-      <section id="how-it-works" className="py-28 px-6 bg-white/[0.02] border-y border-white/5">
+      <section id="how-it-works" className="py-28 px-6 bg-muted/50 border-y border-border">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-cyan-400 text-sm font-bold uppercase tracking-widest mb-4">How it works</p>
             <h2 className="text-4xl md:text-5xl font-black mb-4">Simple. Structured. Effective.</h2>
-            <p className="text-white/50 text-lg max-w-xl mx-auto">
+            <p className="text-foreground/50 text-lg max-w-xl mx-auto">
               Four steps from complete beginner to interview-ready.
             </p>
           </div>
@@ -465,21 +465,21 @@ export default function Home() {
             {HOW_IT_WORKS.map(({ step, title, description, icon: Icon }, i) => (
               <div
                 key={step}
-                className="relative bg-[#0b1119] border border-white/8 rounded-2xl p-6 hover:border-cyan-400/25 transition-colors group"
+                className="relative bg-card border border-border rounded-2xl p-6 hover:border-cyan-400/25 transition-colors group"
               >
                 {i < HOW_IT_WORKS.length - 1 && (
                   <div className="hidden lg:block absolute top-8 -right-3 z-10">
-                    <ChevronRight className="h-5 w-5 text-white/20" />
+                    <ChevronRight className="h-5 w-5 text-foreground/20" />
                   </div>
                 )}
                 <div className="flex items-center justify-between mb-5">
-                  <span className="text-4xl font-black text-white/10 leading-none">{step}</span>
+                  <span className="text-4xl font-black text-foreground/10 leading-none">{step}</span>
                   <div className="w-9 h-9 bg-cyan-400/10 rounded-xl flex items-center justify-center group-hover:bg-cyan-400/20 transition-colors">
                     <Icon className="h-4 w-4 text-cyan-400" />
                   </div>
                 </div>
                 <h3 className="font-bold text-base mb-2 group-hover:text-cyan-400 transition-colors">{title}</h3>
-                <p className="text-white/45 text-sm leading-relaxed">{description}</p>
+                <p className="text-foreground/45 text-sm leading-relaxed">{description}</p>
               </div>
             ))}
           </div>
@@ -495,7 +495,7 @@ export default function Home() {
               Level 1 — completely free, always
             </div>
             <h2 className="text-4xl md:text-5xl font-black mb-4">Start today. No risk. No card.</h2>
-            <p className="text-white/50 text-lg max-w-2xl mx-auto">
+            <p className="text-foreground/50 text-lg max-w-2xl mx-auto">
               Everything you need to know if Spitfire PM is right for you — before spending a penny.
             </p>
           </div>
@@ -504,14 +504,14 @@ export default function Home() {
             {FREE_TRIAL_INCLUDES.map(({ icon: Icon, label, detail }) => (
               <div
                 key={label}
-                className="bg-white/[0.02] border border-white/8 rounded-xl p-5 flex gap-4 items-start hover:border-cyan-400/20 hover:bg-white/[0.04] transition-all group"
+                className="bg-muted/50 border border-border rounded-xl p-5 flex gap-4 items-start hover:border-cyan-400/20 hover:bg-muted/70 transition-all group"
               >
                 <div className="w-9 h-9 bg-cyan-400/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-cyan-400/15 transition-colors">
                   <Icon className="h-4 w-4 text-cyan-400" />
                 </div>
                 <div>
-                  <p className="font-semibold text-white text-sm mb-1">{label}</p>
-                  <p className="text-white/35 text-xs leading-relaxed">{detail}</p>
+                  <p className="font-semibold text-foreground text-sm mb-1">{label}</p>
+                  <p className="text-foreground/35 text-xs leading-relaxed">{detail}</p>
                 </div>
               </div>
             ))}
@@ -526,18 +526,18 @@ export default function Home() {
               Claim Your Free Access
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <p className="text-white/25 text-sm mt-4">No credit card · No commitment · Upgrade only when ready</p>
+            <p className="text-foreground/25 text-sm mt-4">No credit card · No commitment · Upgrade only when ready</p>
           </div>
         </div>
       </section>
 
       {/* ── Simulations ── */}
-      <section className="py-28 px-6 bg-white/[0.015] border-y border-white/5">
+      <section className="py-28 px-6 bg-muted/40 border-y border-border">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-cyan-400 text-sm font-bold uppercase tracking-widest mb-4">What you&apos;ll practise</p>
             <h2 className="text-4xl md:text-5xl font-black mb-4">Stop studying. Start performing.</h2>
-            <p className="text-white/50 text-lg max-w-2xl mx-auto">
+            <p className="text-foreground/50 text-lg max-w-2xl mx-auto">
               Every simulation mirrors a real situation you&apos;ll face in the role — and in the interview room.
             </p>
           </div>
@@ -552,7 +552,7 @@ export default function Home() {
                   {sim.tag}
                 </div>
                 <h3 className="font-black text-lg mb-3 group-hover:text-white transition-colors">{sim.title}</h3>
-                <p className="text-white/50 text-sm leading-relaxed">{sim.description}</p>
+                <p className="text-foreground/50 text-sm leading-relaxed">{sim.description}</p>
               </div>
             ))}
           </div>
@@ -570,7 +570,7 @@ export default function Home() {
                 <br />
                 into every step.
               </h2>
-              <p className="text-white/55 text-lg leading-relaxed mb-8">
+              <p className="text-foreground/55 text-lg leading-relaxed mb-8">
                 Positive reinforcement, momentum tracking, and emotional support — not just a test engine.
                 Because getting a PM role is as much psychology as it is knowledge.
               </p>
@@ -580,13 +580,13 @@ export default function Home() {
                   { icon: Target, title: "Interview Readiness", desc: "Know exactly how prepared you are before walking in." },
                   { icon: Flame, title: "Streak & Momentum", desc: "Daily habits build confidence. Confidence gets jobs." },
                 ].map(({ icon: Icon, title, desc }) => (
-                  <div key={title} className="flex gap-4 items-start p-4 rounded-xl border border-white/8 bg-white/[0.02]">
+                  <div key={title} className="flex gap-4 items-start p-4 rounded-xl border border-border bg-muted/50">
                     <div className="w-9 h-9 bg-cyan-400/10 rounded-lg flex items-center justify-center flex-shrink-0">
                       <Icon className="h-4 w-4 text-cyan-400" />
                     </div>
                     <div>
                       <p className="font-bold text-sm mb-1">{title}</p>
-                      <p className="text-white/45 text-xs leading-relaxed">{desc}</p>
+                      <p className="text-foreground/45 text-xs leading-relaxed">{desc}</p>
                     </div>
                   </div>
                 ))}
@@ -594,11 +594,11 @@ export default function Home() {
             </div>
 
             <div className="space-y-3">
-              <p className="text-white/50 text-xs font-semibold uppercase tracking-widest mb-4">What you&apos;ll hear along the way</p>
+              <p className="text-foreground/50 text-xs font-semibold uppercase tracking-widest mb-4">What you&apos;ll hear along the way</p>
               {MENTOR_MESSAGES.map((msg) => (
                 <div
                   key={msg}
-                  className="border border-cyan-400/10 bg-gradient-to-r from-cyan-500/5 to-transparent rounded-xl px-5 py-3.5 text-white/65 text-sm italic"
+                  className="border border-cyan-400/10 bg-gradient-to-r from-cyan-500/5 to-transparent rounded-xl px-5 py-3.5 text-foreground/65 text-sm italic"
                 >
                   &ldquo;{msg}&rdquo;
                 </div>
@@ -609,12 +609,12 @@ export default function Home() {
       </section>
 
       {/* ── Social Proof ── */}
-      <section className="py-28 px-6 bg-white/[0.015] border-y border-white/5">
+      <section className="py-28 px-6 bg-muted/40 border-y border-border">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-cyan-400 text-sm font-bold uppercase tracking-widest mb-4">Real results</p>
             <h2 className="text-4xl md:text-5xl font-black mb-4">Career changers. Real outcomes.</h2>
-            <p className="text-white/45 text-lg max-w-xl mx-auto">
+            <p className="text-foreground/45 text-lg max-w-xl mx-auto">
               From studying theory to landing the role.
             </p>
           </div>
@@ -623,16 +623,16 @@ export default function Home() {
             {TESTIMONIALS.map(({ quote, name, role, stars }) => (
               <div
                 key={name}
-                className="bg-[#0b1119] border border-white/8 rounded-2xl p-6 flex flex-col hover:border-white/15 transition-colors"
+                className="bg-card border border-border rounded-2xl p-6 flex flex-col hover:border-border/60 transition-colors"
               >
                 <div className="flex gap-1 mb-5">
                   {[...Array(stars)].map((_, i) => (
                     <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                   ))}
                 </div>
-                <p className="text-white/65 text-sm leading-relaxed mb-6 flex-1">&ldquo;{quote}&rdquo;</p>
-                <div className="border-t border-white/8 pt-4">
-                  <p className="font-bold text-white text-sm">{name}</p>
+                <p className="text-foreground/65 text-sm leading-relaxed mb-6 flex-1">&ldquo;{quote}&rdquo;</p>
+                <div className="border-t border-border pt-4">
+                  <p className="font-bold text-foreground text-sm">{name}</p>
                   <p className="text-cyan-400/70 text-xs mt-0.5">{role}</p>
                 </div>
               </div>
@@ -647,7 +647,7 @@ export default function Home() {
           <div className="text-center mb-16">
             <p className="text-cyan-400 text-sm font-bold uppercase tracking-widest mb-4">Who it&apos;s for</p>
             <h2 className="text-4xl md:text-5xl font-black mb-4">Built for real career changers.</h2>
-            <p className="text-white/45 text-lg max-w-2xl mx-auto">
+            <p className="text-foreground/45 text-lg max-w-2xl mx-auto">
               Not students. Not graduates. Professionals who&apos;ve done the hard work and need to prove it.
             </p>
           </div>
@@ -656,12 +656,12 @@ export default function Home() {
             {WHO_ITS_FOR.map(({ role, detail }) => (
               <div
                 key={role}
-                className="border border-white/8 bg-white/[0.02] rounded-xl p-5 flex gap-4 items-start hover:border-cyan-400/20 hover:bg-white/[0.04] transition-all"
+                className="border border-border bg-muted/50 rounded-xl p-5 flex gap-4 items-start hover:border-cyan-400/20 hover:bg-muted/70 transition-all"
               >
                 <CheckCircle2 className="h-4 w-4 text-cyan-400 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-bold text-white text-sm mb-1">{role}</p>
-                  <p className="text-white/40 text-xs">{detail}</p>
+                  <p className="font-bold text-foreground text-sm mb-1">{role}</p>
+                  <p className="text-foreground/40 text-xs">{detail}</p>
                 </div>
               </div>
             ))}
@@ -670,25 +670,25 @@ export default function Home() {
       </section>
 
       {/* ── Pricing ── */}
-      <section className="py-28 px-6 bg-white/[0.015] border-y border-white/5">
+      <section className="py-28 px-6 bg-muted/40 border-y border-border">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-cyan-400 text-sm font-bold uppercase tracking-widest mb-4">Simple pricing</p>
             <h2 className="text-4xl md:text-5xl font-black mb-4">Start free. Upgrade when ready.</h2>
-            <p className="text-white/45 text-lg max-w-2xl mx-auto">
+            <p className="text-foreground/45 text-lg max-w-2xl mx-auto">
               Level 1 is always free. No games, no pressure — full platform from £39/month.
             </p>
           </div>
 
           <div className="grid sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
             {/* Free */}
-            <div className="bg-[#0b1119] border border-white/8 rounded-2xl p-7 flex flex-col">
-              <p className="text-white/40 text-xs font-bold uppercase tracking-widest mb-3">Free</p>
+            <div className="bg-card border border-border rounded-2xl p-7 flex flex-col">
+              <p className="text-foreground/40 text-xs font-bold uppercase tracking-widest mb-3">Free</p>
               <p className="text-5xl font-black mb-1">£0</p>
-              <p className="text-white/35 text-sm mb-7">Level 1 — always free</p>
+              <p className="text-foreground/35 text-sm mb-7">Level 1 — always free</p>
               <ul className="space-y-2.5 mb-8 flex-1">
                 {["6 foundation lessons", "2 PM simulations", "Confidence score", "No time limit"].map((f) => (
-                  <li key={f} className="flex items-center gap-2.5 text-sm text-white/55">
+                  <li key={f} className="flex items-center gap-2.5 text-sm text-foreground/55">
                     <CheckCircle2 className="h-3.5 w-3.5 text-cyan-400 flex-shrink-0" />
                     {f}
                   </li>
@@ -696,7 +696,7 @@ export default function Home() {
               </ul>
               <Button
                 variant="outline"
-                className="w-full border-white/15 text-white hover:bg-white/5"
+                className="w-full border-border/60 text-foreground hover:bg-white/5"
                 onClick={() => setLocation("/login")}
               >
                 Start Free
@@ -711,12 +711,12 @@ export default function Home() {
               <p className="text-cyan-400 text-xs font-bold uppercase tracking-widest mb-3">Professional</p>
               <div className="flex items-end gap-1 mb-1">
                 <p className="text-5xl font-black">£39</p>
-                <span className="text-white/35 text-lg mb-1.5">/mo</span>
+                <span className="text-foreground/35 text-lg mb-1.5">/mo</span>
               </div>
-              <p className="text-white/35 text-sm mb-7">Cancel anytime</p>
+              <p className="text-foreground/35 text-sm mb-7">Cancel anytime</p>
               <ul className="space-y-2.5 mb-8 flex-1">
                 {["All 7 levels", "All PM simulations", "AI decision feedback", "PM Readiness Certificate", "Interview toolkit", "Glossary of 200+ terms"].map((f) => (
-                  <li key={f} className="flex items-center gap-2.5 text-sm text-white/65">
+                  <li key={f} className="flex items-center gap-2.5 text-sm text-foreground/65">
                     <CheckCircle2 className="h-3.5 w-3.5 text-cyan-400 flex-shrink-0" />
                     {f}
                   </li>
@@ -731,16 +731,16 @@ export default function Home() {
             </div>
 
             {/* Annual */}
-            <div className="bg-[#0b1119] border border-white/8 rounded-2xl p-7 flex flex-col">
-              <p className="text-white/40 text-xs font-bold uppercase tracking-widest mb-3">Annual</p>
+            <div className="bg-card border border-border rounded-2xl p-7 flex flex-col">
+              <p className="text-foreground/40 text-xs font-bold uppercase tracking-widest mb-3">Annual</p>
               <div className="flex items-end gap-2 mb-1">
                 <p className="text-5xl font-black">£197</p>
                 <span className="text-xs text-green-400 bg-green-400/10 border border-green-400/20 rounded-full px-2 py-1 mb-1.5">Save £271</span>
               </div>
-              <p className="text-white/35 text-sm mb-7">£16.42/month — best value</p>
+              <p className="text-foreground/35 text-sm mb-7">£16.42/month — best value</p>
               <ul className="space-y-2.5 mb-8 flex-1">
                 {["Everything in Professional", "Lowest monthly rate", "12 months full access", "Loyalty access pricing"].map((f) => (
-                  <li key={f} className="flex items-center gap-2.5 text-sm text-white/55">
+                  <li key={f} className="flex items-center gap-2.5 text-sm text-foreground/55">
                     <CheckCircle2 className="h-3.5 w-3.5 text-cyan-400 flex-shrink-0" />
                     {f}
                   </li>
@@ -756,7 +756,7 @@ export default function Home() {
             </div>
           </div>
 
-          <p className="text-center text-white/50 text-sm mt-8">
+          <p className="text-center text-foreground/50 text-sm mt-8">
             Consistent trial users earn <span className="text-cyan-400/60">Loyalty Access at £19/month</span> for the first 6 months — commitment is rewarded, not discounted.
           </p>
         </div>
@@ -776,7 +776,7 @@ export default function Home() {
                 <br />
                 <span className="text-cyan-400">for PM progression.</span>
               </h2>
-              <p className="text-white/55 text-lg leading-relaxed mb-6">
+              <p className="text-foreground/55 text-lg leading-relaxed mb-6">
                 Know which staff are genuinely ready for PM responsibilities. Reduce costly mis-hires.
                 Build internal PM capability with measurable, objective readiness scores.
               </p>
@@ -787,7 +787,7 @@ export default function Home() {
                   "Confidence and competency reporting for line managers",
                   "NHS, local government, housing, and corporate ready",
                 ].map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-white/55 text-sm">
+                  <li key={item} className="flex items-start gap-3 text-foreground/55 text-sm">
                     <CheckCircle2 className="h-4 w-4 text-cyan-400 flex-shrink-0 mt-0.5" />
                     {item}
                   </li>
@@ -810,11 +810,11 @@ export default function Home() {
                 { icon: Trophy, label: "Aligned to APM, PRINCE2 & Agile" },
                 { icon: Clock, label: "Self-paced — fits around shift patterns" },
               ].map(({ icon: Icon, label }) => (
-                <div key={label} className="flex items-center gap-4 border border-white/5 rounded-xl p-4 bg-white/[0.02]">
+                <div key={label} className="flex items-center gap-4 border border-border rounded-xl p-4 bg-muted/50">
                   <div className="w-9 h-9 bg-cyan-400/10 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Icon className="h-4 w-4 text-cyan-400" />
                   </div>
-                  <span className="text-white/70 font-medium text-sm">{label}</span>
+                  <span className="text-foreground/70 font-medium text-sm">{label}</span>
                 </div>
               ))}
             </div>
@@ -828,7 +828,7 @@ export default function Home() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-3xl mx-auto text-center relative">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 text-white/50 text-sm mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-white/5 text-foreground/50 text-sm mb-8">
             <Zap className="h-3.5 w-3.5 text-cyan-400" />
             Level 1 is always free — no credit card required
           </div>
@@ -838,7 +838,7 @@ export default function Home() {
             <br />
             <span className="text-cyan-400">prove you&apos;re ready.</span>
           </h2>
-          <p className="text-white/50 text-lg mb-12 leading-relaxed max-w-xl mx-auto">
+          <p className="text-foreground/50 text-lg mb-12 leading-relaxed max-w-xl mx-auto">
             Real simulations. Real confidence. The only platform built specifically
             for UK career changers getting their first PM role.
           </p>
@@ -850,13 +850,13 @@ export default function Home() {
             Start Proving Readiness — Free
             <ArrowRight className="ml-3 h-6 w-6" />
           </Button>
-          <p className="text-white/25 text-sm mt-6">
+          <p className="text-foreground/25 text-sm mt-6">
             No credit card · Level 1 always free · Cancel anytime · UK platform
           </p>
 
           {/* LinkedIn share nudge */}
           <div className="mt-10 flex items-center justify-center gap-3">
-            <span className="text-white/25 text-xs">Know someone who wants to become a PM?</span>
+            <span className="text-foreground/25 text-xs">Know someone who wants to become a PM?</span>
             <a
               href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://www.spitfire-pm.com')}`}
               target="_blank"
@@ -874,7 +874,7 @@ export default function Home() {
 
       </main>
       {/* ── Footer ── */}
-      <footer className="border-t border-white/5 py-12 px-6 bg-white/[0.01]">
+      <footer className="border-t border-border py-12 px-6 bg-muted/30">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-8 mb-8">
             <div className="flex items-center gap-3">
@@ -883,16 +883,16 @@ export default function Home() {
                 alt="Spitfire PM"
                 className="h-9 w-auto object-contain"
               />
-              <span className="text-white/30 text-xs">UK Career Transition Platform</span>
+              <span className="text-foreground/30 text-xs">UK Career Transition Platform</span>
             </div>
-            <div className="flex flex-wrap justify-center gap-6 text-white/30 text-sm">
+            <div className="flex flex-wrap justify-center gap-6 text-foreground/30 text-sm">
               <a href="mailto:support@spitfireitsolutions.com" className="hover:text-cyan-400 transition-colors">
                 support@spitfireitsolutions.com
               </a>
-              <button onClick={() => setLocation("/login")} className="hover:text-white/60 transition-colors">
+              <button onClick={() => setLocation("/login")} className="hover:text-foreground/60 transition-colors">
                 Sign In
               </button>
-              <button onClick={() => setLocation("/login")} className="hover:text-white/60 transition-colors">
+              <button onClick={() => setLocation("/login")} className="hover:text-foreground/60 transition-colors">
                 Get Started
               </button>
               <a
@@ -906,7 +906,7 @@ export default function Home() {
               </a>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-8 text-center text-white/20 text-xs">
+          <div className="border-t border-border pt-8 text-center text-foreground/20 text-xs">
             Aligned to PRINCE2, APM & Agile standards · GDPR compliant · Built for UK career changers
           </div>
         </div>

@@ -136,18 +136,18 @@ export default function Pricing() {
   }
 
   return (
-    <div className="min-h-screen bg-[#060d1a] text-white">
+    <div className="min-h-screen bg-background text-foreground">
       <PricingSchema />
 
       {/* Nav */}
-      <div className="border-b border-white/5 px-4 py-4">
+      <div className="border-b border-border px-4 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Link href="/">
-            <button className="text-white/60 hover:text-white/80 text-sm transition-colors">
+            <button className="text-foreground/60 hover:text-foreground/80 text-sm transition-colors">
               ← Back to home
             </button>
           </Link>
-          <span className="text-white/30 text-xs hidden sm:block">
+          <span className="text-foreground/30 text-xs hidden sm:block">
             Secure checkout powered by Stripe
           </span>
         </div>
@@ -165,7 +165,7 @@ export default function Pricing() {
             Simple,<br />
             <span className="text-cyan-400">honest pricing</span>
           </h1>
-          <p className="text-white/60 text-lg max-w-xl mx-auto">
+          <p className="text-foreground/60 text-lg max-w-xl mx-auto">
             One platform. Everything you need to go from beginner to job-ready PM. Your commitment during the free trial determines your rate.
           </p>
         </div>
@@ -174,9 +174,9 @@ export default function Pricing() {
         <div className="grid md:grid-cols-3 gap-6">
 
           {/* Loyalty Access */}
-          <div className="relative rounded-2xl border border-white/10 bg-white/[0.02] p-6 space-y-5 opacity-80">
+          <div className="relative rounded-2xl border border-border bg-muted/50 p-6 space-y-5 opacity-80">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-              <span className="bg-white/10 text-white/60 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1 whitespace-nowrap">
+              <span className="bg-white/10 text-foreground/60 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1 whitespace-nowrap">
                 <Lock className="h-3 w-3" /> Earned by Consistency
               </span>
             </div>
@@ -188,17 +188,17 @@ export default function Pricing() {
                 </span>
               </div>
               <div className="flex items-end gap-1">
-                <span className="text-4xl font-black text-white">£19</span>
-                <span className="text-white/50 mb-1">/month</span>
+                <span className="text-4xl font-black text-foreground">£19</span>
+                <span className="text-foreground/50 mb-1">/month</span>
               </div>
-              <p className="text-xs text-white/40 mt-1">First 6 months · then £39/month</p>
+              <p className="text-xs text-foreground/40 mt-1">First 6 months · then £39/month</p>
             </div>
-            <p className="text-sm text-white/60">
+            <p className="text-sm text-foreground/60">
               Earned by users who demonstrate consistent engagement during the 7-day free trial. Log in daily, complete lessons, run simulations.
             </p>
             <Button
               onClick={handleStart}
-              className="w-full bg-white/10 hover:bg-white/15 text-white/80 font-bold"
+              className="w-full bg-white/10 hover:bg-white/15 text-foreground/80 font-bold"
             >
               Start Free Trial
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -220,12 +220,12 @@ export default function Pricing() {
                 </span>
               </div>
               <div className="flex items-end gap-1">
-                <span className="text-4xl font-black text-white">£197</span>
-                <span className="text-white/50 mb-1">/year</span>
+                <span className="text-4xl font-black text-foreground">£197</span>
+                <span className="text-foreground/50 mb-1">/year</span>
               </div>
-              <p className="text-xs text-white/40 mt-1">£16.42/month · save £271 vs monthly</p>
+              <p className="text-xs text-foreground/40 mt-1">£16.42/month · save £271 vs monthly</p>
             </div>
-            <p className="text-sm text-white/60">
+            <p className="text-sm text-foreground/60">
               For professionals committed to completing their full career transition. The most serious choice.
             </p>
             <Button
@@ -238,27 +238,27 @@ export default function Pricing() {
           </div>
 
           {/* Standard */}
-          <div className="relative rounded-2xl border border-white/10 bg-white/[0.02] p-6 space-y-5">
+          <div className="relative rounded-2xl border border-border bg-muted/50 p-6 space-y-5">
             <div className="pt-2">
               <div className="flex items-center gap-2 mb-1">
-                <TrendingUp className="h-4 w-4 text-white/60" />
-                <span className="text-xs uppercase tracking-widest text-white/50 font-semibold">
+                <TrendingUp className="h-4 w-4 text-foreground/60" />
+                <span className="text-xs uppercase tracking-widest text-foreground/50 font-semibold">
                   Standard Professional
                 </span>
               </div>
               <div className="flex items-end gap-1">
-                <span className="text-4xl font-black text-white">£39</span>
-                <span className="text-white/50 mb-1">/month</span>
+                <span className="text-4xl font-black text-foreground">£39</span>
+                <span className="text-foreground/50 mb-1">/month</span>
               </div>
-              <p className="text-xs text-white/40 mt-1">Full access · cancel anytime</p>
+              <p className="text-xs text-foreground/40 mt-1">Full access · cancel anytime</p>
             </div>
-            <p className="text-sm text-white/60">
+            <p className="text-sm text-foreground/60">
               Full platform access. The standard rate for professionals ready to invest in their career transition.
             </p>
             <Button
               onClick={handleStart}
               variant="outline"
-              className="w-full font-bold bg-transparent border-white/20 text-white/60 hover:border-white/30 hover:text-white/80"
+              className="w-full font-bold bg-transparent border-border/70 text-foreground/60 hover:border-white/30 hover:text-foreground/80"
             >
               Start Standard Access
             </Button>
@@ -267,8 +267,8 @@ export default function Pricing() {
 
         {/* Free trial callout */}
         <div className="rounded-2xl border border-cyan-500/20 bg-cyan-950/10 p-8 text-center space-y-4">
-          <h2 className="text-2xl font-black text-white">Start with a free 7-day trial</h2>
-          <p className="text-white/60 max-w-lg mx-auto">
+          <h2 className="text-2xl font-black text-foreground">Start with a free 7-day trial</h2>
+          <p className="text-foreground/60 max-w-lg mx-auto">
             Every new account gets full access to the first 6 lessons of Level 1 and all PM simulations — completely free. No payment required. Your engagement during the trial determines whether you earn Loyalty pricing.
           </p>
           <Button
@@ -284,14 +284,14 @@ export default function Pricing() {
         {/* What's included */}
         <div className="space-y-8">
           <div className="text-center">
-            <h2 className="text-2xl font-black text-white">Everything included in every plan</h2>
-            <p className="text-white/50 mt-2">No tiers within tiers. Full access, always.</p>
+            <h2 className="text-2xl font-black text-foreground">Everything included in every plan</h2>
+            <p className="text-foreground/50 mt-2">No tiers within tiers. Full access, always.</p>
           </div>
           <div className="grid sm:grid-cols-2 gap-3 max-w-2xl mx-auto">
             {FEATURES_ALL.map((feature) => (
               <div key={feature} className="flex items-start gap-3">
                 <CheckCircle2 className="h-4 w-4 text-cyan-400 flex-shrink-0 mt-0.5" />
-                <span className="text-sm text-white/70">{feature}</span>
+                <span className="text-sm text-foreground/70">{feature}</span>
               </div>
             ))}
           </div>
@@ -299,12 +299,12 @@ export default function Pricing() {
 
         {/* FAQs */}
         <div className="space-y-6 max-w-2xl mx-auto">
-          <h2 className="text-2xl font-black text-white text-center">Common questions</h2>
+          <h2 className="text-2xl font-black text-foreground text-center">Common questions</h2>
           <div className="space-y-4">
             {FAQS.map((faq) => (
-              <div key={faq.q} className="border border-white/10 rounded-xl p-5 space-y-2">
-                <h3 className="font-bold text-white">{faq.q}</h3>
-                <p className="text-sm text-white/60 leading-relaxed">{faq.a}</p>
+              <div key={faq.q} className="border border-border rounded-xl p-5 space-y-2">
+                <h3 className="font-bold text-foreground">{faq.q}</h3>
+                <p className="text-sm text-foreground/60 leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>
@@ -312,7 +312,7 @@ export default function Pricing() {
 
         {/* Bottom CTA */}
         <div className="text-center space-y-4 pb-8">
-          <p className="text-white/50 text-sm">
+          <p className="text-foreground/50 text-sm">
             Questions? Email us at{" "}
             <a
               href="mailto:support@spitfireitsolutions.com"

@@ -37,7 +37,7 @@ export function FounderAccessModal({ open, onClose }: FounderAccessModalProps) {
                 <Star className="h-10 w-10 text-cyan-400" />
               </div>
               <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                <CheckCircle2 className="h-4 w-4 text-white" />
+                <CheckCircle2 className="h-4 w-4 text-foreground" />
               </div>
             </div>
           </div>
@@ -47,27 +47,27 @@ export function FounderAccessModal({ open, onClose }: FounderAccessModalProps) {
             <p className="text-xs uppercase tracking-widest text-cyan-400/70 font-semibold">
               Commitment Reward Activated
             </p>
-            <h2 className="text-3xl font-black text-white leading-tight">
+            <h2 className="text-3xl font-black text-foreground leading-tight">
               You Unlocked<br />
               <span className="text-cyan-400">Loyalty Access</span>
             </h2>
-            <p className="text-white/50 text-sm leading-relaxed">
+            <p className="text-foreground/50 text-sm leading-relaxed">
               Your consistency during the free trial has earned you PM Readiness Member Pricing.
               This is not a discount — this is what commitment looks like.
             </p>
           </div>
 
           {/* What they earned */}
-          <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4 text-left space-y-3">
-            <p className="text-xs text-white/40 uppercase tracking-wider">You earned</p>
+          <div className="bg-muted/60 border border-border rounded-xl p-4 text-left space-y-3">
+            <p className="text-xs text-foreground/40 uppercase tracking-wider">You earned</p>
             <div className="flex items-center justify-between">
-              <span className="text-white font-semibold">Loyalty Access</span>
+              <span className="text-foreground font-semibold">Loyalty Access</span>
               <div className="text-right">
                 <span className="text-2xl font-black text-cyan-400">£19</span>
-                <span className="text-white/40 text-sm">/month</span>
+                <span className="text-foreground/40 text-sm">/month</span>
               </div>
             </div>
-            <p className="text-xs text-white/30">
+            <p className="text-xs text-foreground/30">
               First 6 months at Loyalty pricing · then £39/month · cancel anytime
             </p>
             <div className="pt-1 space-y-1.5">
@@ -80,7 +80,7 @@ export function FounderAccessModal({ open, onClose }: FounderAccessModalProps) {
               ].map((item) => (
                 <div key={item} className="flex items-center gap-2">
                   <CheckCircle2 className="h-3.5 w-3.5 text-cyan-400 flex-shrink-0" />
-                  <span className="text-xs text-white/60">{item}</span>
+                  <span className="text-xs text-foreground/60">{item}</span>
                 </div>
               ))}
             </div>
@@ -97,7 +97,7 @@ export function FounderAccessModal({ open, onClose }: FounderAccessModalProps) {
             </Button>
             <button
               onClick={onClose}
-              className="text-xs text-white/25 hover:text-white/40 transition-colors"
+              className="text-xs text-foreground/25 hover:text-foreground/40 transition-colors"
             >
               I'll claim this later
             </button>

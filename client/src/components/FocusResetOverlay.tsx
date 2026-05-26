@@ -203,9 +203,9 @@ export default function FocusResetOverlay({
 
       {/* Top label */}
       <div className="absolute top-8 left-0 right-0 flex justify-center">
-        <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full">
+        <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-border rounded-full">
           <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-          <span className="text-white/50 text-xs font-medium tracking-widest uppercase">
+          <span className="text-foreground/50 text-xs font-medium tracking-widest uppercase">
             Performance Reset
           </span>
         </div>
@@ -215,14 +215,14 @@ export default function FocusResetOverlay({
       {phase === "checkin" && (
         <div className="flex flex-col items-center text-center space-y-8 px-6 max-w-xl w-full">
           <div className="space-y-3">
-            <p className="text-white/30 text-sm font-medium uppercase tracking-widest">
+            <p className="text-foreground/30 text-sm font-medium uppercase tracking-widest">
               20 minutes of focused learning
             </p>
-            <h1 className="text-3xl md:text-4xl font-black text-white leading-tight">
+            <h1 className="text-3xl md:text-4xl font-black text-foreground leading-tight">
               How are you feeling<br />
               <span className="text-cyan-400">right now?</span>
             </h1>
-            <p className="text-white/40 text-sm max-w-sm mx-auto">
+            <p className="text-foreground/40 text-sm max-w-sm mx-auto">
               Your mentor wants to know. Be honest — this shapes your break.
             </p>
           </div>
@@ -233,12 +233,12 @@ export default function FocusResetOverlay({
                 <button
                   key={emotion.id}
                   onClick={() => handleEmotionSelect(emotion.id)}
-                  className="flex flex-col items-center gap-2 p-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-500/40 rounded-2xl transition-all duration-200 group"
+                  className="flex flex-col items-center gap-2 p-4 bg-white/5 hover:bg-white/10 border border-border hover:border-cyan-500/40 rounded-2xl transition-all duration-200 group"
                 >
                   <span className="text-3xl group-hover:scale-110 transition-transform duration-200">
                     {emotion.icon}
                   </span>
-                  <span className="text-white/60 text-xs font-medium">{emotion.label}</span>
+                  <span className="text-foreground/60 text-xs font-medium">{emotion.label}</span>
                 </button>
               ))}
             </div>
@@ -252,7 +252,7 @@ export default function FocusResetOverlay({
                     Your Mentor Says
                   </span>
                 </div>
-                <p className="text-white/80 text-base leading-relaxed">
+                <p className="text-foreground/80 text-base leading-relaxed">
                   {selectedEmotionData?.response}
                 </p>
               </div>
@@ -272,22 +272,22 @@ export default function FocusResetOverlay({
       {phase === "break" && elapsed < BREAK_DURATION && (
         <div className="flex flex-col items-center text-center space-y-10 px-6 max-w-lg">
           <div className="space-y-2">
-            <p className="text-white/30 text-sm font-medium uppercase tracking-widest">
+            <p className="text-foreground/30 text-sm font-medium uppercase tracking-widest">
               Take 60 seconds
             </p>
-            <h1 className="text-4xl md:text-5xl font-black text-white leading-tight">
+            <h1 className="text-4xl md:text-5xl font-black text-foreground leading-tight">
               Reset your body.<br />
               <span className="text-cyan-400">Reset your mind.</span>
             </h1>
           </div>
 
           {/* Active movement prompt */}
-          <div className="w-full bg-white/5 border border-white/10 rounded-2xl p-8 space-y-3">
+          <div className="w-full bg-white/5 border border-border rounded-2xl p-8 space-y-3">
             <span className="text-5xl">{MOVEMENT_PROMPTS[activePrompt].icon}</span>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-2xl font-bold text-foreground">
               {MOVEMENT_PROMPTS[activePrompt].text}
             </p>
-            <p className="text-white/40 text-sm">{MOVEMENT_PROMPTS[activePrompt].sub}</p>
+            <p className="text-foreground/40 text-sm">{MOVEMENT_PROMPTS[activePrompt].sub}</p>
           </div>
 
           {/* Prompt progress dots */}
@@ -311,13 +311,13 @@ export default function FocusResetOverlay({
                 style={{ width: `${breakProgress}%` }}
               />
             </div>
-            <div className="flex justify-between text-xs text-white/25">
+            <div className="flex justify-between text-xs text-foreground/25">
               <span>Reset in progress</span>
               <span>{BREAK_DURATION - elapsed}s remaining</span>
             </div>
           </div>
 
-          <p className="text-white/30 text-sm italic max-w-sm">
+          <p className="text-foreground/30 text-sm italic max-w-sm">
             Your body affects your mind. Reset now so you can return stronger.
           </p>
         </div>
@@ -328,8 +328,8 @@ export default function FocusResetOverlay({
         <div className="flex flex-col items-center text-center space-y-8 px-6">
           <div className="space-y-2">
             <p className="text-cyan-400 text-xl font-bold">{message.headline}</p>
-            <p className="text-white/50 text-sm max-w-xs mx-auto">{message.sub}</p>
-            <p className="text-white/30 text-xs mt-2">{message.cta}</p>
+            <p className="text-foreground/50 text-sm max-w-xs mx-auto">{message.sub}</p>
+            <p className="text-foreground/30 text-xs mt-2">{message.cta}</p>
           </div>
 
           {/* Big countdown number */}
@@ -361,7 +361,7 @@ export default function FocusResetOverlay({
             </svg>
             <span
               className={cn(
-                "text-7xl font-black text-white tabular-nums transition-all duration-300",
+                "text-7xl font-black text-foreground tabular-nums transition-all duration-300",
                 countdownValue <= 3 && "text-cyan-400 scale-110"
               )}
             >
@@ -374,7 +374,7 @@ export default function FocusResetOverlay({
               Let's go. You've got this.
             </p>
           ) : (
-            <p className="text-white/30 text-sm">
+            <p className="text-foreground/30 text-sm">
               Prepare to focus. Your next session begins now.
             </p>
           )}
@@ -386,7 +386,7 @@ export default function FocusResetOverlay({
         {phase !== "checkin" && (
           <button
             onClick={onComplete}
-            className="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white/40 hover:text-white/70 text-sm transition-all"
+            className="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-border rounded-xl text-foreground/40 hover:text-foreground/70 text-sm transition-all"
           >
             Continue early
           </button>
@@ -394,7 +394,7 @@ export default function FocusResetOverlay({
         {skipsRemaining > 0 && (
           <button
             onClick={onSkip}
-            className="px-5 py-2.5 text-white/20 hover:text-white/40 text-sm transition-all"
+            className="px-5 py-2.5 text-foreground/20 hover:text-foreground/40 text-sm transition-all"
           >
             Skip ({skipsRemaining} remaining today)
           </button>
