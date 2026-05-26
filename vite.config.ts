@@ -24,6 +24,48 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    // Raise warning threshold — chunks above this are flagged in build output
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        // Manual chunk splitting: keeps vendor code separate from app code
+        // so browsers can cache React/UI libs independently of app changes
+        manualChunks: {
+          // Core React runtime — changes rarely
+          'vendor-react': ['react', 'react-dom'],
+          // Routing
+          'vendor-router': ['wouter'],
+          // tRPC + React Query — changes rarely
+          'vendor-trpc': [
+            '@trpc/client',
+            '@trpc/react-query',
+            '@trpc/server',
+            '@tanstack/react-query',
+            'superjson',
+          ],
+          // Radix UI / shadcn primitives — large but stable
+          'vendor-ui': [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-select',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-tooltip',
+            '@radix-ui/react-accordion',
+            '@radix-ui/react-popover',
+            '@radix-ui/react-progress',
+            '@radix-ui/react-scroll-area',
+            '@radix-ui/react-separator',
+            '@radix-ui/react-slot',
+            '@radix-ui/react-switch',
+            '@radix-ui/react-label',
+            '@radix-ui/react-checkbox',
+            '@radix-ui/react-avatar',
+          ],
+          // Icons — large bundle, changes rarely
+          'vendor-icons': ['lucide-react'],
+        },
+      },
+    },
   },
   server: {
     host: true,
