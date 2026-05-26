@@ -407,18 +407,20 @@ In 2-3 sentences, explain why this was ${input.chosenScore >= 3 ? "good" : "poor
       }),
     )
     .mutation(async ({ input }) => {
-      const prompt = `The user is preparing for their first PM job interview.
+      const prompt = `The user is preparing for their first PM job interview. Their answer may have been spoken aloud and transcribed, so it may contain informal phrasing, filler words, or minor grammatical errors — ignore these entirely and focus only on the substance.
+
 Question: ${input.question}
 Answer: ${input.answer}
 Coaching focus: ${input.coachingFocus}
 
-Score the answer 0-100 based on STAR structure, specificity, and PM relevance.
-Provide 3-4 sentences of coaching feedback: what they did well, what was vague or missing, and one specific improvement.
+Score the answer 0-100 based solely on: (1) whether the STAR structure is present (Situation, Task, Action, Result), (2) specificity of the example given, and (3) relevance to the PM role. Do NOT deduct marks for grammar, spelling, informal language, or spoken-style phrasing.
+
+Provide 3-4 sentences of coaching feedback: acknowledge what they got right, highlight any missing STAR elements or vague points, and give one concrete improvement tip focused on content — not language quality.
 Return JSON: { "score": <0-100>, "feedback": "<3-4 sentences>" }`;
 
       const response = await invokeLLM({
         messages: [
-          { role: "system", content: "You are an expert PM interview coach. Always return valid JSON." },
+          { role: "system", content: "You are an expert PM interview coach. You evaluate answers on their PM substance and STAR structure only — never on grammar, spelling, or informal language. Always return valid JSON." },
           { role: "user", content: prompt },
         ],
         response_format: {
@@ -454,18 +456,20 @@ Return JSON: { "score": <0-100>, "feedback": "<3-4 sentences>" }`;
       }),
     )
     .mutation(async ({ input }) => {
-      const prompt = `The user is learning project management and has completed a ${input.documentType}.
+      const prompt = `The user is learning project management and has completed a ${input.documentType}. Some fields may have been dictated by voice and transcribed, so informal phrasing or minor grammatical errors may be present — ignore these and focus on the content.
+
 Project brief: ${input.projectBrief}
 Document: ${input.documentText}
 A correct version would include: ${input.rubricFields}
 
-Score the document 0-100 based on completeness, accuracy, and professional quality.
-Provide 3-4 sentences of coaching feedback.
+Score the document 0-100 based on: (1) completeness — are all required elements present, (2) accuracy — does the content reflect sound PM practice, and (3) relevance to the project brief. Do NOT deduct marks for grammar, spelling, or informal language.
+
+Provide 3-4 sentences of coaching feedback: what they included well, what key elements are missing or underdeveloped, and one specific content improvement.
 Return JSON: { "score": <0-100>, "feedback": "<3-4 sentences>" }`;
 
       const response = await invokeLLM({
         messages: [
-          { role: "system", content: "You are an expert PM coach reviewing a student's PM document. Always return valid JSON." },
+          { role: "system", content: "You are an expert PM coach reviewing a student's PM document. You score on content quality and PM accuracy only — never on grammar, spelling, or informal language. Always return valid JSON." },
           { role: "user", content: prompt },
         ],
         response_format: {
