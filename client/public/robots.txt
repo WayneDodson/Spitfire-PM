@@ -1,0 +1,28 @@
+User-agent: *
+Allow: /
+Allow: /pricing
+Allow: /glossary
+Allow: /frameworks
+Allow: /subscribe
+Allow: /login
+Allow: /onboarding
+
+# Block private and authenticated routes
+Disallow: /dashboard
+Disallow: /admin/
+Disallow: /api/
+Disallow: /profile
+Disallow: /level/
+Disallow: /lesson/
+Disallow: /scenario/
+Disallow: /scenarios
+Disallow: /assessment
+Disallow: /learning-path
+Disallow: /tutorial/
+Disallow: /mindset
+Disallow: /achievements
+Disallow: /qualification-prep/
+Disallow: /verify-email
+Disallow: /reset-password
+
+Sitemap: https://www.spitfire-pm.com/sitemap.xml
