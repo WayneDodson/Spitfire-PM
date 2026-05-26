@@ -37,12 +37,14 @@
   <!-- Learning resources (publicly visible, no login required to view) -->
   <url>
     <loc>https://www.spitfire-pm.com/glossary</loc>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
     <loc>https://www.spitfire-pm.com/frameworks</loc>
+    <lastmod>2026-05-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
