@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Lock, Trophy, Flame, Target, Users, Star } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
+import ShareProgress from "@/components/ShareProgress";
 
 export default function Achievements() {
   const { user, isAuthenticated } = useAuth();
@@ -90,13 +91,22 @@ export default function Achievements() {
           </Badge>
         </div>
       </CardHeader>
-      {unlocked && unlockedAt && (
-        <CardContent>
+      <CardContent className="space-y-3">
+        {unlocked && unlockedAt && (
           <p className="text-xs text-muted-foreground">
             Unlocked {new Date(unlockedAt).toLocaleDateString()}
           </p>
-        </CardContent>
-      )}
+        )}
+        {unlocked && (
+          <div className="pt-1 border-t border-border/50">
+            <ShareProgress
+              context="achievement"
+              achievement={`I just earned the "${achievement.title}" badge on Spitfire PM — ${achievement.description}`}
+              compact={false}
+            />
+          </div>
+        )}
+      </CardContent>
     </Card>
   );
 
