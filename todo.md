@@ -447,3 +447,8 @@
 ## Glossary Fixes (May 2026)
 - [x] Fix Glossary category filter bug: "Agile" term was tagged as category "Methodology" so clicking the "Agile" filter showed Backlog first instead of the Agile term; re-tagged "Agile" → category "Agile" and "Waterfall" → category "Waterfall"
 - [x] Add scroll-to-term behaviour: clicking a category chip now scrolls to the first matching term card
+
+## QA Review Fixes (May 2026)
+- [x] Unify OG and Twitter card meta descriptions — use "no credit card required" hook consistently, remove unverified "expert feedback" claim from Twitter card
+- [x] Create public crawlable /pricing page with Schema.org Product/Offer markup
+- [x] Add /pricing to homepage navigation and internal links

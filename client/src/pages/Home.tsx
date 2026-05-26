@@ -268,6 +268,12 @@ export default function Home() {
             >
               How it works
             </button>
+            <button
+              onClick={() => setLocation("/pricing")}
+              className="hidden md:block text-sm text-white/50 hover:text-white transition-colors"
+            >
+              Pricing
+            </button>
             {isAuthenticated ? (
               <Button
                 size="sm"

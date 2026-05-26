@@ -29,6 +29,7 @@ import LevelAssessment from "./pages/LevelAssessment";
 import Profile from "./pages/Profile";
 import QualificationPrep from "./pages/QualificationPrep";
 import QualificationModules from "./pages/QualificationModules";
+import Pricing from "./pages/Pricing";
 import ApmModule from "./pages/ApmModule";
 import { TrialBanner } from "./components/TrialBanner";
 import { FounderAccessModal } from "./components/FounderAccessModal";
@@ -38,10 +39,10 @@ import { trpc } from "./lib/trpc";
 import { useState, useEffect, useRef } from "react";
 
 // Pages where the trial banner should NOT appear
-const BANNER_EXCLUDED_PATHS = ["/", "/login", "/subscribe", "/verify-email", "/forgot-password", "/reset-password"];
+const BANNER_EXCLUDED_PATHS = ["/", "/login", "/subscribe", "/pricing", "/verify-email", "/forgot-password", "/reset-password"];
 
 // Pages where the focus reset system should NOT be active (public/auth pages)
-const FOCUS_RESET_EXCLUDED_PATHS = ["/", "/login", "/subscribe", "/verify-email", "/onboarding", "/forgot-password", "/reset-password"];
+const FOCUS_RESET_EXCLUDED_PATHS = ["/", "/login", "/subscribe", "/pricing", "/verify-email", "/onboarding", "/forgot-password", "/reset-password"];
 
 function TrialAwareLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
@@ -103,6 +104,7 @@ function Router() {
       <Route path="/glossary" component={Glossary} />
       <Route path="/frameworks" component={Frameworks} />
       <Route path="/subscribe" component={Subscription} />
+      <Route path="/pricing" component={Pricing} />
       <Route path="/verify-email" component={VerifyEmail} />
       <Route path="/forgot-password" component={ForgotPassword} />
       <Route path="/reset-password" component={ResetPassword} />
