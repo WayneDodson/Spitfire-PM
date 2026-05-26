@@ -57,7 +57,7 @@ const TICKER_ITEMS = [
 ];
 
 const TRUST_SIGNALS = [
-  "Built for UK career changers",
+  "Built for career changers worldwide",
   "PRINCE2, Agile & APM aligned",
   "NHS & care sector ready",
   "B2B workforce development",
@@ -257,7 +257,7 @@ export default function Home() {
               className="h-10 w-auto object-contain"
             />
             <span className="hidden sm:inline text-xs text-cyan-400 border border-cyan-400/30 rounded-full px-2.5 py-0.5 font-medium">
-              UK Career Transition
+              Spitfire PM
             </span>
           </div>
           <div className="flex items-center gap-3">
@@ -346,7 +346,7 @@ export default function Home() {
               Training teaches theory. <strong className="text-foreground font-semibold">Simulation proves readiness.</strong>
             </p>
             <p className="text-base text-foreground/35 max-w-xl mx-auto">
-              The UK platform for career changers, NHS staff, and internal candidates preparing for
+              The global platform for career changers, NHS staff, and internal candidates preparing for
               their first PM role — through real scenarios, not revision.
             </p>
           </div>
@@ -840,7 +840,7 @@ export default function Home() {
           </h2>
           <p className="text-foreground/50 text-lg mb-12 leading-relaxed max-w-xl mx-auto">
             Real simulations. Real confidence. The only platform built specifically
-            for UK career changers getting their first PM role.
+            for career changers getting their first PM role.
           </p>
           <Button
             size="lg"
@@ -851,7 +851,7 @@ export default function Home() {
             <ArrowRight className="ml-3 h-6 w-6" />
           </Button>
           <p className="text-foreground/25 text-sm mt-6">
-            No credit card · Level 1 always free · Cancel anytime · UK platform
+            No credit card · Level 1 always free · Cancel anytime · Global platform
           </p>
 
           {/* LinkedIn share nudge */}
@@ -883,7 +883,7 @@ export default function Home() {
                 alt="Spitfire PM"
                 className="h-9 w-auto object-contain"
               />
-              <span className="text-foreground/30 text-xs">UK Career Transition Platform</span>
+              <span className="text-foreground/30 text-xs">Spitfire PM Platform</span>
             </div>
             <div className="flex flex-wrap justify-center gap-6 text-foreground/30 text-sm">
               <a href="mailto:support@spitfireitsolutions.com" className="hover:text-cyan-400 transition-colors">
@@ -907,7 +907,7 @@ export default function Home() {
             </div>
           </div>
           <div className="border-t border-border pt-8 text-center text-foreground/20 text-xs">
-            Aligned to PRINCE2, APM & Agile standards · GDPR compliant · Built for UK career changers
+            Aligned to PRINCE2, APM & Agile standards · GDPR compliant · Built for career changers worldwide
           </div>
         </div>
       </footer>

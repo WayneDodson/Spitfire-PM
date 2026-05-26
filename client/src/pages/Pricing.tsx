@@ -64,7 +64,7 @@ function PricingSchema() {
       "@type": "Product",
       name: "Spitfire PM — Project Management Training Platform",
       description:
-        "The UK platform for career changers and NHS staff who want to become project managers. Learn through real simulations, APM qualification prep, and structured 7-level curriculum.",
+        "The global platform for career changers and professionals who want to become project managers. Learn through real simulations, APM qualification prep, and structured 7-level curriculum.",
       url: "https://www.spitfire-pm.com/pricing",
       brand: {
         "@type": "Brand",

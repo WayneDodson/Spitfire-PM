@@ -506,7 +506,7 @@ export default function Subscription() {
             <span className="font-mono text-foreground/30">4242 4242 4242 4242</span>
           </p>
           <p className="text-foreground/15 text-xs">
-            PM Simulate · UK career transition platform · Powered by Stripe
+            Spitfire PM · Global project management platform · Powered by Stripe
           </p>
         </div>
       </div>
