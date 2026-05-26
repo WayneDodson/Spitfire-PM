@@ -76,14 +76,20 @@ export function useVoiceTranscription({ onTranscript, onError }: UseVoiceTranscr
       setState("recording");
     } catch (err: unknown) {
       const isDomException = err instanceof DOMException;
-      const msg =
-        isDomException && err.name === "NotAllowedError"
-          ? "Microphone permission denied. Please allow access and try again."
-          : "Could not access microphone. Please check your device settings.";
+      const isPermissionDenied = isDomException && (err.name === "NotAllowedError" || err.name === "PermissionDeniedError");
+      const isNotFound = isDomException && (err.name === "NotFoundError" || err.name === "DevicesNotFoundError");
+      const msg = isPermissionDenied
+        ? "permission_denied"
+        : isNotFound
+        ? "no_device"
+        : "device_error";
       setErrorMsg(msg);
       setState("error");
       onError?.(msg);
-      setTimeout(() => setState("idle"), 3000);
+      // Only auto-clear non-permission errors — permission errors stay visible until user acts
+      if (!isPermissionDenied) {
+        setTimeout(() => setState("idle"), 4000);
+      }
     }
   }, [transcribeMutation, onError]);
 
@@ -96,7 +102,8 @@ export function useVoiceTranscription({ onTranscript, onError }: UseVoiceTranscr
   const toggleRecording = useCallback(() => {
     if (state === "recording") {
       stopRecording();
-    } else if (state === "idle" || state === "done") {
+    } else if (state === "idle" || state === "done" || state === "error") {
+      setErrorMsg(null);
       startRecording();
     }
   }, [state, startRecording, stopRecording]);

@@ -81,6 +81,53 @@ function MicButton({ state, onClick }: { state: VoiceState; onClick: () => void 
   );
 }
 
+// ─── mic error banner ───────────────────────────────────────────────────────
+
+function MicErrorBanner({ code, onDismiss }: { code: string; onDismiss: () => void }) {
+  const isPermission = code === "permission_denied";
+  const isNoDevice = code === "no_device";
+
+  const title = isPermission
+    ? "Microphone access blocked"
+    : isNoDevice
+    ? "No microphone found"
+    : "Microphone unavailable";
+
+  const body = isPermission ? (
+    <>
+      Your browser has blocked microphone access for this site. To fix this:
+      <ol className="list-decimal list-inside mt-1.5 space-y-0.5">
+        <li>Click the <strong>lock / camera icon</strong> in your browser’s address bar.</li>
+        <li>Set <strong>Microphone</strong> to <strong>Allow</strong>.</li>
+        <li>Refresh the page, then try again.</li>
+      </ol>
+      <p className="mt-1.5 text-xs opacity-75">Alternatively, type your answer directly in the field below.</p>
+    </>
+  ) : isNoDevice ? (
+    <>No microphone was detected. Please plug in a microphone or headset and try again, or type your answer instead.</>
+  ) : (
+    <>Could not access your microphone. Check that no other app is using it, then try again, or type your answer instead.</>
+  );
+
+  return (
+    <div className="flex gap-3 p-3 rounded-lg border border-red-300 bg-red-50 dark:bg-red-950/20 dark:border-red-800 text-sm text-red-700 dark:text-red-400">
+      <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+      <div className="flex-1">
+        <p className="font-semibold">{title}</p>
+        <div className="mt-0.5 leading-relaxed">{body}</div>
+      </div>
+      <button
+        type="button"
+        onClick={onDismiss}
+        className="shrink-0 text-red-400 hover:text-red-600 dark:hover:text-red-300 transition-colors"
+        title="Dismiss"
+      >
+        ✕
+      </button>
+    </div>
+  );
+}
+
 // ─── types ───────────────────────────────────────────────────────────────────
 
 interface BuildField {
@@ -304,10 +351,7 @@ export default function BuildSimPlayer() {
                       )}
                     </div>
                     {micError && activeFieldId === field.id && (
-                      <p className="text-xs text-red-500 flex items-center gap-1">
-                        <AlertCircle className="h-3 w-3" />
-                        {micError}
-                      </p>
+                      <MicErrorBanner code={micError} onDismiss={() => setMicError(null)} />
                     )}
                     {field.type === "textarea" ? (
                       <Textarea
