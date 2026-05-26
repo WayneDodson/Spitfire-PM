@@ -124,7 +124,7 @@ const HOW_IT_WORKS = [
   {
     step: "03",
     title: "Run PM simulations",
-    description: "Real-world scenarios. Your decisions have consequences. AI feedback after every choice.",
+    description: "Real-world scenarios. Your decisions have consequences. AI-powered feedback after every simulation.",
     icon: Brain,
   },
   {
@@ -346,8 +346,8 @@ export default function Home() {
               Training teaches theory. <strong className="text-foreground font-semibold">Simulation proves readiness.</strong>
             </p>
             <p className="text-base text-foreground/35 max-w-xl mx-auto">
-              The global platform for career changers, healthcare professionals, and internal candidates preparing for
-              their first PM role — through real scenarios, not revision.
+              The UK platform for career changers, healthcare professionals, and internal candidates preparing for
+               their first PM role — through real scenarios, not revision.
             </p>
           </div>
 
@@ -638,6 +638,9 @@ export default function Home() {
               </div>
             ))}
           </div>
+          <p className="text-center text-foreground/25 text-xs mt-6">
+            Illustrative examples based on typical user journeys. Individual results vary.
+          </p>
         </div>
       </section>
 
@@ -706,7 +709,7 @@ export default function Home() {
             {/* Professional — featured */}
             <div className="bg-gradient-to-b from-cyan-950/40 to-[#0b1119] border-2 border-cyan-400/35 rounded-2xl p-7 flex flex-col relative shadow-2xl shadow-cyan-500/10">
               <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-cyan-500 text-black text-xs font-black px-4 py-1.5 rounded-full tracking-wide">
-                MOST POPULAR
+                RECOMMENDED
               </div>
               <p className="text-cyan-400 text-xs font-bold uppercase tracking-widest mb-3">Professional</p>
               <div className="flex items-end gap-1 mb-1">
@@ -851,7 +854,7 @@ export default function Home() {
             <ArrowRight className="ml-3 h-6 w-6" />
           </Button>
           <p className="text-foreground/25 text-sm mt-6">
-            No credit card · Level 1 always free · Cancel anytime · Global platform
+            No credit card · Level 1 always free · Cancel anytime · UK-based platform
           </p>
 
           {/* Share nudge */}

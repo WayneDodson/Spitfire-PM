@@ -65,13 +65,13 @@ describe("Registration input validation", () => {
 
   it("accepts valid registration data", () => {
     const result = registerSchema.safeParse({
-      email: "Jenny@Example.com",
+      email: "testuser@Example.com",
       password: "SecurePass1",
-      displayName: "Jenny Smith",
+      displayName: "Test User",
     });
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.email).toBe("jenny@example.com"); // normalised
+      expect(result.data.email).toBe("testuser@example.com"); // normalised
     }
   });
 
@@ -226,9 +226,9 @@ describe("Sensitive field stripping", () => {
   it("strips passwordHash from user object before returning to client", () => {
     const rawUser = {
       id: 1,
-      email: "jenny@example.com",
-      displayName: "Jenny",
-      name: "Jenny",
+      email: "testuser@example.com",
+      displayName: "Test User",
+      name: "Test User",
       passwordHash: "$2b$12$hashedpassword",
       googleId: "google-sub-id",
       openId: "manus-open-id",
