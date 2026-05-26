@@ -65,7 +65,7 @@ const TRUST_SIGNALS = [
 
 const STATS = [
   { value: "7", label: "Structured levels", sub: "from foundation to interview-ready" },
-  { value: "40+", label: "Real PM simulations", sub: "consequence-based decisions" },
+  { value: "100+", label: "Real PM simulations", sub: "consequence-based decisions" },
   { value: "200+", label: "PM terms covered", sub: "in the built-in glossary" },
   { value: "3 mo", label: "To full readiness", sub: "at 2 hours per day" },
 ];
