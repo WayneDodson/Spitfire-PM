@@ -438,7 +438,14 @@ export default function DecisionSimPlayer() {
   if (isLoading) return <BrandedLoader message="Loading simulation..." />;
   if (!simData) return <div className="p-8 text-center text-muted-foreground">Simulation not found.</div>;
 
-  const content = simData.content as any;
+  // content is stored as a JSON string in the DB — parse it before use
+  let content: any;
+  try {
+    content = typeof simData.content === "string" ? JSON.parse(simData.content) : simData.content;
+  } catch {
+    return <div className="p-8 text-center text-muted-foreground">Unable to load simulation content. Please try again.</div>;
+  }
+  if (!content) return <div className="p-8 text-center text-muted-foreground">Simulation content is missing.</div>;
 
   return (
     <div className="min-h-screen bg-background">

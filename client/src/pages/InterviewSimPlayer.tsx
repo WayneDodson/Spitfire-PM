@@ -65,7 +65,18 @@ export default function InterviewSimPlayer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [simData?.id, isAuthenticated]);
 
-  const content = simData?.content as InterviewContent | undefined;
+  // content is stored as a JSON string in the DB — parse it before use
+  const content: InterviewContent | undefined = (() => {
+    if (!simData?.content) return undefined;
+    try {
+      return typeof simData.content === "string"
+        ? (JSON.parse(simData.content) as InterviewContent)
+        : (simData.content as unknown as InterviewContent);
+    } catch {
+      return undefined;
+    }
+  })();
+
   const wc = wordCount(answer);
   const minWords = content?.minWords ?? 80;
   const maxWords = content?.maxWords ?? 400;

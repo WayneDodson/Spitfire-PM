@@ -66,7 +66,17 @@ export default function BuildSimPlayer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [simData?.id, isAuthenticated]);
 
-  const content = simData?.content as BuildContent | undefined;
+  // content is stored as a JSON string in the DB — parse it before use
+  const content: BuildContent | undefined = (() => {
+    if (!simData?.content) return undefined;
+    try {
+      return typeof simData.content === "string"
+        ? (JSON.parse(simData.content) as BuildContent)
+        : (simData.content as unknown as BuildContent);
+    } catch {
+      return undefined;
+    }
+  })();
 
   function setField(id: string, value: string) {
     setFieldValues((prev) => ({ ...prev, [id]: value }));

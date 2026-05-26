@@ -1,9 +1,10 @@
 import { router, protectedProcedure, publicProcedure } from "../_core/trpc";
 import { z } from "zod";
 import { simulations, userSimulationProgress, userStats, xpTransactions } from "../../drizzle/schema";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, inArray } from "drizzle-orm";
 import { invokeLLM } from "../_core/llm";
 import { getDb } from "../db";
+import { getSimulationHintsForLesson } from "../../shared/lessonSimulationMap";
 
 type Db = Exclude<Awaited<ReturnType<typeof getDb>>, null>;
 
@@ -503,4 +504,56 @@ Return JSON: { "score": <0-100>, "feedback": "<3-4 sentences>" }`;
         : 0,
     };
   }),
+
+  /**
+   * Return up to 2 simulations relevant to a given lesson.
+   * Uses the shared lessonSimulationMap to look up simulation titles,
+   * then fetches the matching DB rows so the client gets full simulation data.
+   */
+  getForLesson: publicProcedure
+    .input(z.object({ lessonId: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      const hints = getSimulationHintsForLesson(input.lessonId);
+      if (hints.length === 0) return [];
+
+      const titles = hints.map((h) => h.title);
+      const rows = await db
+        .select()
+        .from(simulations)
+        .where(inArray(simulations.title, titles));
+
+      // Attach user progress if authenticated
+      let progressMap = new Map<number, typeof userSimulationProgress.$inferSelect>();
+      if (ctx.user) {
+        const progressRows = await db
+          .select()
+          .from(userSimulationProgress)
+          .where(
+            and(
+              eq(userSimulationProgress.userId, ctx.user.id),
+              inArray(
+                userSimulationProgress.simulationId,
+                rows.map((r) => r.id),
+              ),
+            ),
+          );
+        progressMap = new Map(progressRows.map((p) => [p.simulationId, p]));
+      }
+
+      // Preserve the hint order and attach the prompt text
+      return hints
+        .map((hint) => {
+          const sim = rows.find((r) => r.title === hint.title);
+          if (!sim) return null;
+          return {
+            ...sim,
+            prompt: hint.prompt,
+            userProgress: progressMap.get(sim.id) ?? null,
+          };
+        })
+        .filter(Boolean);
+    }),
 });
