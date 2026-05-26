@@ -213,6 +213,15 @@ export default function Dashboard() {
                 <Button
                   variant="ghost"
                   size="sm"
+                  onClick={() => setLocation("/simulations")}
+                  className="text-amber-400/70 hover:text-amber-300"
+                >
+                  <Zap className="h-4 w-4 mr-1.5" />
+                  Simulations
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setLocation("/achievements")}
                   className="text-foreground/60 hover:text-white"
                 >

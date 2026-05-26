@@ -470,3 +470,18 @@
 - [ ] Build reusable ShareProgress component (X, LinkedIn, WhatsApp, Facebook)
 - [ ] Add ShareProgress to Dashboard referral section (authenticated users only)
 - [ ] Add ShareProgress after each completed level/section
+
+## Simulation Hub (Full Build)
+- [x] Add simulations and userSimulationProgress tables to drizzle schema
+- [x] Push schema to database (pnpm db:push)
+- [x] Build simulationsRouter with list, get, start, complete, stats, getDecisionFeedback, scoreInterview, reviewBuildDoc procedures
+- [x] Register simulationsRouter in main appRouter
+- [x] Seed 50 simulations (40 curriculum + 10 interview bank) across 7 levels
+- [x] Build SimulationHub page with type/difficulty/category filters and grouped simulation cards
+- [x] Build DecisionSimPlayer page with AI feedback after each choice
+- [x] Build FullProjectView (multi-stage) inside DecisionSimPlayer
+- [x] Build InterviewSimPlayer page with STAR word-count guidance and AI scoring
+- [x] Build BuildSimPlayer page with structured document fields and AI review
+- [x] Add /simulations, /simulations/decision/:id, /simulations/interview/:id, /simulations/build/:id routes to App.tsx
+- [x] Add Simulations nav link to Dashboard header
+- [x] ShareProgress component wired into all three completion screens

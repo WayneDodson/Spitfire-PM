@@ -524,3 +524,66 @@ export const apmModuleProgress = mysqlTable("apmModuleProgress", {
 
 export type ApmModuleProgress = typeof apmModuleProgress.$inferSelect;
 export type InsertApmModuleProgress = typeof apmModuleProgress.$inferInsert;
+
+/**
+ * Simulations — the core product differentiator.
+ * Four types: decision_sim, interview_sim, build_sim, full_project
+ */
+export const simulations = mysqlTable("simulations", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Level this simulation belongs to (1–7) */
+  levelId: int("levelId").notNull(),
+  /** Display title */
+  title: varchar("title", { length: 255 }).notNull(),
+  /** Short description shown on the card */
+  description: text("description").notNull(),
+  /** Simulation type */
+  type: mysqlEnum("type", ["decision_sim", "interview_sim", "build_sim", "full_project"]).notNull(),
+  /** Difficulty tier */
+  difficulty: mysqlEnum("difficulty", ["beginner", "intermediate", "advanced"]).notNull(),
+  /** Category tag shown on card */
+  categoryTag: mysqlEnum("categoryTag", ["high_impact", "interview_favourite", "common_scenario", "confidence_builder", "exam_prep"]).notNull(),
+  /** Estimated minutes to complete */
+  estimatedMinutes: int("estimatedMinutes").notNull(),
+  /** Free (Level 1) or Pro required */
+  accessType: mysqlEnum("accessType", ["free", "pro"]).notNull().default("pro"),
+  /** Full simulation content — JSON structure varies by type */
+  content: text("content").notNull(),
+  /** Display order within level */
+  orderIndex: int("orderIndex").notNull(),
+  /** Whether this is part of the standalone interview bank */
+  isInterviewBank: boolean("isInterviewBank").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Simulation = typeof simulations.$inferSelect;
+export type InsertSimulation = typeof simulations.$inferInsert;
+
+/**
+ * User simulation progress — tracks attempts and scores per simulation
+ */
+export const userSimulationProgress = mysqlTable("userSimulationProgress", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  simulationId: int("simulationId").notNull(),
+  /** Current status */
+  status: mysqlEnum("status", ["not_started", "in_progress", "completed"]).default("not_started").notNull(),
+  /** Best score achieved (0–100 normalised) */
+  bestScore: int("bestScore"),
+  /** Latest score */
+  latestScore: int("latestScore"),
+  /** Number of attempts */
+  attempts: int("attempts").default(0).notNull(),
+  /** Saved mid-simulation state (JSON) — for Full Project resume */
+  savedState: text("savedState"),
+  /** AI feedback from the last attempt (JSON) */
+  lastFeedback: text("lastFeedback"),
+  startedAt: timestamp("startedAt"),
+  completedAt: timestamp("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserSimulationProgress = typeof userSimulationProgress.$inferSelect;
+export type InsertUserSimulationProgress = typeof userSimulationProgress.$inferInsert;

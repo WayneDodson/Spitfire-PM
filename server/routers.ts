@@ -3,6 +3,7 @@ import { stripeRouter } from "./routers/stripe";
 import { cancellationRouter } from "./routers/cancellation";
 import { apmRouter } from "./routers/apm";
 import { adminQuestionsRouter } from "./routers/adminQuestions";
+import { simulationsRouter } from "./routers/simulations";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
@@ -19,6 +20,7 @@ export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
   apm: apmRouter,
+  simulations: simulationsRouter,
   adminQuestions: adminQuestionsRouter,
   auth: router({
     me: publicProcedure.query(opts => {

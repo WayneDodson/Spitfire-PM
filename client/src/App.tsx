@@ -31,6 +31,10 @@ import QualificationPrep from "./pages/QualificationPrep";
 import QualificationModules from "./pages/QualificationModules";
 import Pricing from "./pages/Pricing";
 import ApmModule from "./pages/ApmModule";
+import SimulationHub from "./pages/SimulationHub";
+import DecisionSimPlayer from "./pages/DecisionSimPlayer";
+import InterviewSimPlayer from "./pages/InterviewSimPlayer";
+import BuildSimPlayer from "./pages/BuildSimPlayer";
 import { TrialBanner } from "./components/TrialBanner";
 import { FounderAccessModal } from "./components/FounderAccessModal";
 import FocusResetProvider from "./components/FocusResetProvider";
@@ -116,6 +120,10 @@ function Router() {
       <Route path="/qualification-prep" component={QualificationPrep} />
       <Route path="/qualification-prep/:qualId" component={QualificationModules} />
       <Route path="/qualification-prep/:qualId/:moduleId" component={ApmModule} />
+      <Route path="/simulations" component={SimulationHub} />
+      <Route path="/simulations/decision/:id" component={DecisionSimPlayer} />
+      <Route path="/simulations/interview/:id" component={InterviewSimPlayer} />
+      <Route path="/simulations/build/:id" component={BuildSimPlayer} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
