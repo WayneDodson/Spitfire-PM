@@ -587,3 +587,39 @@ export const userSimulationProgress = mysqlTable("userSimulationProgress", {
 
 export type UserSimulationProgress = typeof userSimulationProgress.$inferSelect;
 export type InsertUserSimulationProgress = typeof userSimulationProgress.$inferInsert;
+
+/**
+ * Brain Snap question bank — thought-provoking questions shown as interstitials
+ * after ~20 minutes of active learning.
+ */
+export const brainSnapQuestions = mysqlTable("brainSnapQuestions", {
+  id: int("id").autoincrement().primaryKey(),
+  /** The question text */
+  question: text("question").notNull(),
+  /** JSON array of option objects: [{ id: "A", text: "..." }, ...] */
+  options: text("options").notNull(),
+  /** The correct option id, e.g. "A" */
+  correctOptionId: varchar("correctOptionId", { length: 4 }).notNull(),
+  /** Explanation shown after the answer is revealed */
+  explanation: text("explanation").notNull(),
+  /** Optional topic tag, e.g. "scrum", "agile", "waterfall" */
+  topicTag: varchar("topicTag", { length: 64 }),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type BrainSnapQuestion = typeof brainSnapQuestions.$inferSelect;
+export type InsertBrainSnapQuestion = typeof brainSnapQuestions.$inferInsert;
+
+/**
+ * Tracks which Brain Snap questions a user has already seen so we don't repeat them.
+ */
+export const userBrainSnapLog = mysqlTable("userBrainSnapLog", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  questionId: int("questionId").notNull(),
+  /** Whether the user answered correctly */
+  answeredCorrectly: boolean("answeredCorrectly"),
+  seenAt: timestamp("seenAt").defaultNow().notNull(),
+});
+export type UserBrainSnapLog = typeof userBrainSnapLog.$inferSelect;
+export type InsertUserBrainSnapLog = typeof userBrainSnapLog.$inferInsert;

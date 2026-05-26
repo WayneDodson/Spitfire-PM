@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import { ConfidenceCheck } from "@/components/ConfidenceCheck";
 import ShareProgress from "@/components/ShareProgress";
 import { BrandedLoader } from "@/components/BrandedLoader";
+import { BrainSnapModal } from "@/components/BrainSnapModal";
 
 type LessonPhase = "reading" | "confidence_check" | "reflection" | "complete" | "level_complete";
 
@@ -76,12 +77,35 @@ export default function Lesson() {
   const saveReflection = trpc.lessons.saveReflection.useMutation();
   const utils = trpc.useUtils();
 
+  // Brain Snap — fire after 20 minutes of active reading
+  const [brainSnapActive, setBrainSnapActive] = useState(false);
+  const [brainSnapFiredThisLesson, setBrainSnapFiredThisLesson] = useState(false);
+  const { data: brainSnapQuestion, refetch: refetchBrainSnap } = trpc.brainSnap.getRandom.useQuery(
+    undefined,
+    { enabled: false } // only fetch on demand
+  );
+
+  useEffect(() => {
+    if (!isAuthenticated || phase !== "reading" || brainSnapFiredThisLesson) return;
+    const TWENTY_MINUTES = 20 * 60 * 1000;
+    const timer = setTimeout(async () => {
+      const result = await refetchBrainSnap();
+      if (result.data) {
+        setBrainSnapActive(true);
+        setBrainSnapFiredThisLesson(true);
+      }
+    }, TWENTY_MINUTES);
+    return () => clearTimeout(timer);
+  }, [isAuthenticated, phase, brainSnapFiredThisLesson, lessonId]);
+
   // Reset phase when lesson changes
   useEffect(() => {
     window.scrollTo(0, 0);
     setPhase("reading");
     setSelectedReflection(null);
     setReinforcementMessage(null);
+    setBrainSnapFiredThisLesson(false);
+    setBrainSnapActive(false);
   }, [lessonId]);
 
   // Check if already completed
@@ -276,6 +300,13 @@ export default function Lesson() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Brain Snap interstitial — fires after 20 minutes of active reading */}
+      {brainSnapActive && brainSnapQuestion && (
+        <BrainSnapModal
+          question={brainSnapQuestion}
+          onDismiss={() => setBrainSnapActive(false)}
+        />
+      )}
       {/* Header */}
       <div className="border-b bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50 sticky top-0 z-10">
         <div className="container py-4">

@@ -4,6 +4,7 @@ import { cancellationRouter } from "./routers/cancellation";
 import { apmRouter } from "./routers/apm";
 import { adminQuestionsRouter } from "./routers/adminQuestions";
 import { simulationsRouter } from "./routers/simulations";
+import { brainSnapRouter } from "./routers/brainSnap";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
@@ -22,6 +23,7 @@ export const appRouter = router({
   apm: apmRouter,
   simulations: simulationsRouter,
   adminQuestions: adminQuestionsRouter,
+  brainSnap: brainSnapRouter,
   auth: router({
     me: publicProcedure.query(opts => {
       const user = opts.ctx.user;
