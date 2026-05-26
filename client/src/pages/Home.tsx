@@ -358,7 +358,7 @@ export default function Home() {
               onClick={() => setLocation("/login")}
               className="text-lg px-10 py-6 bg-cyan-500 hover:bg-cyan-400 text-black font-black shadow-2xl shadow-cyan-500/30 transition-all hover:scale-105"
             >
-              Start Free — No Card Required
+              Start Free — No Payment Required
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button
