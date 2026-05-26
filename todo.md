@@ -465,3 +465,8 @@
 - [ ] Update CSS variables for clean light mode
 - [ ] Refactor Home.tsx to semantic theme tokens
 - [ ] Refactor all remaining pages and components
+
+## Social Sharing (May 2026)
+- [ ] Build reusable ShareProgress component (X, LinkedIn, WhatsApp, Facebook)
+- [ ] Add ShareProgress to Dashboard referral section (authenticated users only)
+- [ ] Add ShareProgress after each completed level/section

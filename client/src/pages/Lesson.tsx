@@ -19,6 +19,7 @@ import { Streamdown } from "streamdown";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
 import { ConfidenceCheck } from "@/components/ConfidenceCheck";
+import ShareProgress from "@/components/ShareProgress";
 
 type LessonPhase = "reading" | "confidence_check" | "reflection" | "complete" | "level_complete";
 
@@ -523,6 +524,13 @@ export default function Lesson() {
               <p className="text-muted-foreground text-sm">
                 Your progress has been saved. Ready to take on the next challenge?
               </p>
+            </div>
+            {/* Share progress */}
+            <div className="w-full max-w-md">
+              <ShareProgress
+                context="level-complete"
+                achievement={`Just completed ${allLevels?.find((l) => l.id === lesson?.levelId)?.title || "a level"} on Spitfire PM — one step closer to my first PM role!`}
+              />
             </div>
             <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm">
               {(() => {

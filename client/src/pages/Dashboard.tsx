@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { trpc } from "@/lib/trpc";
+import ShareProgress from "@/components/ShareProgress";
 import {
-  Award,
+  Share2,
   BookOpen,
   CheckCircle2,
   Clock,
@@ -14,7 +15,6 @@ import {
   Layers,
   Lock,
   LogOut,
-  Share2,
   TrendingUp,
   Users,
   Target,
@@ -28,6 +28,7 @@ import {
   Shield,
   Brain,
   Pencil,
+  Award,
 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
@@ -558,20 +559,26 @@ export default function Dashboard() {
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-2 flex-shrink-0">
-                  <input
-                    type="text"
-                    value={referralLink}
-                    readOnly
-                    className="w-56 px-3 py-2 bg-white/5 border border-border rounded-lg text-sm text-foreground/60 font-mono"
+                <div className="flex flex-col gap-3 flex-shrink-0">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={referralLink}
+                      readOnly
+                      className="w-56 px-3 py-2 bg-white/5 border border-border rounded-lg text-sm text-foreground/60 font-mono"
+                    />
+                    <Button
+                      onClick={copyReferralLink}
+                      variant="outline"
+                      className="border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/5"
+                    >
+                      {copiedLink ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  <ShareProgress
+                    achievement="Unlock Level 2 free on Spitfire PM — just share your referral link!"
+                    compact={false}
                   />
-                  <Button
-                    onClick={copyReferralLink}
-                    variant="outline"
-                    className="border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/5"
-                  >
-                    {copiedLink ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                  </Button>
                 </div>
               </div>
             </div>
