@@ -451,7 +451,7 @@ export default function Subscription() {
             {
               icon: <Users className="h-5 w-5 text-cyan-400" />,
               title: "Built for career changers",
-              desc: "Designed for NHS professionals, teachers, engineers, and others transitioning into PM roles.",
+              desc: "Designed for healthcare professionals, teachers, engineers, and others transitioning into PM roles.",
             },
             {
               icon: <TrendingUp className="h-5 w-5 text-cyan-400" />,

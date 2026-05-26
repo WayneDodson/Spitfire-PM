@@ -48,7 +48,7 @@ import {
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 const TICKER_ITEMS = [
-  "NHS Administrator → Junior PM",
+  "Care Coordinator → Junior PM",
   "Finance Manager → Programme Lead",
   "Teaching Assistant → Agile PM",
   "Care Home Manager → Project Lead",
@@ -59,7 +59,7 @@ const TICKER_ITEMS = [
 const TRUST_SIGNALS = [
   "Built for career changers worldwide",
   "PRINCE2, Agile & APM aligned",
-  "NHS & care sector ready",
+  "Healthcare & care sector ready",
   "B2B workforce development",
 ];
 
@@ -145,7 +145,7 @@ const FREE_TRIAL_INCLUDES = [
 ];
 
 const WHO_ITS_FOR = [
-  { role: "NHS & Healthcare Staff", detail: "Coordinators, band 5–7 moving into project roles" },
+  { role: "Healthcare & Care Professionals", detail: "Coordinators and care staff moving into project roles" },
   { role: "Care Sector Professionals", detail: "Team leaders and managers seeking PM credentials" },
   { role: "Administrators & Coordinators", detail: "Already doing PM work — now prove it formally" },
   { role: "Internal Promotion Candidates", detail: "Staff being considered for PM progression" },
@@ -157,7 +157,7 @@ const TESTIMONIALS = [
   {
     quote: "I'd done PRINCE2 and still didn't feel ready for interviews. After two weeks on Spitfire PM I landed my first PM role.",
     name: "Sarah K.",
-    role: "Ex-NHS Administrator → Junior PM",
+    role: "Ex-Care Coordinator → Junior PM",
     stars: 5,
   },
   {
@@ -346,7 +346,7 @@ export default function Home() {
               Training teaches theory. <strong className="text-foreground font-semibold">Simulation proves readiness.</strong>
             </p>
             <p className="text-base text-foreground/35 max-w-xl mx-auto">
-              The global platform for career changers, NHS staff, and internal candidates preparing for
+              The global platform for career changers, healthcare professionals, and internal candidates preparing for
               their first PM role — through real scenarios, not revision.
             </p>
           </div>
@@ -785,7 +785,7 @@ export default function Home() {
                   "Objective readiness assessment for internal candidates",
                   "Structured pathway aligned to your PM framework",
                   "Confidence and competency reporting for line managers",
-                  "NHS, local government, housing, and corporate ready",
+                  "Healthcare, local government, housing, and corporate ready",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-foreground/55 text-sm">
                     <CheckCircle2 className="h-4 w-4 text-cyan-400 flex-shrink-0 mt-0.5" />

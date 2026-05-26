@@ -417,7 +417,7 @@ export function CancellationFlowModal({
               <Textarea
                 value={currentSituation}
                 onChange={(e) => setCurrentSituation(e.target.value)}
-                placeholder="e.g. I've been in the NHS for 8 years and I'm trying to move into a PM role…"
+                placeholder="e.g. I've been in healthcare for 8 years and I'm trying to move into a PM role…"
                 className="bg-white/5 border-border text-foreground placeholder:text-foreground/30 resize-none"
                 rows={3}
               />

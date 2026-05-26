@@ -21,7 +21,7 @@ interface OnboardingModalProps {
 }
 
 const INDUSTRIES = [
-  "NHS / Healthcare",
+  "Healthcare / Care",
   "Social Care",
   "Local Government",
   "Housing / Property",

@@ -45,8 +45,8 @@ const FAQS = [
     a: "Yes. All plans are cancel-anytime with no lock-in. You retain access until the end of your billing period.",
   },
   {
-    q: "Is this relevant for NHS staff?",
-    a: "Absolutely. Many of our learners are NHS staff moving into project or programme management roles. The content is aligned to APM standards used widely across the public sector.",
+    q: "Is this relevant for healthcare and care professionals?",
+    a: "Absolutely. Many of our learners come from healthcare, care, and public sector backgrounds moving into project or programme management roles. The content is aligned to APM standards used widely across these sectors.",
   },
   {
     q: "What qualifications does this help with?",
