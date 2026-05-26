@@ -4,7 +4,7 @@
  * Displays:
  * - Day X of 7 progress
  * - Engagement dots (active days)
- * - Founder Access progress bar
+ * - Loyalty Access progress bar
  * - Motivational copy that shifts based on progress
  * - CTA to upgrade when trial expires
  */
@@ -20,7 +20,7 @@ const MOTIVATIONAL_COPY = [
   "Day 2 — you're already ahead of 80% of career changers.",
   "Day 3 — momentum is building. Keep going.",
   "Day 4 — halfway there. You're proving you're serious.",
-  "Day 5 — strong consistency. Founder Access is within reach.",
+  "Day 5 — strong consistency. Loyalty Access is within reach.",
   "Day 6 — one more day. You're building proof, not just knowledge.",
   "Day 7 — final day. You've earned this.",
 ];
@@ -68,7 +68,7 @@ export function TrialBanner() {
     );
   }
 
-  // Don't show if trial is over and user earned Founder Access (they should upgrade)
+  // Don't show if trial is over and user earned Loyalty Access (they should upgrade)
   if (trial.trialExpired && trial.founderAccessEarned) {
     return (
       <div className="bg-gradient-to-r from-cyan-950/80 to-blue-950/80 border-b border-cyan-800/40">
@@ -76,7 +76,7 @@ export function TrialBanner() {
           <div className="flex items-center gap-3">
             <Star className="h-4 w-4 text-cyan-400 flex-shrink-0" />
             <p className="text-sm text-cyan-200">
-              <span className="font-bold text-cyan-300">Founder Access Unlocked.</span>{" "}
+              <span className="font-bold text-cyan-300">Loyalty Access Unlocked.</span>{" "}
               Your consistency earned you £19/month — lock it in before this offer expires.
             </p>
           </div>
@@ -85,7 +85,7 @@ export function TrialBanner() {
             onClick={() => navigate("/subscribe")}
             className="bg-cyan-500 hover:bg-cyan-400 text-black font-bold flex-shrink-0 text-xs"
           >
-            Claim Founder Access
+            Claim Loyalty Access
           </Button>
         </div>
       </div>
@@ -159,7 +159,7 @@ export function TrialBanner() {
               <div className="flex items-center justify-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-cyan-400" />
                 <span className="text-sm font-semibold text-cyan-300">
-                  Commitment Reward Activated — Founder Access Earned
+                  Commitment Reward Activated — Loyalty Access Earned
                 </span>
               </div>
             ) : isNearFounder ? (
@@ -171,11 +171,11 @@ export function TrialBanner() {
             )}
           </div>
 
-          {/* Right: Founder progress or days remaining */}
+          {/* Right: Loyalty progress or days remaining */}
           <div className="flex items-center gap-3">
             {!founderEarned && (
               <div className="hidden md:flex items-center gap-2">
-                <span className="text-xs text-white/30">Founder Access</span>
+                <span className="text-xs text-white/30">Loyalty Access</span>
                 <div className="w-20 h-1.5 bg-white/10 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-cyan-500 rounded-full transition-all duration-700"

@@ -2,7 +2,7 @@
  * Subscription / Membership page
  *
  * Commitment-based pricing model:
- * - Founder Access (£19/month) — earned by consistent trial users
+ * - Loyalty Access (£19/month) — earned by consistent trial users
  * - Standard Professional Access (£39/month) — for all other users
  * - Annual Professional Access (£197/year) — best value anchor
  *
@@ -48,11 +48,11 @@ const FEATURES_ALL = [
 
 const FAQS = [
   {
-    q: "What is Founder Access?",
-    a: "Founder Access is earned — not discounted. Users who demonstrate consistent engagement during the 7-day free trial (logging in most days, completing lessons, running simulations) unlock PM Readiness Member Pricing at £19/month for the first 6 months. It reflects your commitment, not a sale.",
+    q: "What is Loyalty Access?",
+    a: "Loyalty Access is earned — not discounted. Users who demonstrate consistent engagement during the 7-day free trial (logging in most days, completing lessons, running simulations) unlock PM Readiness Member Pricing at £19/month for the first 6 months. It reflects your commitment, not a sale.",
   },
   {
-    q: "What happens after the 6-month Founder period?",
+    q: "What happens after the 6-month Loyalty period?",
     a: "After 6 months, your subscription moves to the standard rate of £39/month. You can cancel anytime before then — no lock-in, no penalties.",
   },
   {
@@ -64,7 +64,7 @@ const FAQS = [
     a: "The Annual plan at £197/year works out at £16.42/month — the best value option. It is designed for professionals who are serious about completing their transition and want to invest in the full journey.",
   },
   {
-    q: "What if I did not earn Founder Access?",
+    q: "What if I did not earn Loyalty Access?",
     a: "Standard Professional Access at £39/month gives you exactly the same platform. The pricing difference reflects the commitment demonstrated during the trial — consistent users earn better pricing.",
   },
   {
@@ -217,11 +217,11 @@ export default function Subscription() {
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <button
             onClick={() => navigate(isAuthenticated ? "/dashboard" : "/")}
-            className="text-white/40 hover:text-white/70 text-sm transition-colors"
+              className="text-white/60 hover:text-white/80 text-sm transition-colors"
           >
             ← Back
           </button>
-          <span className="text-white/20 text-xs">Secure checkout powered by Stripe</span>
+          <span className="text-white/30 text-xs">Secure checkout powered by Stripe</span>
         </div>
       </div>
 
@@ -232,14 +232,14 @@ export default function Subscription() {
           {founderEarned && (
             <div className="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/30 rounded-full px-4 py-2 text-sm text-cyan-400 font-semibold mb-4">
               <Star className="h-4 w-4" />
-              Commitment Reward Activated — Founder Access Earned
+              Commitment Reward Activated — Loyalty Access Earned
             </div>
           )}
           <h1 className="text-4xl md:text-6xl font-black leading-tight">
             {founderEarned ? (
               <>
                 You earned<br />
-                <span className="text-cyan-400">Founder Access</span>
+                <span className="text-cyan-400">Loyalty Access</span>
               </>
             ) : (
               <>
@@ -258,7 +258,7 @@ export default function Subscription() {
         {/* Pricing cards */}
         <div className="grid md:grid-cols-3 gap-6">
 
-          {/* Founder Access */}
+          {/* Loyalty Access */}
           <div
             className={cn(
               "relative rounded-2xl border p-6 transition-all duration-200 space-y-5",
@@ -289,7 +289,7 @@ export default function Subscription() {
               <div className="flex items-center gap-2 mb-1">
                 <Star className="h-4 w-4 text-cyan-400" />
                 <span className="text-xs uppercase tracking-widest text-cyan-400/70 font-semibold">
-                  Founder Access
+                  Loyalty Access
                 </span>
               </div>
               <div className="flex items-end gap-1">
@@ -316,7 +316,7 @@ export default function Subscription() {
                 ) : (
                   <Zap className="h-4 w-4 mr-2" />
                 )}
-                Claim Founder Access
+                Claim Loyalty Access
               </Button>
             ) : (
               <div className="text-xs text-white/25 text-center py-2">

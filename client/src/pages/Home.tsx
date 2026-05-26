@@ -305,6 +305,7 @@ export default function Home() {
         </div>
       </nav>
 
+      <main>
       {/* ── Hero ── */}
       <section className="pt-36 pb-16 px-6 relative overflow-hidden">
         {/* Background grid */}
@@ -406,10 +407,10 @@ export default function Home() {
                 </p>
               </div>
               <h2 className="text-4xl md:text-5xl font-black leading-[1.1] mb-8">
-                <span className="text-white/30 italic text-3xl block mb-2">&ldquo;</span>
+                <span className="text-white/50 italic text-3xl block mb-2">&ldquo;</span>
                 I&apos;ve studied the theory.
                 <br />
-                <span className="text-white/40">But how do I</span>
+                <span className="text-white/60">But how do I</span>
                 <br />
                 <span className="text-cyan-400">prove I&apos;m ready?&rdquo;</span>
               </h2>
@@ -428,14 +429,14 @@ export default function Home() {
 
             {/* Before / After */}
             <div className="space-y-3">
-              <p className="text-white/30 text-xs font-semibold uppercase tracking-widest mb-4 ml-1">What changes</p>
+              <p className="text-white/50 text-xs font-semibold uppercase tracking-widest mb-4 ml-1">What changes</p>
               {BEFORE_AFTER.map(({ before, after }, i) => (
                 <div
                   key={i}
                   className="grid grid-cols-2 gap-0 rounded-xl overflow-hidden border border-white/8"
                 >
                   <div className="bg-red-950/30 border-r border-white/8 px-4 py-3.5">
-                    <span className="text-xs text-red-400/60 font-medium block mb-1">Before</span>
+                    <span className="text-xs text-red-400 font-medium block mb-1">Before</span>
                     <span className="text-white/50 text-sm">{before}</span>
                   </div>
                   <div className="bg-cyan-950/20 px-4 py-3.5">
@@ -593,7 +594,7 @@ export default function Home() {
             </div>
 
             <div className="space-y-3">
-              <p className="text-white/30 text-xs font-semibold uppercase tracking-widest mb-4">What you&apos;ll hear along the way</p>
+              <p className="text-white/50 text-xs font-semibold uppercase tracking-widest mb-4">What you&apos;ll hear along the way</p>
               {MENTOR_MESSAGES.map((msg) => (
                 <div
                   key={msg}
@@ -738,7 +739,7 @@ export default function Home() {
               </div>
               <p className="text-white/35 text-sm mb-7">£16.42/month — best value</p>
               <ul className="space-y-2.5 mb-8 flex-1">
-                {["Everything in Professional", "Lowest monthly rate", "12 months full access", "Founder access pricing"].map((f) => (
+                {["Everything in Professional", "Lowest monthly rate", "12 months full access", "Loyalty access pricing"].map((f) => (
                   <li key={f} className="flex items-center gap-2.5 text-sm text-white/55">
                     <CheckCircle2 className="h-3.5 w-3.5 text-cyan-400 flex-shrink-0" />
                     {f}
@@ -755,8 +756,8 @@ export default function Home() {
             </div>
           </div>
 
-          <p className="text-center text-white/25 text-sm mt-8">
-            Consistent trial users earn <span className="text-cyan-400/60">Founder Access at £19/month</span> for the first 6 months — commitment is rewarded, not discounted.
+          <p className="text-center text-white/50 text-sm mt-8">
+            Consistent trial users earn <span className="text-cyan-400/60">Loyalty Access at £19/month</span> for the first 6 months — commitment is rewarded, not discounted.
           </p>
         </div>
       </section>
@@ -871,6 +872,7 @@ export default function Home() {
         </div>
       </section>
 
+      </main>
       {/* ── Footer ── */}
       <footer className="border-t border-white/5 py-12 px-6 bg-white/[0.01]">
         <div className="max-w-5xl mx-auto">

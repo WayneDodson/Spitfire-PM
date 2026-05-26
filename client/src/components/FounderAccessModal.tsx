@@ -1,5 +1,5 @@
 /**
- * FounderAccessModal — celebration screen shown when a user earns Founder Access.
+ * FounderAccessModal — celebration screen shown when a user earns Loyalty Access.
  *
  * Framed as earned access, not a discount.
  * Shown once when founderAccessEarned transitions from false → true.
@@ -49,7 +49,7 @@ export function FounderAccessModal({ open, onClose }: FounderAccessModalProps) {
             </p>
             <h2 className="text-3xl font-black text-white leading-tight">
               You Unlocked<br />
-              <span className="text-cyan-400">Founder Access</span>
+              <span className="text-cyan-400">Loyalty Access</span>
             </h2>
             <p className="text-white/50 text-sm leading-relaxed">
               Your consistency during the free trial has earned you PM Readiness Member Pricing.
@@ -61,14 +61,14 @@ export function FounderAccessModal({ open, onClose }: FounderAccessModalProps) {
           <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4 text-left space-y-3">
             <p className="text-xs text-white/40 uppercase tracking-wider">You earned</p>
             <div className="flex items-center justify-between">
-              <span className="text-white font-semibold">Founder Access</span>
+              <span className="text-white font-semibold">Loyalty Access</span>
               <div className="text-right">
                 <span className="text-2xl font-black text-cyan-400">£19</span>
                 <span className="text-white/40 text-sm">/month</span>
               </div>
             </div>
             <p className="text-xs text-white/30">
-              First 6 months at Founder pricing · then £39/month · cancel anytime
+              First 6 months at Loyalty pricing · then £39/month · cancel anytime
             </p>
             <div className="pt-1 space-y-1.5">
               {[
@@ -93,7 +93,7 @@ export function FounderAccessModal({ open, onClose }: FounderAccessModalProps) {
               className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-black text-base py-6"
             >
               <Zap className="h-5 w-5 mr-2" />
-              Claim Founder Access — £19/month
+              Claim Loyalty Access — £19/month
             </Button>
             <button
               onClick={onClose}

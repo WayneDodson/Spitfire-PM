@@ -221,7 +221,7 @@ export default function Profile() {
                 {(trialData as any)?.founderAccessEarned && (
                   <div className="flex items-center gap-2 text-sm text-amber-300">
                     <Crown className="h-4 w-4 text-amber-400" />
-                    Founder Access pricing applied
+                    Loyalty Access pricing applied
                   </div>
                 )}
                 <Button

@@ -476,7 +476,7 @@ export default function Dashboard() {
                   <div className="flex-1">
                     {trialStatus.founderAccessEarned ? (
                       <>
-                        <h3 className="font-black text-lg text-cyan-400 mb-1">Founder Access Earned</h3>
+                        <h3 className="font-black text-lg text-cyan-400 mb-1">Loyalty Access Earned</h3>
                         <p className="text-white/60 text-sm">
                           Your consistency during the free trial unlocked PM Readiness Member Pricing at £19/month.
                           Claim it before your trial ends.
@@ -488,7 +488,7 @@ export default function Dashboard() {
                           Day {trialStatus.dayNumber} of 7 — Free Trial
                         </h3>
                         <p className="text-white/50 text-sm">
-                          Log in consistently and complete lessons to earn Founder Access at £19/month.
+                          Log in consistently and complete lessons to earn Loyalty Access at £19/month.
                           {trialStatus.activeDays >= 3
                             ? " You're building a strong streak — keep going."
                             : " Consistency is what separates people who get hired from people who don't."}
@@ -509,7 +509,7 @@ export default function Dashboard() {
                         </div>
                         <p className="text-xs text-white/30 mt-1.5">
                           {trialStatus.activeDays} of 7 days active
-                          {trialStatus.activeDays >= 5 ? ' — Founder Access threshold reached!' : ` — ${5 - trialStatus.activeDays} more days needed for Founder Access`}
+                          {trialStatus.activeDays >= 5 ? ' — Loyalty Access threshold reached!' : ` — ${5 - trialStatus.activeDays} more days needed for Loyalty Access`}
                         </p>
                       </>
                     )}
@@ -522,7 +522,7 @@ export default function Dashboard() {
                       className="bg-cyan-500 hover:bg-cyan-400 text-black font-black whitespace-nowrap"
                     >
                       <Zap className="h-4 w-4 mr-2" />
-                      Claim Founder Access
+                      Claim Loyalty Access
                     </Button>
                   ) : (
                     <Button
