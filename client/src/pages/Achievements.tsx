@@ -1,4 +1,7 @@
 import { trpc } from "@/lib/trpc";
+import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -100,6 +103,15 @@ export default function Achievements() {
   return (
     <div className="container py-8 max-w-6xl">
       <div className="space-y-6">
+        {/* Back button */}
+        <div>
+          <Link href="/dashboard">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Dashboard
+            </Button>
+          </Link>
+        </div>
         {/* Header */}
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-bold">Achievements</h1>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -89,25 +89,43 @@ const glossaryTerms = [
   { term: "Work Package", definition: "The lowest level of the Work Breakdown Structure. A work package can be scheduled, cost-estimated, monitored, and controlled.", category: "Planning", level: 2 },
 ];
 
+// Terms that have their own named entry in the glossary — used for Quick Jump chips
+const quickJumpTerms = glossaryTerms
+  .filter(t => glossaryTerms.some(other => other.term === t.term))
+  .map(t => t.term)
+  // Only show terms whose name matches a recognisable "concept" word people would jump to
+  .filter(name =>
+    ["Agile", "Waterfall", "Scrum", "Kanban", "Risk", "Stakeholder", "Milestone", "Epic",
+     "Sprint", "Backlog", "Velocity", "Audit", "Escalation", "Dependency", "Deliverable",
+     "Baseline", "Lifecycle", "Assumption", "Constraints"].includes(name)
+  )
+  .sort();
+
 const categories = ["All", ...Array.from(new Set(glossaryTerms.map(t => t.category))).sort()];
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
-/** Scroll to the first visible term card that belongs to the given category */
-function scrollToFirstTermInCategory(category: string) {
-  if (category === "All") return;
-  // Small delay to let React re-render the filtered list first
-  setTimeout(() => {
-    const firstMatch = document.querySelector<HTMLElement>(`[data-term-category="${CSS.escape(category)}"]`);
-    if (firstMatch) {
-      firstMatch.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, 60);
+/** Build a stable DOM id for a term card */
+function termId(term: string) {
+  return `term-${term.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+}
+
+/** Scroll to the card for a specific term name */
+function scrollToTerm(termName: string) {
+  const el = document.getElementById(termId(termName));
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    // Brief highlight flash
+    el.classList.add("ring-2", "ring-primary");
+    setTimeout(() => el.classList.remove("ring-2", "ring-primary"), 1800);
+  }
 }
 
 export default function Glossary() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedLetter, setSelectedLetter] = useState("");
+  // Track pending scroll-to-term after category/letter reset
+  const pendingScrollTerm = useRef<string | null>(null);
 
   const filtered = glossaryTerms.filter(t => {
     const matchesSearch = t.term.toLowerCase().includes(search.toLowerCase()) ||
@@ -123,6 +141,24 @@ export default function Glossary() {
     acc[letter].push(term);
     return acc;
   }, {} as Record<string, typeof glossaryTerms>);
+
+  // After render, execute any pending scroll (needed when filters were reset first)
+  useEffect(() => {
+    if (pendingScrollTerm.current) {
+      const name = pendingScrollTerm.current;
+      pendingScrollTerm.current = null;
+      // Give React one more frame to paint the newly visible card
+      requestAnimationFrame(() => scrollToTerm(name));
+    }
+  });
+
+  function handleQuickJump(termName: string) {
+    // Reset all filters so the term is definitely visible, then scroll to it
+    setSearch("");
+    setSelectedCategory("All");
+    setSelectedLetter("");
+    pendingScrollTerm.current = termName;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -147,7 +183,8 @@ export default function Glossary() {
 
       <div className="max-w-5xl mx-auto px-4 py-8">
         {/* Search and filters */}
-        <div className="space-y-4 mb-8">
+        <div className="space-y-5 mb-8">
+          {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -158,49 +195,76 @@ export default function Glossary() {
             />
           </div>
 
-          {/* Category filter */}
-          <div className="flex flex-wrap gap-2">
-            {categories.map(cat => (
-              <Button
-                key={cat}
-                variant={selectedCategory === cat ? "default" : "outline"}
-                size="sm"
-                onClick={() => {
-                  setSelectedCategory(cat);
-                  scrollToFirstTermInCategory(cat);
-                }}
-                className="text-xs"
-              >
-                {cat}
-              </Button>
-            ))}
+          {/* Quick Jump — jumps directly to that term's card */}
+          <div>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+              Quick Jump — click to go straight to that term
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {quickJumpTerms.map(name => (
+                <Button
+                  key={name}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleQuickJump(name)}
+                  className="text-xs"
+                >
+                  {name}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          {/* Category filter — filters the list to show only terms in that category */}
+          <div>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+              Filter by category — shows all terms in that topic area
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {categories.map(cat => (
+                <Button
+                  key={cat}
+                  variant={selectedCategory === cat ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedCategory(cat)}
+                  className="text-xs"
+                >
+                  {cat}
+                </Button>
+              ))}
+            </div>
           </div>
 
           {/* Alphabet filter */}
-          <div className="flex flex-wrap gap-1">
-            <Button
-              variant={selectedLetter === "" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setSelectedLetter("")}
-              className="text-xs w-8 h-8 p-0"
-            >
-              All
-            </Button>
-            {alphabet.map(letter => {
-              const hasTerms = glossaryTerms.some(t => t.term.toUpperCase().startsWith(letter));
-              return (
-                <Button
-                  key={letter}
-                  variant={selectedLetter === letter ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setSelectedLetter(selectedLetter === letter ? "" : letter)}
-                  disabled={!hasTerms}
-                  className="text-xs w-8 h-8 p-0"
-                >
-                  {letter}
-                </Button>
-              );
-            })}
+          <div>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+              Browse by letter
+            </p>
+            <div className="flex flex-wrap gap-1">
+              <Button
+                variant={selectedLetter === "" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setSelectedLetter("")}
+                className="text-xs w-8 h-8 p-0"
+              >
+                All
+              </Button>
+              {alphabet.map(letter => {
+                const hasTerms = glossaryTerms.some(t => t.term.toUpperCase().startsWith(letter));
+                return (
+                  <Button
+                    key={letter}
+                    variant={selectedLetter === letter ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setSelectedLetter(selectedLetter === letter ? "" : letter)}
+                    disabled={!hasTerms}
+                    className="text-xs w-8 h-8 p-0"
+                  >
+                    {letter}
+                  </Button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -217,9 +281,9 @@ export default function Glossary() {
               {groupedByLetter[letter].map(term => (
                 <Card
                   key={term.term}
-                  id={`term-${term.term.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+                  id={termId(term.term)}
                   data-term-category={term.category}
-                  className="border-border/50"
+                  className="border-border/50 transition-all duration-300"
                 >
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between gap-4">
