@@ -479,7 +479,7 @@ export default function DecisionSimPlayer() {
               achievement={`I just scored ${finalScore}% on "${simData.title}" on Spitfire PM!`}
             />
             <div className="flex gap-3 justify-center">
-              <Button variant="outline" onClick={() => setLocation("/simulations")} className="gap-1">
+              <Button variant="outline" onClick={() => setLocation(`/simulations?completed=${simId}`)} className="gap-1">
                 <ArrowLeft className="h-4 w-4" />
                 Back to Hub
               </Button>

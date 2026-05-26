@@ -157,7 +157,7 @@ export default function InterviewSimPlayer() {
               achievement={`I just practised a PM interview question on Spitfire PM — "${simData.title}"`}
             />
             <div className="flex gap-3 justify-center">
-              <Button variant="outline" onClick={() => setLocation("/simulations")} className="gap-1">
+              <Button variant="outline" onClick={() => setLocation(`/simulations?completed=${simId}`)} className="gap-1">
                 <ArrowLeft className="h-4 w-4" />
                 Back to Hub
               </Button>
