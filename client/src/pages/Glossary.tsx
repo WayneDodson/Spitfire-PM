@@ -9,7 +9,7 @@ import { ArrowLeft, Search, BookOpen } from "lucide-react";
 const glossaryTerms = [
   // A
   { term: "Acceptance Criteria", definition: "The conditions that a deliverable must satisfy to be accepted by the client or stakeholder. Defined upfront and used to verify completion.", category: "Planning", level: 1 },
-  { term: "Agile", definition: "An iterative approach to project management and software development that helps teams deliver value to their customers faster. Work is completed in short cycles called sprints or iterations.", category: "Methodology", level: 3 },
+  { term: "Agile", definition: "An iterative approach to project management and software development that helps teams deliver value to their customers faster. Work is completed in short cycles called sprints or iterations.", category: "Agile", level: 3 },
   { term: "Assumption", definition: "A factor considered to be true, real, or certain without proof or demonstration. Assumptions carry risk — if an assumption proves false, it may affect the project.", category: "Risk", level: 1 },
   { term: "Audit", definition: "A structured review of a project's processes, documentation, or deliverables to assess compliance with standards and identify areas for improvement.", category: "Quality", level: 5 },
   // B
@@ -84,13 +84,25 @@ const glossaryTerms = [
   // V
   { term: "Velocity", definition: "In Scrum, the amount of work a team completes in a sprint, measured in story points. Used to forecast future sprint capacity.", category: "Agile", level: 3 },
   // W
-  { term: "Waterfall", definition: "A sequential project management methodology where each phase must be completed before the next begins. Phases typically include Requirements, Design, Development, Testing, and Deployment.", category: "Methodology", level: 2 },
+  { term: "Waterfall", definition: "A sequential project management methodology where each phase must be completed before the next begins. Phases typically include Requirements, Design, Development, Testing, and Deployment.", category: "Waterfall", level: 2 },
   { term: "WBS (Work Breakdown Structure)", definition: "A hierarchical decomposition of the total scope of work into smaller, manageable components called work packages. The foundation of project planning.", category: "Planning", level: 2 },
   { term: "Work Package", definition: "The lowest level of the Work Breakdown Structure. A work package can be scheduled, cost-estimated, monitored, and controlled.", category: "Planning", level: 2 },
 ];
 
 const categories = ["All", ...Array.from(new Set(glossaryTerms.map(t => t.category))).sort()];
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+/** Scroll to the first visible term card that belongs to the given category */
+function scrollToFirstTermInCategory(category: string) {
+  if (category === "All") return;
+  // Small delay to let React re-render the filtered list first
+  setTimeout(() => {
+    const firstMatch = document.querySelector<HTMLElement>(`[data-term-category="${CSS.escape(category)}"]`);
+    if (firstMatch) {
+      firstMatch.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, 60);
+}
 
 export default function Glossary() {
   const [search, setSearch] = useState("");
@@ -153,7 +165,10 @@ export default function Glossary() {
                 key={cat}
                 variant={selectedCategory === cat ? "default" : "outline"}
                 size="sm"
-                onClick={() => setSelectedCategory(cat)}
+                onClick={() => {
+                  setSelectedCategory(cat);
+                  scrollToFirstTermInCategory(cat);
+                }}
                 className="text-xs"
               >
                 {cat}
@@ -200,7 +215,12 @@ export default function Glossary() {
             <h2 className="text-2xl font-bold text-primary mb-4 border-b border-border pb-2">{letter}</h2>
             <div className="space-y-4">
               {groupedByLetter[letter].map(term => (
-                <Card key={term.term} className="border-border/50">
+                <Card
+                  key={term.term}
+                  id={`term-${term.term.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+                  data-term-category={term.category}
+                  className="border-border/50"
+                >
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between gap-4">
                       <CardTitle className="text-lg font-semibold">{term.term}</CardTitle>

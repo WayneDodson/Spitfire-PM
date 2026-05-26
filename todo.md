@@ -443,3 +443,7 @@
 - [ ] Build Full Question Bank PDF with every question and answer from the entire site
 - [x] Add user name to quiz results PDF header
 - [x] Full Question Bank PDF: download every question and answer from all levels and APM modules
+
+## Glossary Fixes (May 2026)
+- [x] Fix Glossary category filter bug: "Agile" term was tagged as category "Methodology" so clicking the "Agile" filter showed Backlog first instead of the Agile term; re-tagged "Agile" → category "Agile" and "Waterfall" → category "Waterfall"
+- [x] Add scroll-to-term behaviour: clicking a category chip now scrolls to the first matching term card
