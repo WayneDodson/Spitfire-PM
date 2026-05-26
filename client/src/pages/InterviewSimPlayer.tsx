@@ -18,6 +18,7 @@ import {
   Lightbulb,
   AlertCircle,
   Loader2,
+  Trash2,
 } from "lucide-react";
 
 // ─── mic button ──────────────────────────────────────────────────────────────
@@ -274,6 +275,17 @@ export default function InterviewSimPlayer() {
                   <label className="text-sm font-medium text-foreground">Your Answer</label>
                   <div className="flex items-center gap-2">
                     <MicButton state={micState} onClick={toggleRecording} />
+                    {answer.trim().length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setAnswer("")}
+                        title="Clear answer"
+                        className="flex items-center gap-1.5 px-2 py-2 rounded-lg text-xs font-medium border border-border text-muted-foreground hover:text-red-500 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all duration-200"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Clear
+                      </button>
+                    )}
                     <span className={`text-xs ${tooShort ? "text-muted-foreground" : tooLong ? "text-red-500" : "text-emerald-600"}`}>
                       {wc} / {minWords}–{maxWords} words
                     </span>

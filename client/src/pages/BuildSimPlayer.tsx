@@ -21,6 +21,7 @@ import {
   MicOff,
   Loader2,
   AlertCircle,
+  Trash2,
 } from "lucide-react";
 
 // ─── mic button ──────────────────────────────────────────────────────────────
@@ -283,10 +284,23 @@ export default function BuildSimPlayer() {
                         {field.label}
                       </Label>
                       {field.type === "textarea" && (
-                        <MicButton
-                          state={activeFieldId === field.id ? micState : "idle"}
-                          onClick={() => handleMicClick(field.id)}
-                        />
+                        <div className="flex items-center gap-1.5">
+                          <MicButton
+                            state={activeFieldId === field.id ? micState : "idle"}
+                            onClick={() => handleMicClick(field.id)}
+                          />
+                          {(fieldValues[field.id] ?? "").trim().length > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => setField(field.id, "")}
+                              title="Clear field"
+                              className="flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium border border-border text-muted-foreground hover:text-red-500 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all duration-200"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                              Clear
+                            </button>
+                          )}
+                        </div>
                       )}
                     </div>
                     {micError && activeFieldId === field.id && (
