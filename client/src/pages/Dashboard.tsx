@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { trpc } from "@/lib/trpc";
 import ShareProgress from "@/components/ShareProgress";
+import { BrandedLoader } from "@/components/BrandedLoader";
 import {
   Share2,
   BookOpen,
@@ -185,11 +186,7 @@ export default function Dashboard() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400" />
-      </div>
-    );
+    return <BrandedLoader />;
   }
 
   if (!isAuthenticated) {
@@ -210,7 +207,7 @@ export default function Dashboard() {
                 <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
                   <Target className="h-3.5 w-3.5 text-foreground" />
                 </div>
-                <span className="font-bold text-base">PM Simulate</span>
+                <span className="font-bold text-base">Spitfire PM</span>
               </div>
               <nav className="hidden md:flex gap-1">
                 <Button
@@ -549,13 +546,13 @@ export default function Dashboard() {
                     <Share2 className="h-5 w-5 text-cyan-400" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg mb-1">Unlock Level 2 — free</h3>
+                    <h3 className="font-bold text-lg mb-1">Unlock Level 3 — free</h3>
                     <p className="text-foreground/50 text-sm">
-                      Share your link with one person making a career change. When they sign up, Level 2 unlocks for you — no payment needed.
+                      Share your link with one person making a career change. When they sign up, Level 3 unlocks for you — no payment needed.
                     </p>
                     <p className="text-xs text-foreground/30 mt-1.5">
                       You've referred {referralCount} {referralCount === 1 ? "person" : "people"} so far
-                      {referralCount >= 1 ? " — Level 2 is unlocked!" : ""}
+                      {referralCount >= 1 ? " — Level 3 is unlocked!" : ""}
                     </p>
                   </div>
                 </div>
@@ -576,7 +573,7 @@ export default function Dashboard() {
                     </Button>
                   </div>
                   <ShareProgress
-                    achievement="Unlock Level 2 free on Spitfire PM — just share your referral link!"
+                    achievement="Unlock Level 3 free on Spitfire PM — just share your referral link!"
                     compact={false}
                   />
                 </div>
@@ -692,7 +689,7 @@ export default function Dashboard() {
                           setLocation("/subscribe");
                         } else if (isLocked) {
                           if (level.accessType === "referral") {
-                            toast.info("Refer 1 friend to unlock this level — it's free!");
+                            toast.info("Refer 1 friend to unlock this level — it's completely free!");
                           } else {
                             setLocation("/subscribe");
                           }

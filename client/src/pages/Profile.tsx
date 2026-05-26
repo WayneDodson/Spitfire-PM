@@ -24,6 +24,7 @@ import {
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
+import { BrandedLoader } from "@/components/BrandedLoader";
 
 export default function Profile() {
   const { user, loading } = useAuth();
@@ -83,11 +84,7 @@ export default function Profile() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <BrandedLoader />;
   }
 
   if (!user) {

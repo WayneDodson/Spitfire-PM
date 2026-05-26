@@ -31,7 +31,7 @@ export default function Onboarding() {
               </div>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold">
-              Welcome to Project Pro
+              Welcome to Spitfire PM
             </h1>
             <p className="text-xl text-muted-foreground">
               Master project management through realistic simulations and hands-on practice.

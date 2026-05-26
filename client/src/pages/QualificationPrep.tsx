@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { generateFullQuestionBankPDF } from "@/lib/generateFullQuestionBankPDF";
+import { BrandedLoader } from "@/components/BrandedLoader";
 
 // ─────────────────────────────────────────────
 // Register Interest Modal (pure UI, no backend)
@@ -283,11 +284,7 @@ function AuthenticatedQualificationPrep() {
   }
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#080e1a] flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
-      </div>
-    );
+    return <BrandedLoader />;
   }
 
   const pfq = qualifications?.find((q) => q.id === "pfq");
@@ -482,11 +479,7 @@ export default function QualificationPrep() {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
-    return (
-      <div className="h-screen bg-[#080e1a] flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
-      </div>
-    );
+    return <BrandedLoader />;
   }
 
   if (!isAuthenticated) {

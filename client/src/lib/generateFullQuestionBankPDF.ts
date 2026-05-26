@@ -102,7 +102,7 @@ function drawCover(doc: jsPDF, userName?: string) {
 
   doc.setFontSize(14);
   setTextColor(doc, ACCENT);
-  doc.text("PM Simulate — Complete Study Reference", cx, 94, { align: "center" });
+  doc.text("Spitfire PM — Complete Study Reference", cx, 94, { align: "center" });
 
   if (userName) {
     doc.setFontSize(11);
@@ -135,7 +135,7 @@ function drawCover(doc: jsPDF, userName?: string) {
   doc.rect(0, PAGE_H - 14, PAGE_W, 14, "F");
   doc.setFontSize(8);
   setTextColor(doc, MUTED);
-  doc.text("PM Simulate · www.spitfire-pm.com", cx, PAGE_H - 5, { align: "center" });
+  doc.text("Spitfire PM · www.spitfire-pm.com", cx, PAGE_H - 5, { align: "center" });
 }
 
 // ── Section header (full-width coloured bar) ───────────────────────────────────
@@ -251,7 +251,7 @@ function addFooters(doc: jsPDF) {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7);
     setTextColor(doc, MUTED);
-    doc.text("PM Simulate · Full Question Bank", MARGIN, PAGE_H - 3.5);
+    doc.text("Spitfire PM · Full Question Bank", MARGIN, PAGE_H - 3.5);
     doc.text(`Page ${p} of ${total}`, PAGE_W - MARGIN, PAGE_H - 3.5, { align: "right" });
   }
 }
@@ -328,5 +328,5 @@ export function generateFullQuestionBankPDF(input: FullQuestionBankInput): void 
   addFooters(doc);
 
   const safeName = input.userName ? `_${input.userName.replace(/\s+/g, "_")}` : "";
-  doc.save(`PM_Simulate_Full_Question_Bank${safeName}.pdf`);
+  doc.save(`Spitfire_PM_Full_Question_Bank${safeName}.pdf`);
 }

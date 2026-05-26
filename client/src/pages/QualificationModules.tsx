@@ -14,6 +14,7 @@ import {
   Loader2,
   HelpCircle,
 } from "lucide-react";
+import { BrandedLoader } from "@/components/BrandedLoader";
 
 const QUAL_META: Record<
   string,
@@ -57,11 +58,7 @@ export default function QualificationModules() {
   const meta = QUAL_META[qualId] ?? QUAL_META.pfq;
 
   if (authLoading || isLoading) {
-    return (
-      <div className="min-h-screen bg-[#080e1a] flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
-      </div>
-    );
+    return <BrandedLoader />;
   }
 
   const passedCount = modules?.filter((m) => m.progress?.passed).length ?? 0;

@@ -138,7 +138,7 @@ export function OnboardingModal({ open, onComplete }: OnboardingModalProps) {
                 <div className="w-12 h-12 bg-cyan-400/10 rounded-xl flex items-center justify-center mb-4">
                   <Target className="h-6 w-6 text-cyan-400" />
                 </div>
-                <h2 className="text-2xl font-black mb-2">Welcome to PM Simulate</h2>
+                <h2 className="text-2xl font-black mb-2">Welcome to Spitfire PM</h2>
                 <p className="text-foreground/50 text-sm leading-relaxed">
                   You've taken the first step. Let's personalise your experience so the platform
                   works for your specific career transition.

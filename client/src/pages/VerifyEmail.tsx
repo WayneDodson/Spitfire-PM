@@ -69,8 +69,7 @@ export default function VerifyEmail() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-primary">Project Pro</h1>
-          <p className="text-muted-foreground text-sm">The PM Simulator</p>
+          <h1 className="text-2xl font-bold text-primary">Spitfire PM</h1>
         </div>
 
         <div className="bg-card border border-border rounded-2xl p-8 text-center space-y-6">

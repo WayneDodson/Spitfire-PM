@@ -18,6 +18,7 @@ import { generateQuizPDF } from "@/lib/generateQuizPDF";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
+import { BrandedLoader } from "@/components/BrandedLoader";
 
 type Tab = "study" | "terms" | "quiz";
 
@@ -117,16 +118,12 @@ export default function ApmModule() {
   };
 
   if (authLoading || isLoading) {
-    return (
-      <div className="min-h-screen bg-[#080e1a] flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
-      </div>
-    );
+    return <BrandedLoader />;
   }
 
   if (!module) {
     return (
-      <div className="min-h-screen bg-[#080e1a] flex items-center justify-center text-foreground/50">
+      <div className="min-h-screen bg-background flex items-center justify-center text-foreground/50">
         Module not found.
       </div>
     );
