@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, BookOpen, CheckCircle2, Clock, PlayCircle, Lock, Trophy, Brain, Crown, Zap } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { BrandedLoader } from "@/components/BrandedLoader";
 
 const TRIAL_LESSON_LIMIT = 6;
 
@@ -31,14 +32,7 @@ export default function Level() {
   const daysRemaining = trialStatus?.daysRemaining ?? 0;
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="text-muted-foreground">Loading lessons...</p>
-        </div>
-      </div>
-    );
+    return <BrandedLoader message="Loading lessons..." />;
   }
 
   if (!level || !lessons) {

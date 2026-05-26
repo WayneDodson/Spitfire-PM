@@ -20,6 +20,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
 import { ConfidenceCheck } from "@/components/ConfidenceCheck";
 import ShareProgress from "@/components/ShareProgress";
+import { BrandedLoader } from "@/components/BrandedLoader";
 
 type LessonPhase = "reading" | "confidence_check" | "reflection" | "complete" | "level_complete";
 
@@ -161,14 +162,7 @@ export default function Lesson() {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="text-muted-foreground">Loading lesson...</p>
-        </div>
-      </div>
-    );
+    return <BrandedLoader message="Loading lesson..." />;
   }
 
   if (!lesson) {
