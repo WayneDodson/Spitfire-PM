@@ -485,3 +485,9 @@
 - [x] Add /simulations, /simulations/decision/:id, /simulations/interview/:id, /simulations/build/:id routes to App.tsx
 - [x] Add Simulations nav link to Dashboard header
 - [x] ShareProgress component wired into all three completion screens
+
+## Voice Transcription (Mic Button)
+- [x] Add transcribeAudio tRPC procedure (server/routers/simulations.ts) — uploads base64 audio to S3, calls Whisper, returns transcript
+- [x] Build useVoiceTranscription hook (client/src/hooks/useVoiceTranscription.ts) — MediaRecorder → base64 → tRPC mutation
+- [x] Add MicButton component + STAR prompt strip to InterviewSimPlayer.tsx
+- [x] Add MicButton component to BuildSimPlayer.tsx (per-field, single shared hook + activeFieldId)

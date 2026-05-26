@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useVoiceTranscription, VoiceState } from "@/hooks/useVoiceTranscription";
 import { useParams, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -16,7 +17,68 @@ import {
   FileText,
   RotateCcw,
   BookOpen,
+  Mic,
+  MicOff,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
+
+// ─── mic button ──────────────────────────────────────────────────────────────
+
+function MicButton({ state, onClick }: { state: VoiceState; onClick: () => void }) {
+  const isRecording = state === "recording";
+  const isTranscribing = state === "transcribing";
+  const isDone = state === "done";
+  const isError = state === "error";
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={isTranscribing}
+      title={
+        isRecording
+          ? "Stop recording"
+          : isTranscribing
+          ? "Transcribing…"
+          : isDone
+          ? "Transcribed — click to record again"
+          : isError
+          ? "Error — click to retry"
+          : "Click to speak your answer"
+      }
+      className={[
+        "flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium border transition-all duration-200",
+        isRecording
+          ? "bg-red-500 border-red-500 text-white animate-pulse shadow-md shadow-red-500/30"
+          : isTranscribing
+          ? "bg-amber-100 border-amber-300 text-amber-700 dark:bg-amber-950/30 dark:border-amber-700 dark:text-amber-400 cursor-not-allowed"
+          : isDone
+          ? "bg-emerald-100 border-emerald-300 text-emerald-700 dark:bg-emerald-950/30 dark:border-emerald-700 dark:text-emerald-400"
+          : isError
+          ? "bg-red-100 border-red-300 text-red-700 dark:bg-red-950/30 dark:border-red-700 dark:text-red-400"
+          : "bg-card border-border text-muted-foreground hover:text-foreground hover:bg-accent hover:border-primary/50",
+      ].join(" ")}
+    >
+      {isTranscribing ? (
+        <Loader2 className="h-3 w-3 animate-spin" />
+      ) : isRecording ? (
+        <MicOff className="h-3 w-3" />
+      ) : (
+        <Mic className="h-3 w-3" />
+      )}
+      {isRecording
+        ? "Stop"
+        : isTranscribing
+        ? "Transcribing…"
+        : isDone
+        ? "Done"
+        : isError
+        ? "Retry"
+        : "Speak"}
+    </button>
+  );
+}
 
 // ─── types ───────────────────────────────────────────────────────────────────
 
@@ -47,6 +109,23 @@ export default function BuildSimPlayer() {
   const [score, setScore] = useState<number | null>(null);
   const [loadingFeedback, setLoadingFeedback] = useState(false);
   const [completed, setCompleted] = useState(false);
+  const [activeFieldId, setActiveFieldId] = useState<string | null>(null);
+  const [micError, setMicError] = useState<string | null>(null);
+
+  const { state: micState, toggleRecording } = useVoiceTranscription({
+    onTranscript: (text) =>
+      setFieldValues((prev) => ({
+        ...prev,
+        [activeFieldId ?? ""]: prev[activeFieldId ?? ""] ? `${prev[activeFieldId ?? ""]} ${text}` : text,
+      })),
+    onError: (msg) => setMicError(msg),
+  });
+
+  function handleMicClick(fieldId: string) {
+    setActiveFieldId(fieldId);
+    setMicError(null);
+    toggleRecording();
+  }
 
   const simId = parseInt(params.id ?? "0", 10);
 
@@ -199,15 +278,29 @@ export default function BuildSimPlayer() {
               <div className="space-y-5">
                 {content.fields.map((field) => (
                   <div key={field.id} className="space-y-1.5">
-                    <Label htmlFor={field.id} className="text-sm font-medium">
-                      {field.label}
-                    </Label>
+                    <div className="flex items-center justify-between gap-2">
+                      <Label htmlFor={field.id} className="text-sm font-medium">
+                        {field.label}
+                      </Label>
+                      {field.type === "textarea" && (
+                        <MicButton
+                          state={activeFieldId === field.id ? micState : "idle"}
+                          onClick={() => handleMicClick(field.id)}
+                        />
+                      )}
+                    </div>
+                    {micError && activeFieldId === field.id && (
+                      <p className="text-xs text-red-500 flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" />
+                        {micError}
+                      </p>
+                    )}
                     {field.type === "textarea" ? (
                       <Textarea
                         id={field.id}
                         value={fieldValues[field.id] ?? ""}
                         onChange={(e) => setField(field.id, e.target.value)}
-                        placeholder={field.placeholder}
+                        placeholder={field.placeholder ?? "Type your answer, or click \"Speak\" to record."}
                         className="min-h-24 resize-y"
                       />
                     ) : (

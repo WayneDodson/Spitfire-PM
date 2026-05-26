@@ -3,6 +3,9 @@ import { z } from "zod";
 import { simulations, userSimulationProgress, userStats, xpTransactions } from "../../drizzle/schema";
 import { eq, and, sql, inArray } from "drizzle-orm";
 import { invokeLLM } from "../_core/llm";
+import { transcribeAudio } from "../_core/voiceTranscription";
+import { storagePut } from "../storage";
+import { TRPCError } from "@trpc/server";
 import { getDb } from "../db";
 import { getSimulationHintsForLesson } from "../../shared/lessonSimulationMap";
 
@@ -572,5 +575,48 @@ Return JSON: { "score": <0-100>, "feedback": "<3-4 sentences>" }`;
           };
         })
         .filter(Boolean);
+    }),
+
+  // ─── voice transcription ─────────────────────────────────────────────────
+  transcribeAudio: protectedProcedure
+    .input(
+      z.object({
+        audioBase64: z.string(),
+        mimeType: z.string().default("audio/webm"),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      // Decode base64 → Buffer
+      const audioBuffer = Buffer.from(input.audioBase64, "base64");
+
+      // Enforce 16 MB limit
+      const sizeMB = audioBuffer.length / (1024 * 1024);
+      if (sizeMB > 16) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Audio file is ${sizeMB.toFixed(1)} MB — maximum allowed is 16 MB. Please record a shorter answer.`,
+        });
+      }
+
+      // Upload to S3 so the Whisper helper can fetch it via URL
+      const ext = input.mimeType.split("/")[1]?.split(";")[0] ?? "webm";
+      const key = `voice-transcripts/tmp-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { url } = await storagePut(key, audioBuffer, input.mimeType);
+
+      // Call Whisper
+      const result = await transcribeAudio({
+        audioUrl: url,
+        language: "en",
+        prompt: "Transcribe a project management interview answer using the STAR method.",
+      });
+
+      if ("error" in result) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: result.error,
+        });
+      }
+
+      return { text: result.text.trim() };
     }),
 });

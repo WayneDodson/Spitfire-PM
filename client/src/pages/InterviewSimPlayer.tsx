@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useVoiceTranscription, VoiceState } from "@/hooks/useVoiceTranscription";
 import { useParams, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -12,10 +13,69 @@ import {
   ArrowLeft,
   CheckCircle2,
   Mic,
+  MicOff,
   RotateCcw,
   Lightbulb,
   AlertCircle,
+  Loader2,
 } from "lucide-react";
+
+// ─── mic button ──────────────────────────────────────────────────────────────
+
+function MicButton({ state, onClick }: { state: VoiceState; onClick: () => void }) {
+  const isRecording = state === "recording";
+  const isTranscribing = state === "transcribing";
+  const isDone = state === "done";
+  const isError = state === "error";
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={isTranscribing}
+      title={
+        isRecording
+          ? "Stop recording"
+          : isTranscribing
+          ? "Transcribing…"
+          : isDone
+          ? "Transcribed — click to record again"
+          : isError
+          ? "Error — click to retry"
+          : "Click to speak your answer"
+      }
+      className={[
+        "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border transition-all duration-200",
+        isRecording
+          ? "bg-red-500 border-red-500 text-white animate-pulse shadow-lg shadow-red-500/30"
+          : isTranscribing
+          ? "bg-amber-100 border-amber-300 text-amber-700 dark:bg-amber-950/30 dark:border-amber-700 dark:text-amber-400 cursor-not-allowed"
+          : isDone
+          ? "bg-emerald-100 border-emerald-300 text-emerald-700 dark:bg-emerald-950/30 dark:border-emerald-700 dark:text-emerald-400"
+          : isError
+          ? "bg-red-100 border-red-300 text-red-700 dark:bg-red-950/30 dark:border-red-700 dark:text-red-400"
+          : "bg-card border-border text-foreground hover:bg-accent hover:border-primary/50",
+      ].join(" ")}
+    >
+      {isTranscribing ? (
+        <Loader2 className="h-4 w-4 animate-spin" />
+      ) : isRecording ? (
+        <MicOff className="h-4 w-4" />
+      ) : (
+        <Mic className="h-4 w-4" />
+      )}
+      {isRecording
+        ? "Stop"
+        : isTranscribing
+        ? "Transcribing…"
+        : isDone
+        ? "Done"
+        : isError
+        ? "Retry"
+        : "Speak"}
+    </button>
+  );
+}
 
 // ─── types ───────────────────────────────────────────────────────────────────
 
@@ -41,6 +101,12 @@ export default function InterviewSimPlayer() {
   const { isAuthenticated } = useAuth();
 
   const [answer, setAnswer] = useState("");
+  const [micError, setMicError] = useState<string | null>(null);
+
+  const { state: micState, toggleRecording } = useVoiceTranscription({
+    onTranscript: (text) => setAnswer((prev) => prev ? `${prev} ${text}` : text),
+    onError: (msg) => setMicError(msg),
+  });
   const [submitted, setSubmitted] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [score, setScore] = useState<number | null>(null);
@@ -206,14 +272,40 @@ export default function InterviewSimPlayer() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="text-sm font-medium text-foreground">Your Answer</label>
-                  <span className={`text-xs ${tooShort ? "text-muted-foreground" : tooLong ? "text-red-500" : "text-emerald-600"}`}>
-                    {wc} / {minWords}–{maxWords} words
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <MicButton state={micState} onClick={toggleRecording} />
+                    <span className={`text-xs ${tooShort ? "text-muted-foreground" : tooLong ? "text-red-500" : "text-emerald-600"}`}>
+                      {wc} / {minWords}–{maxWords} words
+                    </span>
+                  </div>
                 </div>
+
+                {/* STAR prompt strip */}
+                <div className="grid grid-cols-4 gap-2 text-xs">
+                  {[
+                    { letter: "S", label: "Situation", color: "bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400" },
+                    { letter: "T", label: "Task",      color: "bg-purple-100 text-purple-700 dark:bg-purple-950/40 dark:text-purple-400" },
+                    { letter: "A", label: "Action",    color: "bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400" },
+                    { letter: "R", label: "Result",    color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400" },
+                  ].map(({ letter, label, color }) => (
+                    <div key={letter} className={`flex items-center gap-1.5 px-2 py-1.5 rounded-md ${color}`}>
+                      <span className="font-bold text-sm">{letter}</span>
+                      <span>{label}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {micError && (
+                  <p className="text-xs text-red-500 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {micError}
+                  </p>
+                )}
+
                 <Textarea
                   value={answer}
                   onChange={(e) => setAnswer(e.target.value)}
-                  placeholder={`Use the STAR method: Situation, Task, Action, Result. Aim for ${minWords}–${maxWords} words.`}
+                  placeholder={`Use the STAR method: Situation, Task, Action, Result. Aim for ${minWords}–${maxWords} words. Or click "Speak" to record your answer.`}
                   className="min-h-48 resize-y"
                 />
                 {tooShort && wc > 0 && (
