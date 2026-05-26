@@ -1,0 +1,1 @@
+ALTER TABLE `simulations` MODIFY COLUMN `accessType` enum('free','pro','advanced') NOT NULL DEFAULT 'pro';

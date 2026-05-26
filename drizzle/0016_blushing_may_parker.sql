@@ -1,0 +1,1 @@
+ALTER TABLE `simulations` MODIFY COLUMN `levelId` int;

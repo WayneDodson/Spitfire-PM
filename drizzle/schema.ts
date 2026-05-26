@@ -531,8 +531,8 @@ export type InsertApmModuleProgress = typeof apmModuleProgress.$inferInsert;
  */
 export const simulations = mysqlTable("simulations", {
   id: int("id").autoincrement().primaryKey(),
-  /** Level this simulation belongs to (1–7) */
-  levelId: int("levelId").notNull(),
+  /** Level this simulation belongs to (1–7). NULL for advanced modules not tied to a core level. */
+  levelId: int("levelId"),
   /** Display title */
   title: varchar("title", { length: 255 }).notNull(),
   /** Short description shown on the card */
@@ -546,11 +546,13 @@ export const simulations = mysqlTable("simulations", {
   /** Estimated minutes to complete */
   estimatedMinutes: int("estimatedMinutes").notNull(),
   /** Free (Level 1) or Pro required */
-  accessType: mysqlEnum("accessType", ["free", "pro"]).notNull().default("pro"),
+  accessType: mysqlEnum("accessType", ["free", "pro", "advanced"]).notNull().default("pro"),
   /** Full simulation content — JSON structure varies by type */
   content: text("content").notNull(),
   /** Display order within level */
   orderIndex: int("orderIndex").notNull(),
+  /** Module name for advanced simulations (e.g. 'Lean Methodology', 'Six Sigma') */
+  moduleName: varchar("moduleName", { length: 100 }),
   /** Whether this is part of the standalone interview bank */
   isInterviewBank: boolean("isInterviewBank").default(false).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

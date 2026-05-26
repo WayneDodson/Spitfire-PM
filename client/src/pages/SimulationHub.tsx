@@ -23,6 +23,8 @@ import {
   ChevronUp,
   Trophy,
   Star,
+  GraduationCap,
+  FlaskConical,
 } from "lucide-react";
 import TierCelebration from "@/components/TierCelebration";
 
@@ -243,6 +245,11 @@ export default function SimulationHub() {
     isInterviewBank: showInterviewBank ? true : undefined,
   });
 
+  // Fetch advanced module simulations separately
+  const { data: advancedSims } = trpc.simulations.list.useQuery({
+    accessType: "advanced",
+  }, { enabled: !showInterviewBank });
+
   const { data: stats } = trpc.simulations.stats.useQuery(undefined, {
     enabled: isAuthenticated,
   });
@@ -262,6 +269,35 @@ export default function SimulationHub() {
   }, [sims]);
 
   const interviewBankSims = useMemo(() => sims?.filter((s) => s.isInterviewBank) ?? [], [sims]);
+
+  // Group advanced module simulations by moduleName
+  const advancedModuleGroups = useMemo(() => {
+    const groups: Record<string, NonNullable<typeof advancedSims>> = {};
+    if (!advancedSims) return groups;
+    for (const s of advancedSims) {
+      const mod = s.moduleName ?? "Other";
+      if (!groups[mod]) groups[mod] = [];
+      groups[mod].push(s);
+    }
+    return groups;
+  }, [advancedSims]);
+
+  // Check if core curriculum is complete (all 3 difficulty tiers fully completed)
+  const coreComplete = useMemo(() => {
+    if (!sims || sims.length === 0) return false;
+    const coreSims = sims.filter((s) => !s.isInterviewBank && s.accessType !== "advanced");
+    if (coreSims.length === 0) return false;
+    return coreSims.every((s) => s.userProgress?.status === "completed");
+  }, [sims]);
+
+  const MODULE_ORDER = [
+    "Lean Methodology",
+    "Six Sigma",
+    "PRINCE2 Practitioner",
+    "MSP: Managing Successful Programmes",
+    "MoP — Management of Portfolios",
+    "Change Management",
+  ];
 
   // Detect newly completed tiers and fire celebration
   useEffect(() => {
@@ -500,6 +536,147 @@ export default function SimulationHub() {
           <div className="text-center py-20 text-muted-foreground">
             No simulations match your filters.
           </div>
+        )}
+
+        {/* Advanced Modules section */}
+        {!showInterviewBank && (
+          <section className={`rounded-xl border overflow-hidden transition-all ${
+            coreComplete
+              ? "border-amber-500/30 bg-gradient-to-b from-amber-500/5 to-transparent"
+              : "border-muted bg-muted/20"
+          }`}>
+            <div className={`px-6 py-5 border-b ${
+              coreComplete ? "border-amber-500/20" : "border-muted"
+            }`}>
+              <div className="flex items-center gap-3">
+                <GraduationCap className={`h-5 w-5 ${coreComplete ? "text-amber-500" : "text-muted-foreground"}`} />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-lg font-bold text-foreground">Advanced Modules</h2>
+                    {!coreComplete && (
+                      <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground border">
+                        <Lock className="h-3 w-3" />
+                        Locked
+                      </span>
+                    )}
+                    {coreComplete && (
+                      <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 border border-amber-500/20">
+                        <Trophy className="h-3 w-3" />
+                        Unlocked
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-0.5">
+                    {coreComplete
+                      ? "You've earned access to specialist methodology simulations."
+                      : "Complete all Beginner, Intermediate, and Advanced core simulations to unlock."
+                    }
+                  </p>
+                </div>
+                <span className="text-sm text-muted-foreground">
+                  {Object.keys(advancedModuleGroups).length} modules
+                </span>
+              </div>
+            </div>
+
+            {!coreComplete ? (
+              <div className="px-6 py-10 text-center">
+                <Lock className="h-10 w-10 text-muted-foreground mx-auto mb-3 opacity-40" />
+                <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                  Complete all core simulations (Beginner, Intermediate, and Advanced tiers) to unlock Lean, Six Sigma, PRINCE2 Practitioner, MSP, MoP, and Change Management.
+                </p>
+              </div>
+            ) : (
+              <div className="px-6 pb-6 pt-4 space-y-8">
+                {MODULE_ORDER.filter((mod) => advancedModuleGroups[mod]?.length > 0).map((moduleName) => {
+                  const modSims = advancedModuleGroups[moduleName] ?? [];
+                  const completedInMod = modSims.filter((s) => s.userProgress?.status === "completed").length;
+                  return (
+                    <div key={moduleName}>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <FlaskConical className="h-4 w-4 text-amber-500" />
+                          <h3 className="font-semibold text-foreground">{moduleName}</h3>
+                        </div>
+                        <span className="text-xs text-muted-foreground">
+                          {completedInMod}/{modSims.length} completed
+                        </span>
+                      </div>
+                      <Progress value={(completedInMod / modSims.length) * 100} className="h-1.5 mb-4" />
+                      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {modSims.map((sim) => {
+                          const typeMeta = TYPE_META[sim.type];
+                          const prog = sim.userProgress;
+                          const isCompleted = prog?.status === "completed";
+                          const isInProgress = prog?.status === "in_progress";
+                          return (
+                            <Card
+                              key={sim.id}
+                              className={`group relative flex flex-col cursor-pointer transition-shadow hover:shadow-md ${
+                                isCompleted ? "border-emerald-500/30 bg-emerald-500/5" : ""
+                              }`}
+                              onClick={() => handleOpen(sim)}
+                            >
+                              {isCompleted && (
+                                <div className="absolute top-3 right-3 z-10">
+                                  <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                                </div>
+                              )}
+                              {isInProgress && !isCompleted && (
+                                <div className="absolute top-3 right-3 z-10">
+                                  <RotateCcw className="h-4 w-4 text-amber-500" />
+                                </div>
+                              )}
+                              <CardHeader className="pb-2">
+                                <div className="flex flex-wrap gap-1.5 mb-2">
+                                  <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border font-medium ${typeMeta?.colour}`}>
+                                    {typeMeta?.icon}
+                                    {typeMeta?.label}
+                                  </span>
+                                  <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border font-medium bg-amber-500/10 text-amber-600 border-amber-500/20">
+                                    <Star className="h-3 w-3" />
+                                    Advanced
+                                  </span>
+                                </div>
+                                <CardTitle className="text-base leading-snug pr-6">{sim.title}</CardTitle>
+                              </CardHeader>
+                              <CardContent className="flex flex-col flex-1 gap-3">
+                                <CardDescription className="text-sm leading-relaxed line-clamp-3">
+                                  {sim.description}
+                                </CardDescription>
+                                <div className="mt-auto flex items-center justify-between">
+                                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                                    <Clock className="h-3.5 w-3.5" />
+                                    {sim.estimatedMinutes} min
+                                  </span>
+                                  {isCompleted ? (
+                                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1">
+                                      <RotateCcw className="h-3 w-3" />
+                                      Retry
+                                    </Button>
+                                  ) : (
+                                    <Button size="sm" className="h-7 text-xs gap-1">
+                                      <PlayCircle className="h-3 w-3" />
+                                      {isInProgress ? "Continue" : "Start"}
+                                    </Button>
+                                  )}
+                                </div>
+                                {prog?.bestScore != null && (
+                                  <div className="text-xs text-muted-foreground">
+                                    Best score: <span className="font-semibold text-foreground">{prog.bestScore}%</span>
+                                  </div>
+                                )}
+                              </CardContent>
+                            </Card>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </section>
         )}
       </div>
     </div>

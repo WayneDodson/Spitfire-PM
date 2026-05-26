@@ -70,6 +70,7 @@ export const simulationsRouter = router({
         difficulty: z.enum(["all", "beginner", "intermediate", "advanced"]).optional(),
         categoryTag: z.enum(["all", "high_impact", "interview_favourite", "common_scenario", "confidence_builder", "exam_prep"]).optional(),
         isInterviewBank: z.boolean().optional(),
+        accessType: z.enum(["free", "pro", "advanced"]).optional(),
       }).optional(),
     )
     .query(async ({ ctx, input }) => {
@@ -91,6 +92,9 @@ export const simulationsRouter = router({
       }
       if (input?.isInterviewBank !== undefined) {
         query = query.where(eq(simulations.isInterviewBank, input.isInterviewBank));
+      }
+      if (input?.accessType) {
+        query = query.where(eq(simulations.accessType, input.accessType));
       }
 
       const rows = await query.orderBy(simulations.levelId, simulations.orderIndex);
