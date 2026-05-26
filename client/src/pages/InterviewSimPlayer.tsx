@@ -83,11 +83,17 @@ function MicButton({ state, onClick }: { state: VoiceState; onClick: () => void 
 function MicErrorBanner({ code, onDismiss }: { code: string; onDismiss: () => void }) {
   const isPermission = code === "permission_denied";
   const isNoDevice = code === "no_device";
+  const isInUse = code === "in_use";
+  const isEmpty = code === "empty_recording";
 
   const title = isPermission
     ? "Microphone access blocked"
     : isNoDevice
     ? "No microphone found"
+    : isInUse
+    ? "Microphone is in use by another app"
+    : isEmpty
+    ? "No audio recorded"
     : "Microphone unavailable";
 
   const body = isPermission ? (
@@ -102,8 +108,12 @@ function MicErrorBanner({ code, onDismiss }: { code: string; onDismiss: () => vo
     </>
   ) : isNoDevice ? (
     <>No microphone was detected. Please plug in a microphone or headset and try again, or type your answer instead.</>
+  ) : isInUse ? (
+    <>Your microphone appears to be open in another app (e.g. a video call or recording software). Close that app and click <strong>Speak</strong> again, or type your answer instead.</>
+  ) : isEmpty ? (
+    <>Nothing was recorded — the microphone may have been muted. Check your headset mute button and try again.</>
   ) : (
-    <>Could not access your microphone. Check that no other app is using it, then try again, or type your answer instead.</>
+    <>Could not access your microphone. Try closing other apps that use the mic, then click <strong>Speak</strong> again, or type your answer instead.</>
   );
 
   return (
