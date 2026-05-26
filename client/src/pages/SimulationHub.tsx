@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useLocation, useSearch } from "wouter";
+import { ArrowLeft, LayoutDashboard } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { BrandedLoader } from "@/components/BrandedLoader";
@@ -310,6 +311,31 @@ export default function SimulationHub() {
           onDismiss={() => setCelebrationTier(null)}
         />
       )}
+
+      {/* ── Sticky nav bar ── */}
+      <div className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setLocation("/dashboard")}
+            className="gap-1.5 text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setLocation("/dashboard")}
+            className="gap-1.5 text-muted-foreground hover:text-foreground"
+          >
+            <LayoutDashboard className="h-4 w-4" />
+            Dashboard
+          </Button>
+          <span className="text-foreground/30 text-sm ml-1">/ Simulation Hub</span>
+        </div>
+      </div>
 
       {/* ── Header ── */}
       <div className="border-b border-border bg-card/50">

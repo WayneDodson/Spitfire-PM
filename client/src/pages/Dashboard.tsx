@@ -31,12 +31,13 @@ import {
   Pencil,
   Award,
 } from "lucide-react";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { XPProgressBar } from "@/components/XPProgressBar";
 import { OnboardingModal } from "@/components/OnboardingModal";
+import FullCurriculumCelebration from "@/components/FullCurriculumCelebration";
 
 // Motivational messages keyed by progress milestones
 const MOTIVATIONAL_MESSAGES = [
@@ -105,6 +106,8 @@ export default function Dashboard() {
   const [, setLocation] = useLocation();
   const [copiedLink, setCopiedLink] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showFullCelebration, setShowFullCelebration] = useState(false);
+  const fullCelebrationShownRef = useRef(false);
 
   const { data: levels } = trpc.levels.getAll.useQuery();
   const { data: levelProgress } = trpc.levels.getMyProgress.useQuery(undefined, {
@@ -114,6 +117,9 @@ export default function Dashboard() {
     enabled: isAuthenticated,
   });
   const { data: trialStatus } = trpc.trial.getStatus.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
+  const { data: simStats } = trpc.simulations.stats.useQuery(undefined, {
     enabled: isAuthenticated,
   });
 
@@ -137,6 +143,20 @@ export default function Dashboard() {
 
   const completedLevels = userProgress?.filter((p: any) => p.completed).length || 0;
   const totalLevels = 7;
+
+  // Full curriculum completion: all 7 levels done + all Advanced simulations passed
+  const advancedSimsCompleted = simStats?.byDifficulty?.advanced?.completed ?? 0;
+  const advancedSimsTotal = simStats?.byDifficulty?.advanced?.total ?? 1;
+  const allAdvancedPassed = advancedSimsTotal > 0 && advancedSimsCompleted >= advancedSimsTotal;
+  const isFullyComplete = completedLevels >= totalLevels && allAdvancedPassed;
+
+  useEffect(() => {
+    if (isFullyComplete && !fullCelebrationShownRef.current) {
+      fullCelebrationShownRef.current = true;
+      // Small delay so the dashboard has rendered first
+      setTimeout(() => setShowFullCelebration(true), 800);
+    }
+  }, [isFullyComplete]);
   const overallProgress = (completedLevels / totalLevels) * 100;
 
   const currentLevelProgress =
@@ -788,6 +808,125 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* Advanced Modules — locked until core curriculum complete */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-2xl font-black">Advanced Modules</h3>
+                <p className="text-foreground/40 text-sm mt-0.5">
+                  Specialist frameworks unlocked after completing all 7 core levels.
+                </p>
+              </div>
+              {completedLevels < totalLevels && (
+                <span className="flex items-center gap-1.5 text-xs text-foreground/30 border border-border rounded-full px-3 py-1">
+                  <Lock className="h-3.5 w-3.5" />
+                  Complete all 7 levels to unlock
+                </span>
+              )}
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[
+                {
+                  title: "Lean Methodology",
+                  subtitle: "Eliminate waste, maximise value",
+                  description: "Learn Lean principles, value stream mapping, and how to apply continuous improvement in project environments.",
+                  icon: <TrendingUp className="h-5 w-5 text-green-400" />,
+                  colour: "bg-green-500/[0.05] border-green-500/20",
+                  iconBg: "bg-green-500/10",
+                  comingSoon: true,
+                },
+                {
+                  title: "Six Sigma",
+                  subtitle: "Data-driven quality control",
+                  description: "Master DMAIC, statistical process control, and defect reduction techniques used in high-stakes projects.",
+                  icon: <BarChart3 className="h-5 w-5 text-blue-400" />,
+                  colour: "bg-blue-500/[0.05] border-blue-500/20",
+                  iconBg: "bg-blue-500/10",
+                  comingSoon: true,
+                },
+                {
+                  title: "PRINCE2 Practitioner",
+                  subtitle: "Structured project governance",
+                  description: "Go beyond the foundation — learn how to tailor PRINCE2 to real projects and prepare for the Practitioner exam.",
+                  icon: <Shield className="h-5 w-5 text-purple-400" />,
+                  colour: "bg-purple-500/[0.05] border-purple-500/20",
+                  iconBg: "bg-purple-500/10",
+                  comingSoon: true,
+                },
+                {
+                  title: "MSP — Managing Successful Programmes",
+                  subtitle: "Programme-level leadership",
+                  description: "Understand how to manage portfolios of related projects, align them to organisational strategy, and deliver transformational change.",
+                  icon: <Layers className="h-5 w-5 text-amber-400" />,
+                  colour: "bg-amber-500/[0.05] border-amber-500/20",
+                  iconBg: "bg-amber-500/10",
+                  comingSoon: true,
+                },
+                {
+                  title: "MoP — Management of Portfolios",
+                  subtitle: "Strategic portfolio management",
+                  description: "Learn how organisations select, prioritise, and govern their project portfolios to maximise strategic value and return.",
+                  icon: <Target className="h-5 w-5 text-cyan-400" />,
+                  colour: "bg-cyan-500/[0.05] border-cyan-500/20",
+                  iconBg: "bg-cyan-500/10",
+                  comingSoon: true,
+                },
+                {
+                  title: "Change Management",
+                  subtitle: "Lead people through change",
+                  description: "Explore ADKAR, Kotter's 8-step model, and practical techniques for managing the human side of project delivery.",
+                  icon: <Users className="h-5 w-5 text-rose-400" />,
+                  colour: "bg-rose-500/[0.05] border-rose-500/20",
+                  iconBg: "bg-rose-500/10",
+                  comingSoon: true,
+                },
+              ].map((mod) => {
+                const isUnlocked = completedLevels >= totalLevels || user?.role === "admin" || (user as any)?.founderAccessEarned;
+                return (
+                  <div
+                    key={mod.title}
+                    className={`relative rounded-2xl border p-5 transition-all ${
+                      isUnlocked
+                        ? `${mod.colour} cursor-pointer hover:opacity-90`
+                        : "border-border bg-card opacity-50"
+                    }`}
+                    onClick={() => {
+                      if (!isUnlocked) {
+                        toast.info("Complete all 7 core levels to unlock Advanced Modules.");
+                      } else {
+                        toast.info(`${mod.title} — content coming soon!`);
+                      }
+                    }}
+                  >
+                    {/* Lock / Coming Soon badge */}
+                    <div className="absolute top-4 right-4">
+                      {isUnlocked ? (
+                        <span className="text-xs font-semibold text-foreground/30 border border-border rounded-full px-2 py-0.5">Coming Soon</span>
+                      ) : (
+                        <Lock className="h-4 w-4 text-foreground/20" />
+                      )}
+                    </div>
+
+                    <div className={`w-10 h-10 ${mod.iconBg} rounded-lg flex items-center justify-center mb-3`}>
+                      {mod.icon}
+                    </div>
+                    <h4 className="font-bold text-base mb-0.5 pr-16">{mod.title}</h4>
+                    <p className="text-xs text-foreground/40 mb-2">{mod.subtitle}</p>
+                    <p className="text-sm text-foreground/50 leading-relaxed line-clamp-3">{mod.description}</p>
+
+                    {!isUnlocked && (
+                      <div className="mt-3 flex items-center gap-1.5 text-xs text-foreground/30">
+                        <Lock className="h-3 w-3" />
+                        Complete all 7 levels to unlock
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Resources */}
           <div className="space-y-4">
             <h3 className="text-xl font-bold">Reference Materials</h3>
@@ -843,6 +982,13 @@ export default function Dashboard() {
           window.location.reload();
         }}
       />
+
+      {showFullCelebration && (
+        <FullCurriculumCelebration
+          userName={user?.displayName || user?.name}
+          onDismiss={() => setShowFullCelebration(false)}
+        />
+      )}
     </>
   );
 }

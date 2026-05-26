@@ -496,12 +496,25 @@ Return JSON: { "score": <0-100>, "feedback": "<3-4 sentences>" }`;
         ),
       );
 
+    // Get all simulations to know total counts per difficulty
+    const allSims = await db.select({ id: simulations.id, difficulty: simulations.difficulty }).from(simulations);
+    const completedIds = new Set(rows.map((r) => r.simulationId));
+
+    const difficulties = ["beginner", "intermediate", "advanced"] as const;
+    const byDifficulty: Record<string, { total: number; completed: number }> = {};
+    for (const diff of difficulties) {
+      const total = allSims.filter((s) => s.difficulty === diff).length;
+      const completed = allSims.filter((s) => s.difficulty === diff && completedIds.has(s.id)).length;
+      byDifficulty[diff] = { total, completed };
+    }
+
     return {
       totalCompleted: rows.length,
       totalAttempts: rows.reduce((sum, r) => sum + r.attempts, 0),
       averageScore: rows.length
         ? Math.round(rows.reduce((sum, r) => sum + (r.bestScore ?? 0), 0) / rows.length)
         : 0,
+      byDifficulty,
     };
   }),
 
