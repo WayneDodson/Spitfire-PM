@@ -336,41 +336,51 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Mobile / tablet dropdown menu */}
-        {menuOpen && (
-          <div className="lg:hidden border-t sp-divider sp-nav px-6 py-4 flex flex-col gap-1">
-            <button
-              onClick={scrollToHowItWorks}
-              className="text-left w-full px-3 py-2.5 rounded-lg text-sm text-foreground/70 hover:text-white hover:bg-white/5 transition-colors"
-            >
-              How it works
-            </button>
-            <button
-              onClick={() => navigate("/pricing")}
-              className="text-left w-full px-3 py-2.5 rounded-lg text-sm text-foreground/70 hover:text-white hover:bg-white/5 transition-colors"
-            >
-              Pricing
-            </button>
-            <div className="border-t border-border/40 my-1" />
-            {isAuthenticated ? (
-              <Button
-                onClick={() => navigate("/dashboard")}
-                className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold mt-1"
+        {/* Mobile / tablet dropdown menu — always mounted, animated via grid-rows */}
+        <div
+          className="lg:hidden overflow-hidden transition-[grid-template-rows,opacity] duration-300 ease-in-out"
+          style={{
+            display: "grid",
+            gridTemplateRows: menuOpen ? "1fr" : "0fr",
+            opacity: menuOpen ? 1 : 0,
+          }}
+          aria-hidden={!menuOpen}
+        >
+          <div className="min-h-0">
+            <div className="border-t sp-divider sp-nav px-6 py-4 flex flex-col gap-1">
+              <button
+                onClick={scrollToHowItWorks}
+                className="text-left w-full px-3 py-2.5 rounded-lg text-sm text-foreground/70 hover:text-white hover:bg-white/5 transition-colors"
               >
-                Go to Dashboard <ChevronRight className="h-4 w-4 ml-1" />
-              </Button>
-            ) : (
-              <div className="flex flex-col gap-2 mt-1">
-                <Button variant="outline" onClick={() => navigate("/login")} className="w-full">
-                  Sign In
+                How it works
+              </button>
+              <button
+                onClick={() => navigate("/pricing")}
+                className="text-left w-full px-3 py-2.5 rounded-lg text-sm text-foreground/70 hover:text-white hover:bg-white/5 transition-colors"
+              >
+                Pricing
+              </button>
+              <div className="border-t border-border/40 my-1" />
+              {isAuthenticated ? (
+                <Button
+                  onClick={() => navigate("/dashboard")}
+                  className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold mt-1"
+                >
+                  Go to Dashboard <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
-                <Button onClick={() => navigate("/login")} className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold shadow-lg shadow-cyan-500/25">
-                  Start Free — No Payment Required
-                </Button>
-              </div>
-            )}
+              ) : (
+                <div className="flex flex-col gap-2 mt-1">
+                  <Button variant="outline" onClick={() => navigate("/login")} className="w-full">
+                    Sign In
+                  </Button>
+                  <Button onClick={() => navigate("/login")} className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold shadow-lg shadow-cyan-500/25">
+                    Start Free — No Payment Required
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
-        )}
+        </div>
       </nav>
 
       <main>
