@@ -43,6 +43,8 @@ import {
   Trophy,
   AlertTriangle,
   Share2,
+  Menu,
+  X,
 } from "lucide-react";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -239,17 +241,36 @@ function StatCard({ value, label, sub }: { value: string; label: string; sub: st
 export default function Home() {
   const [, setLocation] = useLocation();
   const { isAuthenticated } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const scrollToHowItWorks = () => {
-    document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" });
+    setMenuOpen(false);
+    setTimeout(() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" }), 50);
   };
+
+  const navigate = (path: string) => {
+    setMenuOpen(false);
+    setLocation(path);
+  };
+
+  // Close menu on outside click
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest("#site-nav")) setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [menuOpen]);
 
   return (
     <div className="min-h-screen sp-page overflow-x-hidden">
 
       {/* ── Navigation ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b sp-divider sp-nav backdrop-blur-md">
+      <nav id="site-nav" className="fixed top-0 left-0 right-0 z-50 border-b sp-divider sp-nav backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          {/* Logo */}
           <div className="flex items-center gap-3">
             <img
               src="/manus-storage/spitfire-pm-logo_8b0682d2.png"
@@ -260,49 +281,91 @@ export default function Home() {
               Spitfire PM
             </span>
           </div>
-          <div className="flex items-center gap-3">
+
+          {/* Right side */}
+          <div className="flex items-center gap-2">
             <ThemeToggle />
+
+            {/* Desktop nav links — hidden on all mobile/tablet/landscape sizes */}
+            <div className="hidden lg:flex items-center gap-3">
+              <button
+                onClick={scrollToHowItWorks}
+                className="text-sm text-foreground/50 hover:text-white transition-colors"
+              >
+                How it works
+              </button>
+              <button
+                onClick={() => navigate("/pricing")}
+                className="text-sm text-foreground/50 hover:text-white transition-colors"
+              >
+                Pricing
+              </button>
+              {isAuthenticated ? (
+                <Button
+                  size="sm"
+                  onClick={() => navigate("/dashboard")}
+                  className="bg-cyan-500 hover:bg-cyan-400 text-black font-bold"
+                >
+                  Dashboard <ChevronRight className="h-3.5 w-3.5 ml-1" />
+                </Button>
+              ) : (
+                <>
+                  <Button size="sm" variant="ghost" onClick={() => navigate("/login")} className="text-foreground/60 hover:text-white">
+                    Sign In
+                  </Button>
+                  <Button size="sm" onClick={() => navigate("/login")} className="bg-cyan-500 hover:bg-cyan-400 text-black font-bold shadow-lg shadow-cyan-500/25">
+                    Start Free
+                  </Button>
+                </>
+              )}
+            </div>
+
+            {/* Burger button — visible on everything below lg */}
+            <button
+              className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg border border-border text-foreground/60 hover:text-white hover:border-cyan-400/40 transition-colors"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+            >
+              {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile / tablet dropdown menu */}
+        {menuOpen && (
+          <div className="lg:hidden border-t sp-divider sp-nav px-6 py-4 flex flex-col gap-1">
             <button
               onClick={scrollToHowItWorks}
-              className="hidden md:block text-sm text-foreground/50 hover:text-white transition-colors"
+              className="text-left w-full px-3 py-2.5 rounded-lg text-sm text-foreground/70 hover:text-white hover:bg-white/5 transition-colors"
             >
               How it works
             </button>
             <button
-              onClick={() => setLocation("/pricing")}
-              className="hidden md:block text-sm text-foreground/50 hover:text-white transition-colors"
+              onClick={() => navigate("/pricing")}
+              className="text-left w-full px-3 py-2.5 rounded-lg text-sm text-foreground/70 hover:text-white hover:bg-white/5 transition-colors"
             >
               Pricing
             </button>
+            <div className="border-t border-border/40 my-1" />
             {isAuthenticated ? (
               <Button
-                size="sm"
-                onClick={() => setLocation("/dashboard")}
-                className="bg-cyan-500 hover:bg-cyan-400 text-black font-bold"
+                onClick={() => navigate("/dashboard")}
+                className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold mt-1"
               >
-                Dashboard <ChevronRight className="h-3.5 w-3.5 ml-1" />
+                Go to Dashboard <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
             ) : (
-              <>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => setLocation("/login")}
-                  className="text-foreground/60 hover:text-white"
-                >
+              <div className="flex flex-col gap-2 mt-1">
+                <Button variant="outline" onClick={() => navigate("/login")} className="w-full">
                   Sign In
                 </Button>
-                <Button
-                  size="sm"
-                  onClick={() => setLocation("/login")}
-                  className="bg-cyan-500 hover:bg-cyan-400 text-black font-bold shadow-lg shadow-cyan-500/25"
-                >
-                  Start Free
+                <Button onClick={() => navigate("/login")} className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold shadow-lg shadow-cyan-500/25">
+                  Start Free — No Payment Required
                 </Button>
-              </>
+              </div>
             )}
           </div>
-        </div>
+        )}
       </nav>
 
       <main>
