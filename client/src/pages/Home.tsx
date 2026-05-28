@@ -253,15 +253,20 @@ export default function Home() {
     setLocation(path);
   };
 
-  // Close menu on outside click
+  // Close menu on outside click or scroll
   useEffect(() => {
     if (!menuOpen) return;
-    const handler = (e: MouseEvent) => {
+    const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (!target.closest("#site-nav")) setMenuOpen(false);
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    const handleScroll = () => setMenuOpen(false);
+    document.addEventListener("mousedown", handleClick);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, [menuOpen]);
 
   return (
