@@ -14,6 +14,7 @@ import {
   CreditCard,
   Crown,
   Layers,
+  LayoutDashboard,
   Lock,
   LogOut,
   TrendingUp,
@@ -324,6 +325,10 @@ export default function Dashboard() {
           >
             <div className="min-h-0">
               <div className="border-t border-border px-4 py-3 flex flex-col gap-1 bg-background/95">
+                <button onClick={() => navTo("/dashboard")} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-cyan-400/90 hover:text-cyan-300 hover:bg-white/5 transition-colors text-left">
+                  <LayoutDashboard className="h-4 w-4 shrink-0" />Dashboard
+                </button>
+                <div className="border-t border-border/30 my-1" />
                 <button onClick={() => navTo("/simulations")} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-amber-400/80 hover:text-amber-300 hover:bg-white/5 transition-colors text-left">
                   <Zap className="h-4 w-4 shrink-0" />Simulations
                 </button>
