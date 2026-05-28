@@ -25,13 +25,13 @@ import {
   RefreshCw,
   ChevronRight,
   CheckCircle2,
-  ArrowLeft,
   Flame,
   Eye,
   Shield,
   Clock,
   Star,
 } from "lucide-react";
+import { AppHeader } from "@/components/AppHeader";
 import { cn } from "@/lib/utils";
 
 // ─── Identity Affirmations ────────────────────────────────────────────────────
@@ -158,28 +158,7 @@ export default function MindsetHub() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Header */}
-      <header className="border-b border-border bg-background/90 backdrop-blur-md sticky top-0 z-40">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="text-foreground/40 hover:text-white transition-colors"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </button>
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center">
-                <Brain className="h-3.5 w-3.5 text-foreground" />
-              </div>
-              <span className="font-bold text-base">Mindset Hub</span>
-            </div>
-          </div>
-          <span className="text-xs text-foreground/30 hidden sm:block">
-            Identity · Discipline · Focus · Consistency
-          </span>
-        </div>
-      </header>
+      <AppHeader activePath="/mindset" />
 
       <div className="max-w-5xl mx-auto px-6 py-12 space-y-16">
 

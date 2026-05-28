@@ -9,6 +9,7 @@ import { Lock, Trophy, Flame, Target, Users, Star } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import ShareProgress from "@/components/ShareProgress";
+import { AppHeader } from "@/components/AppHeader";
 
 export default function Achievements() {
   const { user, isAuthenticated } = useAuth();
@@ -111,17 +112,10 @@ export default function Achievements() {
   );
 
   return (
-    <div className="container py-8 max-w-6xl">
+    <div className="min-h-screen bg-background">
+      <AppHeader activePath="/achievements" />
+      <div className="container py-8 max-w-6xl">
       <div className="space-y-6">
-        {/* Back button */}
-        <div>
-          <Link href="/dashboard">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Dashboard
-            </Button>
-          </Link>
-        </div>
         {/* Header */}
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-bold">Achievements</h1>
@@ -203,6 +197,7 @@ export default function Achievements() {
             </TabsContent>
           ))}
         </Tabs>
+      </div>
       </div>
     </div>
   );

@@ -2,7 +2,8 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Layers, CheckCircle2, AlertCircle, Clock, Users, TrendingUp } from "lucide-react";
+import { Layers, CheckCircle2, AlertCircle, Clock, Users, TrendingUp } from "lucide-react";
+import { AppHeader } from "@/components/AppHeader";
 
 const frameworks = [
   {
@@ -127,15 +128,10 @@ const colorMap: Record<string, string> = {
 export default function Frameworks() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+      <AppHeader activePath="/frameworks" />
+      {/* Page title */}
       <div className="border-b border-border bg-card/50">
         <div className="max-w-5xl mx-auto px-4 py-6">
-          <Link href="/dashboard">
-            <Button variant="ghost" size="sm" className="mb-4">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Dashboard
-            </Button>
-          </Link>
           <div className="flex items-center gap-3 mb-2">
             <Layers className="h-7 w-7 text-primary" />
             <h1 className="text-3xl font-bold">PM Frameworks Reference</h1>
