@@ -30,6 +30,8 @@ import {
   Brain,
   Pencil,
   Award,
+  Menu,
+  X,
 } from "lucide-react";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useLocation } from "wouter";
@@ -108,6 +110,28 @@ export default function Dashboard() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showFullCelebration, setShowFullCelebration] = useState(false);
   const fullCelebrationShownRef = useRef(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navTo = (path: string) => {
+    setMobileMenuOpen(false);
+    setLocation(path);
+  };
+
+  // Close mobile menu on outside click or scroll
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest("#dash-nav")) setMobileMenuOpen(false);
+    };
+    const handleScroll = () => setMobileMenuOpen(false);
+    document.addEventListener("mousedown", handleClick);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [mobileMenuOpen]);
 
   const { data: levels } = trpc.levels.getAll.useQuery();
   const { data: levelProgress } = trpc.levels.getMyProgress.useQuery(undefined, {
@@ -220,112 +244,119 @@ export default function Dashboard() {
     <>
       <div className="min-h-screen bg-background text-foreground">
         {/* Header */}
-        <header className="border-b border-border bg-background/90 backdrop-blur-md sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
-                  <Target className="h-3.5 w-3.5 text-foreground" />
-                </div>
-                <span className="font-bold text-base">Spitfire PM</span>
+        <header id="dash-nav" className="border-b border-border bg-background/90 backdrop-blur-md sticky top-0 z-50">
+          {/* Main header row */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-2">
+            {/* Logo */}
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
+                <Target className="h-3.5 w-3.5 text-foreground" />
               </div>
-              <nav className="hidden md:flex gap-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setLocation("/simulations")}
-                  className="text-amber-400/70 hover:text-amber-300"
-                >
-                  <Zap className="h-4 w-4 mr-1.5" />
-                  Simulations
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setLocation("/achievements")}
-                  className="text-foreground/60 hover:text-white"
-                >
-                  <Award className="h-4 w-4 mr-1.5" />
-                  Achievements
-                </Button>
-                {user?.role === "admin" && (
-                  <>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setLocation("/admin/cancellations")}
-                      className="text-rose-400/70 hover:text-rose-300"
-                    >
-                      <Shield className="h-4 w-4 mr-1.5" />
-                      Admin
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setLocation("/admin/questions")}
-                      className="text-amber-400/70 hover:text-amber-300"
-                    >
-                      <Pencil className="h-4 w-4 mr-1.5" />
-                      Questions
-                    </Button>
-                  </>
-                )}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setLocation("/mindset")}
-                  className="text-purple-400/70 hover:text-purple-300"
-                >
-                  <Brain className="h-4 w-4 mr-1.5" />
-                  Mindset
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setLocation("/glossary")}
-                  className="text-foreground/60 hover:text-white"
-                >
-                  <BookOpen className="h-4 w-4 mr-1.5" />
-                  Glossary
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setLocation("/frameworks")}
-                  className="text-foreground/60 hover:text-white"
-                >
-                  <Layers className="h-4 w-4 mr-1.5" />
-                  Frameworks
-                </Button>
-              </nav>
+              <span className="font-bold text-base">Spitfire PM</span>
             </div>
-            <div className="flex items-center gap-3">
+
+            {/* Desktop nav — hidden below lg */}
+            <nav className="hidden lg:flex gap-1 flex-1 justify-center">
+              <Button variant="ghost" size="sm" onClick={() => setLocation("/simulations")} className="text-amber-400/70 hover:text-amber-300">
+                <Zap className="h-4 w-4 mr-1.5" />Simulations
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => setLocation("/achievements")} className="text-foreground/60 hover:text-white">
+                <Award className="h-4 w-4 mr-1.5" />Achievements
+              </Button>
+              {user?.role === "admin" && (
+                <>
+                  <Button variant="ghost" size="sm" onClick={() => setLocation("/admin/cancellations")} className="text-rose-400/70 hover:text-rose-300">
+                    <Shield className="h-4 w-4 mr-1.5" />Admin
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => setLocation("/admin/questions")} className="text-amber-400/70 hover:text-amber-300">
+                    <Pencil className="h-4 w-4 mr-1.5" />Questions
+                  </Button>
+                </>
+              )}
+              <Button variant="ghost" size="sm" onClick={() => setLocation("/mindset")} className="text-purple-400/70 hover:text-purple-300">
+                <Brain className="h-4 w-4 mr-1.5" />Mindset
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => setLocation("/glossary")} className="text-foreground/60 hover:text-white">
+                <BookOpen className="h-4 w-4 mr-1.5" />Glossary
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => setLocation("/frameworks")} className="text-foreground/60 hover:text-white">
+                <Layers className="h-4 w-4 mr-1.5" />Frameworks
+              </Button>
+            </nav>
+
+            {/* Right controls */}
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
               <ThemeToggle />
+              {/* Name + email — desktop only */}
               <button
                 onClick={() => setLocation("/profile")}
-                className="text-sm text-right hidden sm:block hover:opacity-80 transition-opacity cursor-pointer"
+                className="text-sm text-right hidden lg:block hover:opacity-80 transition-opacity cursor-pointer"
               >
                 <p className="font-medium text-foreground">{user?.displayName || user?.name}</p>
                 <p className="text-foreground/40 text-xs">{user?.email}</p>
               </button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setLocation("/profile")}
-                className="text-foreground/40 hover:text-white"
-                title="My Profile"
-              >
+              <Button variant="ghost" size="sm" onClick={() => setLocation("/profile")} className="text-foreground/40 hover:text-white" title="My Profile">
                 <User className="h-4 w-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => logout()}
-                className="text-foreground/40 hover:text-white"
-                title="Sign out"
-              >
+              <Button variant="ghost" size="sm" onClick={() => logout()} className="text-foreground/40 hover:text-white" title="Sign out">
                 <LogOut className="h-4 w-4" />
               </Button>
+              {/* Burger — visible below lg */}
+              <button
+                className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg border border-border text-foreground/60 hover:text-white hover:border-cyan-400/40 transition-colors"
+                onClick={() => setMobileMenuOpen(v => !v)}
+                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              >
+                {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile / tablet dropdown — animated slide-down */}
+          <div
+            className="lg:hidden overflow-hidden transition-[grid-template-rows,opacity] duration-300 ease-in-out"
+            style={{
+              display: "grid",
+              gridTemplateRows: mobileMenuOpen ? "1fr" : "0fr",
+              opacity: mobileMenuOpen ? 1 : 0,
+            }}
+            aria-hidden={!mobileMenuOpen}
+          >
+            <div className="min-h-0">
+              <div className="border-t border-border px-4 py-3 flex flex-col gap-1 bg-background/95">
+                <button onClick={() => navTo("/simulations")} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-amber-400/80 hover:text-amber-300 hover:bg-white/5 transition-colors text-left">
+                  <Zap className="h-4 w-4 shrink-0" />Simulations
+                </button>
+                <button onClick={() => navTo("/achievements")} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-foreground/70 hover:text-white hover:bg-white/5 transition-colors text-left">
+                  <Award className="h-4 w-4 shrink-0" />Achievements
+                </button>
+                <button onClick={() => navTo("/mindset")} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-purple-400/80 hover:text-purple-300 hover:bg-white/5 transition-colors text-left">
+                  <Brain className="h-4 w-4 shrink-0" />Mindset
+                </button>
+                <button onClick={() => navTo("/glossary")} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-foreground/70 hover:text-white hover:bg-white/5 transition-colors text-left">
+                  <BookOpen className="h-4 w-4 shrink-0" />Glossary
+                </button>
+                <button onClick={() => navTo("/frameworks")} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-foreground/70 hover:text-white hover:bg-white/5 transition-colors text-left">
+                  <Layers className="h-4 w-4 shrink-0" />Frameworks
+                </button>
+                {user?.role === "admin" && (
+                  <>
+                    <div className="border-t border-border/40 my-1" />
+                    <button onClick={() => navTo("/admin/cancellations")} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-rose-400/80 hover:text-rose-300 hover:bg-white/5 transition-colors text-left">
+                      <Shield className="h-4 w-4 shrink-0" />Admin
+                    </button>
+                    <button onClick={() => navTo("/admin/questions")} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-amber-400/80 hover:text-amber-300 hover:bg-white/5 transition-colors text-left">
+                      <Pencil className="h-4 w-4 shrink-0" />Questions
+                    </button>
+                  </>
+                )}
+                <div className="border-t border-border/40 my-1" />
+                <button onClick={() => navTo("/profile")} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-foreground/70 hover:text-white hover:bg-white/5 transition-colors text-left">
+                  <User className="h-4 w-4 shrink-0" />
+                  <span className="truncate">{user?.displayName || user?.name}</span>
+                  <span className="text-foreground/40 text-xs ml-auto truncate hidden sm:block">{user?.email}</span>
+                </button>
+              </div>
             </div>
           </div>
         </header>
