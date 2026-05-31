@@ -11,7 +11,7 @@ import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
 import * as gamification from "./gamification";
-import { getTrialStatus, recordLessonCompletion, recordSimulationCompletion, recordCheckCompletion, STRIPE_PRICES } from "./trial";
+import { getTrialStatus, startTrialIfNeeded, recordLessonCompletion, recordSimulationCompletion, recordCheckCompletion, STRIPE_PRICES } from "./trial";
 import bcrypt from "bcryptjs";
 import { PASSWORD_REGEX, PASSWORD_REGEX_MSG, PASSWORD_MIN_LENGTH } from "../shared/const";
 import { achievements, userAchievements, userStats, xpTransactions } from "../drizzle/schema";
@@ -25,9 +25,11 @@ export const appRouter = router({
   adminQuestions: adminQuestionsRouter,
   brainSnap: brainSnapRouter,
   auth: router({
-    me: publicProcedure.query(opts => {
+    me: publicProcedure.query(async opts => {
       const user = opts.ctx.user;
       if (!user) return null;
+      // Start the 7-day free trial on first authenticated visit
+      await startTrialIfNeeded(user.id);
       // Strip sensitive fields — never expose password hash or OAuth IDs to the client
       const { passwordHash: _ph, googleId: _gid, openId: _oid, ...safeUser } = user as any;
       return safeUser;
