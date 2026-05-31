@@ -112,30 +112,23 @@ export const appRouter = router({
           return { canAccess: false, reason: "Level not found" };
         }
 
-        // Level 1 is always free
+        // Levels 1 and 2 are always free (accessType = 'free')
         if (level.accessType === "free") {
           return { canAccess: true };
         }
 
-        // Level 2 requires 1 referral
-        if (level.accessType === "referral") {
-          const referralCount = await db.getReferralCount(ctx.user.id);
-          if (referralCount >= 1) {
-            return { canAccess: true };
-          }
-          return { canAccess: false, reason: "Requires 1 referral" };
+        // Admin and founder access bypass subscription check
+        const user = await db.getUserById(ctx.user.id);
+        if (user?.role === 'admin' || user?.founderAccessEarned) {
+          return { canAccess: true };
         }
 
-        // Levels 3-7 require active subscription
-        if (level.accessType === "paid") {
-          const subscription = await db.getActiveSubscription(ctx.user.id);
-          if (subscription) {
-            return { canAccess: true };
-          }
-          return { canAccess: false, reason: "Requires active subscription" };
+        // Levels 3-7 (accessType = 'paid' or legacy 'referral') require active subscription
+        const subscription = await db.getActiveSubscription(ctx.user.id);
+        if (subscription) {
+          return { canAccess: true };
         }
-
-        return { canAccess: false, reason: "Unknown access type" };
+        return { canAccess: false, reason: "Requires active subscription" };
       }),
 
     // Update progress for a level

@@ -49,10 +49,11 @@ export const stripeRouter = router({
 
       // Allowed price IDs — validated server-side to prevent price manipulation
       const ALLOWED_PRICE_IDS = [
-        "price_1TNrMnAlIkFVb04s0DqEUelE", // Founder £19/month
-        "price_1TNrMnAlIkFVb04scUtJB4Hr", // Standard £39/month
-        "price_1TNrMoAlIkFVb04s7L47K0qg", // Annual £197/year
-        STRIPE_PRICE_ID,                    // Legacy env-based price
+        "price_1Td7i6AlIkFVb04sc2uvWlVl", // Pro £19.99/month
+        "price_1TNrMnAlIkFVb04s0DqEUelE", // Legacy Founder £19/month
+        "price_1TNrMnAlIkFVb04scUtJB4Hr", // Legacy Standard £39/month
+        "price_1TNrMoAlIkFVb04s7L47K0qg", // Legacy Annual £197/year
+        STRIPE_PRICE_ID,                    // Env-based price
       ].filter(Boolean);
 
       const resolvedPriceId = input.priceId ?? STRIPE_PRICE_ID;

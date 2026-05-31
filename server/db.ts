@@ -520,13 +520,9 @@ export async function canAccessLesson(
       return { canAccess: false, reason: "trial_expired" };
     }
 
-    // Active trial: Level 1 only, first TRIAL_LESSON_LIMIT lessons
-    if (lesson.levelId === 1 && lesson.lessonNumber > TRIAL_LESSON_LIMIT) {
-      return { canAccess: false, reason: "trial_limit" };
-    }
-
-    // Active trial: block Levels 2-7
-    if (lesson.levelId > 1) {
+    // Active trial: Levels 1 and 2 are always accessible during trial
+    // Levels 3-7 require a subscription
+    if (lesson.levelId > 2) {
       return { canAccess: false, reason: "subscription_required" };
     }
   }
@@ -567,4 +563,12 @@ export async function updateUserDisplayName(userId: number, displayName: string)
     .update(users)
     .set({ displayName })
     .where(eq(users.id, userId));
+}
+
+export async function getUserById(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
 }

@@ -225,7 +225,8 @@ export default function Dashboard() {
     // Trial expired — block all levels until subscription
     if (!hasActiveSubscription && trialStatus?.trialExpired) return "trial_expired";
     if (level.accessType === "free") return "unlocked";
-    if (level.accessType === "referral") return referralCount >= 1 ? "unlocked" : "locked";
+    // referral type is no longer used — treat same as paid
+    if (level.accessType === "referral") return hasActiveSubscription ? "unlocked" : "locked";
     if (level.accessType === "paid") return hasActiveSubscription ? "unlocked" : "locked";
     return "locked";
   };

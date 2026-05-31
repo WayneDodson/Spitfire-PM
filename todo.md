@@ -10,8 +10,8 @@
 ### Referral System
 - [x] Generate unique referral codes for users
 - [x] Create referral tracking endpoint
-- [ ] Implement Level 2 unlock logic (1 referral required)
-- [ ] Add referral count display in dashboard
+- [x] Level 2 is now free (accessType=free) — no referral required
+- [x] Referral logic removed from level gating
 
 ### Level Progression
 - [x] Create level access control logic
@@ -20,10 +20,13 @@
 - [x] Create level completion logic
 
 ### Stripe Integration
-- [ ] Create £20/month subscription product
-- [ ] Implement subscription checkout flow
-- [ ] Add webhook handler for subscription events
-- [ ] Implement access control for paid levels (3-7)
+- [x] Create £19.99/month subscription product (price_1Td7i6AlIkFVb04sc2uvWlVl)
+- [x] Implement subscription checkout flow
+- [x] Add webhook handler for subscription events
+- [x] Implement access control for paid levels (3-7)
+- [x] Update Level 3 accessType from referral to paid
+- [x] Allow Levels 1-2 during 7-day free trial
+- [x] Simplify Subscription page to single £19.99/month plan with Free vs Pro comparison
 
 ### User Dashboard
 - [ ] Create dashboard page
