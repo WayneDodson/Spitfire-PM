@@ -53,12 +53,18 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       values.lastSignedIn = user.lastSignedIn;
       updateSet.lastSignedIn = user.lastSignedIn;
     }
-    if (user.role !== undefined) {
-      values.role = user.role;
-      updateSet.role = user.role;
-    } else if ((ENV.ownerOpenId && user.openId === ENV.ownerOpenId) || (ENV.ownerEmail && user.email === ENV.ownerEmail)) {
+    // ── Protected admin emails always win — cannot be demoted by any code path ──
+    const isProtectedAdmin =
+      (user.email && ENV.protectedAdminEmails.has(user.email.toLowerCase())) ||
+      (ENV.ownerOpenId && user.openId === ENV.ownerOpenId);
+
+    if (isProtectedAdmin) {
+      // Hardcoded admin — overrides whatever role was passed in
       values.role = 'admin';
       updateSet.role = 'admin';
+    } else if (user.role !== undefined) {
+      values.role = user.role;
+      updateSet.role = user.role;
     }
 
     if (!values.lastSignedIn) {
