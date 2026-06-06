@@ -1,62 +1,58 @@
 /**
- * One-time script: ensure jenny_sacay_herbert@outlook.com has role=admin.
- * Creates the account if it doesn't exist yet.
- * Run with: node scripts/set-admin.mjs
+ * set-admin.mjs
+ * One-time script to restore admin role for the site owner.
+ *
+ * Usage (run from project root):
+ *   OWNER_EMAIL="your@email.com" node scripts/set-admin.mjs
  */
-import mysql from "mysql2/promise";
-import crypto from "crypto";
-import "dotenv/config";
+
+import { createConnection } from "mysql2/promise";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 const DATABASE_URL = process.env.DATABASE_URL;
+const OWNER_EMAIL = process.env.OWNER_EMAIL;
+
 if (!DATABASE_URL) {
-  console.error("DATABASE_URL is not set");
+  console.error("❌  DATABASE_URL is not set.");
+  process.exit(1);
+}
+if (!OWNER_EMAIL) {
+  console.error("❌  OWNER_EMAIL is not set.");
+  console.error("    Usage: OWNER_EMAIL=your@email.com node scripts/set-admin.mjs");
   process.exit(1);
 }
 
-const JENNY_EMAIL = "jenny_sacay_herbert@outlook.com";
-const JENNY_DISPLAY_NAME = "Jenny";
-
-function generateReferralCode() {
-  const bytes = crypto.randomBytes(6);
-  return Array.from(bytes)
-    .map((b) => b.toString(36).padStart(2, "0"))
-    .join("")
-    .toUpperCase()
-    .slice(0, 8);
-}
-
-const conn = await mysql.createConnection(DATABASE_URL);
-
+let connection;
 try {
-  // Check if Jenny already exists
-  const [rows] = await conn.execute(
-    "SELECT id, email, displayName, role FROM users WHERE email = ?",
-    [JENNY_EMAIL]
+  console.log("🔧  Connecting to database...");
+  connection = await createConnection(DATABASE_URL);
+
+  const [rows] = await connection.execute(
+    "SELECT id, email, role FROM users WHERE email = ? LIMIT 1",
+    [OWNER_EMAIL]
   );
 
-  if (rows.length > 0) {
-    const jenny = rows[0];
-    console.log(`Found existing account: id=${jenny.id}, role=${jenny.role}`);
-
-    if (jenny.role === "admin") {
-      console.log("✅ Jenny is already an admin. No changes needed.");
-    } else {
-      await conn.execute("UPDATE users SET role = 'admin', emailVerified = 1 WHERE id = ?", [jenny.id]);
-      console.log(`✅ Updated Jenny (id=${jenny.id}) to role=admin and emailVerified=true.`);
-    }
-  } else {
-    // Account doesn't exist yet — pre-create it with admin role.
-    // No password set (null) so she must sign in via Google or use password reset.
-    const referralCode = generateReferralCode();
-    const [result] = await conn.execute(
-      `INSERT INTO users (email, displayName, name, role, authProvider, emailVerified, referralCode, lastSignedIn, createdAt, updatedAt)
-       VALUES (?, ?, ?, 'admin', 'email', 1, ?, NOW(), NOW(), NOW())`,
-      [JENNY_EMAIL, JENNY_DISPLAY_NAME, JENNY_DISPLAY_NAME, referralCode]
-    );
-    const newId = result.insertId;
-    console.log(`✅ Created admin account for Jenny (id=${newId}, email=${JENNY_EMAIL}).`);
-    console.log(`   She can set her password via the "Forgot password?" flow on the login page.`);
+  if (rows.length === 0) {
+    console.error(`❌  No user found with email: ${OWNER_EMAIL}`);
+    console.error("    Sign in at least once before running this script.");
+    process.exit(1);
   }
+
+  const user = rows[0];
+  console.log(`✅  Found user: ${user.email} (current role: ${user.role})`);
+
+  if (user.role === "admin") {
+    console.log("ℹ️   Already an admin — no changes needed.");
+    process.exit(0);
+  }
+
+  await connection.execute("UPDATE users SET role = 'admin' WHERE email = ?", [OWNER_EMAIL]);
+  console.log(`🎉  Done! ${user.email} is now admin.`);
+  console.log("    Sign in again at spitfire-pm.com to activate admin access.");
+} catch (err) {
+  console.error("❌  Error:", err.message);
+  process.exit(1);
 } finally {
-  await conn.end();
+  if (connection) await connection.end();
 }
