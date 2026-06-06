@@ -101,12 +101,14 @@ function sanitiseUser(user: {
   name: string | null;
   authProvider: string | null;
   avatarUrl?: string | null;
+  role?: string | null;
 }) {
   return {
     id: user.id,
     email: user.email,
     displayName: user.displayName || user.name,
     authProvider: user.authProvider,
+    role: user.role ?? "user",
     ...(user.avatarUrl ? { avatarUrl: user.avatarUrl } : {}),
   };
 }
@@ -282,6 +284,8 @@ router.post("/google", async (req: Request, res: Response) => {
     let displayName: string;
     let avatarUrl: string | undefined;
 
+    let userRole: string = "user";
+
     if (existing) {
       await db
         .update(users)
@@ -297,6 +301,7 @@ router.post("/google", async (req: Request, res: Response) => {
       userId = existing.id;
       displayName = existing.displayName || existing.name || name || email.split("@")[0];
       avatarUrl = picture;
+      userRole = existing.role ?? "user";
     } else {
       const referralCode = generateReferralCode();
       const [result] = await db.insert(users).values({
@@ -314,6 +319,7 @@ router.post("/google", async (req: Request, res: Response) => {
       userId = (result as any).insertId;
       displayName = name || email.split("@")[0];
       avatarUrl = picture;
+      userRole = "user";
     }
 
     await createUserSession(res, userId, email.toLowerCase(), req);
@@ -323,7 +329,7 @@ router.post("/google", async (req: Request, res: Response) => {
 
     return res.json({
       success: true,
-      user: sanitiseUser({ id: userId, email: email.toLowerCase(), displayName, name: displayName, authProvider: "google", avatarUrl }),
+      user: sanitiseUser({ id: userId, email: email.toLowerCase(), displayName, name: displayName, authProvider: "google", avatarUrl, role: userRole }),
     });
   } catch (err) {
     console.error("[Auth] Google OAuth error:", err);
