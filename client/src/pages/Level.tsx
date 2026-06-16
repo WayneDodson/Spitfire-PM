@@ -12,7 +12,8 @@ export default function Level() {
   const params = useParams();
   const levelId = parseInt(params.id || "1");
   const [, setLocation] = useLocation();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const isAdmin = (user as any)?.role === 'admin';
 
   const { data: levels } = trpc.levels.getAll.useQuery();
   const { data: lessons, isLoading } = trpc.lessons.getLessonsByLevel.useQuery({ levelId });
@@ -54,8 +55,8 @@ export default function Level() {
     );
   }
 
-  // Trial expired wall — block access to all levels
-  if (!hasSubscription && trialExpired) {
+  // Trial expired wall — block access to all levels (admins bypass)
+  if (!isAdmin && !hasSubscription && trialExpired) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex items-center justify-center p-6">
         <Card className="max-w-lg w-full border-amber-500/30 bg-amber-500/5 text-center">
