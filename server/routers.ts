@@ -95,11 +95,13 @@ export const appRouter = router({
       const progress = await db.getUserProgress(ctx.user.id);
       const referralCount = await db.getReferralCount(ctx.user.id);
       const subscription = await db.getActiveSubscription(ctx.user.id);
+      // Admin users always have full access — treat as subscribed
+      const isAdmin = ctx.user.role === 'admin';
 
       return {
         progress,
         referralCount,
-        hasActiveSubscription: !!subscription,
+        hasActiveSubscription: isAdmin || !!subscription,
       };
     }),
 

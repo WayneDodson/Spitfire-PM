@@ -150,10 +150,23 @@ export async function getTrialStatus(userId: number): Promise<TrialStatus> {
     trialEndsAt: users.trialEndsAt,
     founderAccessEarned: users.founderAccessEarned,
     founderAccessEarnedAt: users.founderAccessEarnedAt,
+    role: users.role,
   }).from(users).where(eq(users.id, userId));
 
   if (!user || !user.trialStartedAt) {
     return defaultTrialStatus();
+  }
+
+  // Admin users are never subject to trial expiry — they always have full access
+  if (user.role === 'admin') {
+    return {
+      ...defaultTrialStatus(),
+      trialActive: true,
+      trialExpired: false,
+      trialStartedAt: user.trialStartedAt,
+      founderAccessEarned: user.founderAccessEarned ?? false,
+      founderAccessEarnedAt: user.founderAccessEarnedAt ?? null,
+    };
   }
 
   const now = new Date();

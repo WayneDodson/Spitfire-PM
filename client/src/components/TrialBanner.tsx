@@ -18,8 +18,12 @@ export function TrialBanner() {
   const { data: trial, isLoading } = trpc.trial.getStatus.useQuery(undefined, {
     refetchInterval: 60_000,
   });
+  const { data: me } = trpc.auth.me.useQuery();
 
   if (isLoading || !trial) return null;
+
+  // Admin users never see trial banners — they have unrestricted access
+  if ((me as any)?.role === 'admin') return null;
 
   // Trial hasn't started yet (shouldn't happen after auth.me fix, but guard anyway)
   if (!trial.trialStartedAt) return null;
