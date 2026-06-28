@@ -45,6 +45,7 @@ import {
   Share2,
   Menu,
   X,
+  Calendar,
 } from "lucide-react";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -448,16 +449,17 @@ export default function Home() {
               See How It Works
             </Button>
           </div>
-          {/* Coaching CTA */}
-          <div className="flex justify-center mb-16">
+          {/* Coaching CTA — prominent assessment button */}
+          <div className="flex flex-col items-center gap-3 mb-16">
             <button
-              onClick={() => setLocation("/one-to-one-coaching")}
-              className="group inline-flex items-center gap-2 px-6 py-3 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-300 text-sm font-semibold hover:bg-amber-500/20 hover:border-amber-400/60 transition-all"
+              onClick={() => setLocation("/one-to-one-coaching/assessment")}
+              className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-base md:text-lg shadow-lg shadow-amber-500/30 hover:shadow-amber-400/40 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
             >
-              <span className="text-amber-400">★</span>
-              Want personal 1-to-1 coaching?
-              <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+              <Calendar className="h-5 w-5 flex-shrink-0" />
+              Book a Free 20-Minute PM Career Assessment
+              <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </button>
+            <p className="text-xs text-foreground/45">No payment required &mdash; speak directly with a senior PM coach</p>
           </div>
 
           {/* Stats row */}

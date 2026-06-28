@@ -62,11 +62,38 @@ export default function CoachingAssessment() {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [pendingPayment, setPendingPayment] = useState<{ bookingId: number; pricePence: number } | null>(null);
   const [error, setError] = useState("");
+  const [isRedirectingToPayment, setIsRedirectingToPayment] = useState(false);
+
+  const checkoutMutation = trpc.coaching.createCoachingCheckout.useMutation({
+    onSuccess: (data) => {
+      if (data.url) window.location.href = data.url;
+    },
+    onError: (e) => {
+      setError(e.message);
+      setIsRedirectingToPayment(false);
+    },
+  });
 
   const submitMutation = trpc.coaching.submitAssessment.useMutation({
-    onSuccess: () => setSubmitted(true),
-    onError: (e) => setError(e.message),
+    onSuccess: (data) => {
+      if (data.requiresPayment && data.bookingId) {
+        setPendingPayment({ bookingId: data.bookingId, pricePence: data.pricePence ?? 0 });
+      } else {
+        setSubmitted(true);
+      }
+    },
+    onError: (e) => {
+      if (e.data?.code === "CONFLICT") {
+        setError(
+          "A free assessment has already been requested with this email address. " +
+          "If you believe this is an error or would like to book a paid session, please email support@spitfireitsolutions.com."
+        );
+      } else {
+        setError(e.message);
+      }
+    },
   });
 
   const toggle = (arr: string[], val: string) =>
@@ -100,6 +127,61 @@ export default function CoachingAssessment() {
     });
   };
 
+  // ── Pending payment state ─────────────────────────────────────────────────
+  if (pendingPayment) {
+    const priceGBP = (pendingPayment.pricePence / 100).toFixed(2);
+    return (
+      <div className="min-h-screen bg-background">
+        <AppHeader activePath="/one-to-one-coaching" />
+        <div className="container max-w-2xl py-24 text-center space-y-6">
+          <div className="w-20 h-20 rounded-full bg-amber-500/10 flex items-center justify-center mx-auto">
+            <CheckCircle2 className="h-10 w-10 text-amber-500" />
+          </div>
+          <h1 className="text-3xl font-bold">One Last Step — Complete Payment</h1>
+          <p className="text-muted-foreground text-lg leading-relaxed">
+            Your booking request has been received. To confirm your session, please complete the secure payment of <strong>£{priceGBP}</strong>.
+          </p>
+          <p className="text-sm text-muted-foreground bg-card border border-border rounded-lg p-4">
+            Your session will only be confirmed once payment is received. You will be redirected to a secure Stripe checkout page.
+          </p>
+          {error && (
+            <div className="flex items-start gap-3 bg-destructive/10 border border-destructive/30 rounded-lg p-4 text-sm text-destructive text-left">
+              <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+              <span>{error}</span>
+            </div>
+          )}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+            <Button
+              size="lg"
+              className="bg-cyan-500 hover:bg-cyan-600 text-white"
+              disabled={isRedirectingToPayment || checkoutMutation.isPending}
+              onClick={() => {
+                setIsRedirectingToPayment(true);
+                setError("");
+                checkoutMutation.mutate({
+                  bookingId: pendingPayment.bookingId,
+                  successUrl: `${window.location.origin}/one-to-one-coaching/booking-confirmed?bookingId=${pendingPayment.bookingId}`,
+                  cancelUrl: `${window.location.origin}/one-to-one-coaching/assessment`,
+                });
+              }}
+            >
+              {(isRedirectingToPayment || checkoutMutation.isPending) ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Redirecting to payment…</>
+              ) : (
+                <>Pay £{priceGBP} Securely</>
+              )}
+            </Button>
+            <Button variant="outline" onClick={() => setLocation("/one-to-one-coaching")}>
+              Cancel
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">Payments are processed securely by Stripe. Spitfire PM does not store your card details.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Success state ─────────────────────────────────────────────────────────
   if (submitted) {
     return (
       <div className="min-h-screen bg-background">

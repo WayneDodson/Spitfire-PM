@@ -7,6 +7,7 @@ import { registerOAuthRoutes } from "./oauth";
 import { registerStorageProxy } from "./storageProxy";
 import authRouter from "../authRouter";
 import { handleStripeWebhook } from "../routers/stripe";
+import { coachingRemindersHandler } from "../scheduledHandlers/coachingReminders";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
@@ -149,6 +150,9 @@ async function startServer() {
     (req as any).rawBody = req.body;
     handleStripeWebhook(req, res);
   });
+
+  // ─── Scheduled: coaching reminders (24h + 1h before sessions) ───────────────
+  app.post("/api/scheduled/coaching-reminders", coachingRemindersHandler);
 
   // ─── Body parser — tight limits to prevent DoS ──────────────────────────────
   // Auth endpoints: 100 KB (email + password + name is tiny)

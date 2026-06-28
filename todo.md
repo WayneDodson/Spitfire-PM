@@ -514,3 +514,9 @@
 - [ ] Add CTA cards on homepage, pricing page, and dashboard
 - [ ] Add SEO meta tags and FAQ schema to coaching page
 - [ ] Add routes to App.tsx (/one-to-one-coaching, /coaching/book, /admin/coaching)
+
+## Homepage Coaching CTA Upgrade (Jun 2026)
+- [x] Replace subtle amber pill coaching CTA with prominent amber button: "Book a Free 20-Minute PM Career Assessment"
+- [x] New button links directly to /one-to-one-coaching/assessment (not just /one-to-one-coaching)
+- [x] Button uses bold amber background, calendar icon, arrow icon, and sub-label "No payment required — speak directly with a senior PM coach"
+- [x] 0 TypeScript errors, 81 tests passing

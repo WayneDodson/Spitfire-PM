@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { AppHeader } from "@/components/AppHeader";
 import {
   CheckCircle2, XCircle, Clock, Download, RefreshCw, Mail, Loader2,
-  ChevronDown, ChevronUp, Plus, Trash2, Star, Save, X,
+  ChevronDown, ChevronUp, Plus, Trash2, Star, Save, X, Calendar,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -42,6 +42,12 @@ function BookingRow({ booking, onRefresh }: { booking: any; onRefresh: () => voi
   const [expanded, setExpanded] = useState(false);
   const [note, setNote] = useState("");
   const [sendEmailType, setSendEmailType] = useState<string>("");
+  const [scheduledAt, setScheduledAt] = useState(
+    booking.scheduledAt ? new Date(booking.scheduledAt).toISOString().slice(0, 16) : ""
+  );
+  const [meetingLink, setMeetingLink] = useState(booking.meetingLink ?? "");
+  const [declineReason, setDeclineReason] = useState("");
+  const [showDeclineInput, setShowDeclineInput] = useState(false);
 
   const updateMutation = trpc.coaching.adminUpdateBooking.useMutation({
     onSuccess: () => { toast.success("Booking updated"); onRefresh(); },
@@ -55,7 +61,17 @@ function BookingRow({ booking, onRefresh }: { booking: any; onRefresh: () => voi
 
   const handleDecline = (e: React.MouseEvent) => {
     e.stopPropagation();
-    updateMutation.mutate({ bookingId: booking.id, status: "declined", sendEmailType: "declined" });
+    if (!showDeclineInput) { setShowDeclineInput(true); setExpanded(true); return; }
+    updateMutation.mutate({ bookingId: booking.id, status: "declined", sendEmailType: "declined", declineReason: declineReason || undefined });
+    setShowDeclineInput(false);
+  };
+
+  const handleSaveSchedule = () => {
+    updateMutation.mutate({
+      bookingId: booking.id,
+      scheduledAt: scheduledAt || undefined,
+      meetingLink: meetingLink || undefined,
+    });
   };
 
   const handleStatusChange = (v: string) => {
@@ -208,6 +224,54 @@ function BookingRow({ booking, onRefresh }: { booking: any; onRefresh: () => voi
               </Button>
             )}
           </div>
+
+          {/* Schedule + meeting link */}
+          <div className="grid sm:grid-cols-2 gap-2">
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground font-medium">Scheduled date &amp; time</label>
+              <Input
+                type="datetime-local"
+                value={scheduledAt}
+                onChange={(e) => setScheduledAt(e.target.value)}
+                className="text-sm h-8"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground font-medium">Meeting link (Zoom / Teams / Google Meet)</label>
+              <Input
+                type="url"
+                placeholder="https://zoom.us/j/..."
+                value={meetingLink}
+                onChange={(e) => setMeetingLink(e.target.value)}
+                className="text-sm h-8"
+              />
+            </div>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-8 text-xs w-full sm:w-auto"
+            onClick={handleSaveSchedule}
+            disabled={updateMutation.isPending}
+          >
+            <Calendar className="h-3 w-3 mr-1" /> Save schedule &amp; meeting link
+          </Button>
+
+          {/* Decline reason input */}
+          {showDeclineInput && (
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Input
+                placeholder="Optional reason for declining (sent to client)…"
+                value={declineReason}
+                onChange={(e) => setDeclineReason(e.target.value)}
+                className="text-sm h-8 flex-1"
+              />
+              <Button size="sm" className="h-8 text-xs bg-red-500 hover:bg-red-600 text-white" onClick={handleDecline} disabled={updateMutation.isPending}>
+                Confirm decline
+              </Button>
+              <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => setShowDeclineInput(false)}>Cancel</Button>
+            </div>
+          )}
 
           {/* Add note */}
           <div className="flex gap-2">
