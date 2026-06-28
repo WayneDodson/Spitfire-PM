@@ -645,6 +645,22 @@ export const coachingServices = mysqlTable("coachingServices", {
   features: text("features").notNull(),
   /** Stripe price ID for paid services */
   stripePriceId: varchar("stripePriceId", { length: 255 }),
+  /** Normal/RRP price in pence shown as crossed-out or 'Normally £X' (null = not shown) */
+  normalPricePence: int("normalPricePence"),
+  /** Label shown above/beside price e.g. 'Founding Client Price' (null = not shown) */
+  foundingLabel: varchar("foundingLabel", { length: 128 }),
+  /** Savings text e.g. 'Save £28 compared with three individual sessions' (null = not shown) */
+  savingsText: varchar("savingsText", { length: 255 }),
+  /** Best-for label shown under price e.g. 'Best for one immediate challenge' */
+  bestFor: varchar("bestFor", { length: 255 }),
+  /** Whether founding pricing is currently active (controls display of founding labels) */
+  isFoundingPriceActive: boolean("isFoundingPriceActive").default(false).notNull(),
+  /** Total founding places available (null = not shown) */
+  foundingPlacesTotal: int("foundingPlacesTotal"),
+  /** Remaining founding places (null = not shown) */
+  foundingPlacesRemaining: int("foundingPlacesRemaining"),
+  /** Note shown below feature list (e.g. suitability note for application packages) */
+  featureNote: varchar("featureNote", { length: 512 }),
   isActive: boolean("isActive").default(true).notNull(),
   orderIndex: int("orderIndex").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

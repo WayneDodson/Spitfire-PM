@@ -57,64 +57,15 @@ const WHO_FOR = [
   { icon: MessageSquare, label: "Candidates preparing for project management interviews" },
 ];
 
-// ── Pricing cards ─────────────────────────────────────────────────────────────
-const PRICING = [
-  {
-    slug: "focused_session",
-    name: "Focused Coaching Session",
-    price: "£59",
-    duration: "60 minutes",
-    description: "A focused 1-to-1 session built around one specific challenge.",
-    features: [
-      "Interview preparation",
-      "Reviewing competency examples",
-      "Practising project scenarios",
-      "Understanding a PM role",
-      "Building a career transition plan",
-      "Improving confidence and decision-making",
-    ],
-    cta: "Book a Focused Session",
-    popular: false,
-    type: "paid",
-  },
-  {
-    slug: "career_accelerator",
-    name: "PM Career Accelerator",
-    price: "£149",
-    duration: "3 × 60-minute sessions",
-    description: "Three structured 1-to-1 coaching sessions designed to move you closer to your first or next PM role.",
-    features: [
-      "Career and skills assessment",
-      "Competency and experience development",
-      "Interview and scenario preparation",
-      "Personal action plan",
-      "Three 60-minute sessions",
-    ],
-    cta: "Choose Career Accelerator",
-    popular: true,
-    type: "paid",
-  },
-  {
-    slug: "transition_programme",
-    name: "Project Manager Transition Programme",
-    price: "From £299",
-    duration: "4 × 60-minute sessions",
-    description: "A comprehensive support programme for people making a serious transition into project management.",
-    features: [
-      "Four 60-minute coaching sessions",
-      "CV review",
-      "LinkedIn profile review",
-      "Competency example development",
-      "Mock project management interview",
-      "Personal development plan",
-      "Spitfire PM platform access during the programme",
-      "Limited email support between sessions",
-    ],
-    cta: "Apply for the Programme",
-    popular: false,
-    type: "application",
-  },
-];
+// Pricing CTA labels per slug
+const PLAN_CTA: Record<string, string> = {
+  focused_session: "Book a Focused Session",
+  career_accelerator: "Choose Career Accelerator",
+  transition_programme: "Apply for the Programme",
+};
+const PLAN_POPULAR: Record<string, boolean> = {
+  career_accelerator: true,
+};
 
 // ── FAQ accordion item ────────────────────────────────────────────────────────
 function FaqItem({ q, a }: { q: string; a: string }) {
@@ -144,6 +95,9 @@ export default function CoachingLanding() {
   const pricingRef = useRef<HTMLDivElement>(null);
 
   const { data: testimonials = [] } = trpc.coaching.getTestimonials.useQuery();
+  const { data: dbServices = [] } = trpc.coaching.getServices.useQuery();
+  // Exclude the free assessment from the paid pricing grid
+  const paidServices = dbServices.filter((s: any) => s.slug !== "free_assessment");
 
   const scrollToPricing = () => {
     pricingRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -284,52 +238,105 @@ export default function CoachingLanding() {
               </p>
             </div>
             <div className="grid md:grid-cols-3 gap-6">
-              {PRICING.map((plan) => (
-                <div
-                  key={plan.slug}
-                  className={`relative flex flex-col bg-card border rounded-2xl p-7 ${
-                    plan.popular ? "border-cyan-500 shadow-[0_0_30px_rgba(14,165,233,0.15)]" : "border-border"
-                  }`}
-                >
-                  {plan.popular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <Badge className="bg-cyan-500 text-white border-0 px-4 py-1 text-xs font-semibold">Most Popular</Badge>
-                    </div>
-                  )}
-                  <div className="space-y-1 mb-4">
-                    <h3 className="text-lg font-bold text-card-foreground">{plan.name}</h3>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-extrabold text-foreground">{plan.price}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                      <Clock className="h-3.5 w-3.5" />
-                      {plan.duration}
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-5 leading-relaxed">{plan.description}</p>
-                  <ul className="space-y-2 mb-6 flex-1">
-                    {plan.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2 text-sm text-muted-foreground">
-                        <CheckCircle2 className="h-4 w-4 text-cyan-500 flex-shrink-0 mt-0.5" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  <Button
-                    className={`w-full ${plan.popular ? "bg-cyan-500 hover:bg-cyan-600 text-white" : ""}`}
-                    variant={plan.popular ? "default" : "outline"}
-                    onClick={() =>
-                      setLocation(
-                        plan.type === "application"
-                          ? `/one-to-one-coaching/assessment?service=${plan.slug}`
-                          : `/one-to-one-coaching/book?service=${plan.slug}`
-                      )
-                    }
+              {paidServices.map((svc: any) => {
+                const popular = PLAN_POPULAR[svc.slug] ?? false;
+                const cta = PLAN_CTA[svc.slug] ?? "Book Now";
+                const isApplication = svc.type === "application";
+                const features: string[] = (() => {
+                  try { return JSON.parse(svc.features); } catch { return []; }
+                })();
+                const pricePounds = (svc.pricePence / 100).toFixed(0);
+                const normalPounds = svc.normalPricePence ? (svc.normalPricePence / 100).toFixed(0) : null;
+                return (
+                  <div
+                    key={svc.slug}
+                    className={`relative flex flex-col bg-card border rounded-2xl p-7 ${
+                      popular ? "border-cyan-500 shadow-[0_0_30px_rgba(14,165,233,0.15)]" : "border-border"
+                    }`}
                   >
-                    {plan.cta}
-                  </Button>
-                </div>
-              ))}
+                    {popular && (
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                        <Badge className="bg-cyan-500 text-white border-0 px-4 py-1 text-xs font-semibold">Most Popular</Badge>
+                      </div>
+                    )}
+
+                    {/* Founding label */}
+                    {svc.isFoundingPriceActive && svc.foundingLabel && (
+                      <div className="mb-3">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-amber-500/15 text-amber-400 border border-amber-500/30 rounded-full px-3 py-1">
+                          ★ {svc.foundingLabel}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="space-y-1 mb-2">
+                      <h3 className="text-lg font-bold text-card-foreground">{svc.name}</h3>
+
+                      {/* Price row */}
+                      <div className="flex items-baseline gap-2 flex-wrap">
+                        <span className="text-3xl font-extrabold text-foreground">£{pricePounds}</span>
+                        {normalPounds && svc.isFoundingPriceActive && (
+                          <span className="text-base text-muted-foreground line-through">£{normalPounds}</span>
+                        )}
+                      </div>
+
+                      {/* Best-for label */}
+                      {svc.bestFor && (
+                        <p className="text-xs font-medium text-cyan-400">{svc.bestFor}</p>
+                      )}
+
+                      <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                        <Clock className="h-3.5 w-3.5" />
+                        {svc.durationMinutes} minutes
+                      </div>
+                    </div>
+
+                    {/* Savings text */}
+                    {svc.isFoundingPriceActive && svc.savingsText && (
+                      <p className="text-xs text-emerald-400 font-medium mb-3">{svc.savingsText}</p>
+                    )}
+
+                    {/* Founding places remaining */}
+                    {svc.isFoundingPriceActive && svc.foundingPlacesTotal && (
+                      <div className="mb-3 bg-amber-500/5 border border-amber-500/20 rounded-lg px-3 py-2 text-xs text-amber-300">
+                        {svc.foundingPlacesRemaining != null
+                          ? `${svc.foundingPlacesRemaining} of ${svc.foundingPlacesTotal} founding places remaining`
+                          : `Limited to ${svc.foundingPlacesTotal} founding clients`}
+                      </div>
+                    )}
+
+                    <p className="text-sm text-muted-foreground mb-5 leading-relaxed">{svc.shortDescription}</p>
+
+                    <ul className="space-y-2 mb-4 flex-1">
+                      {features.map((f: string) => (
+                        <li key={f} className="flex items-start gap-2 text-sm text-muted-foreground">
+                          <CheckCircle2 className="h-4 w-4 text-cyan-500 flex-shrink-0 mt-0.5" />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* Feature note */}
+                    {svc.featureNote && (
+                      <p className="text-xs text-muted-foreground italic mb-4 border-t border-border pt-3">{svc.featureNote}</p>
+                    )}
+
+                    <Button
+                      className={`w-full ${popular ? "bg-cyan-500 hover:bg-cyan-600 text-white" : ""}`}
+                      variant={popular ? "default" : "outline"}
+                      onClick={() =>
+                        setLocation(
+                          isApplication
+                            ? `/one-to-one-coaching/assessment?service=${svc.slug}`
+                            : `/one-to-one-coaching/assessment?service=${svc.slug}`
+                        )
+                      }
+                    >
+                      {cta}
+                    </Button>
+                  </div>
+                );
+              })}
             </div>
 
             {/* Cancellation policy */}

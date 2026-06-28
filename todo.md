@@ -537,3 +537,13 @@
 - [x] Add My Bookings nav item to AppHeader
 - [x] Add View My Bookings button to CoachingAssessment success screen
 - [x] 0 TypeScript errors, 81 tests passing
+
+## Dynamic Pricing Cards Update (Jun 28 2026)
+
+- [x] Add normalPricePence, foundingLabel, savingsText, bestFor, isFoundingPriceActive, foundingPlacesTotal, foundingPlacesRemaining, featureNote columns to coachingServices schema
+- [x] Run db:push to apply migration 0019 (all 8 new columns added)
+- [x] Populate new pricing fields for focused_session, career_accelerator, transition_programme via SQL
+- [x] Extend adminUpdateService tRPC procedure to accept all new pricing fields
+- [x] Add Services tab to AdminCoaching with ServicesSection component (edit all pricing fields inline)
+- [x] Replace static PRICING array in CoachingLanding with DB-driven cards (founding label, normal price strikethrough, savings text, best-for label, founding places counter, feature note)
+- [x] 0 TypeScript errors, 81 tests passing

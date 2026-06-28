@@ -11,6 +11,7 @@ import { AppHeader } from "@/components/AppHeader";
 import {
   CheckCircle2, XCircle, Clock, Download, RefreshCw, Mail, Loader2,
   ChevronDown, ChevronUp, Plus, Trash2, Star, Save, X, Calendar,
+  Package, Edit3,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -375,12 +376,204 @@ function TestimonialSection() {
   );
 }
 
+// ── Services / Pricing section ───────────────────────────────────────────────
+function ServicesSection() {
+  const { data: services = [], refetch } = trpc.coaching.adminGetServices.useQuery();
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [form, setForm] = useState<Record<string, any>>({});
+
+  const updateMutation = trpc.coaching.adminUpdateService.useMutation({
+    onSuccess: () => {
+      toast.success("Package updated");
+      setEditingId(null);
+      refetch();
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const startEdit = (svc: any) => {
+    setEditingId(svc.id);
+    setForm({
+      name: svc.name ?? "",
+      shortDescription: svc.shortDescription ?? "",
+      pricePence: svc.pricePence ?? 0,
+      durationMinutes: svc.durationMinutes ?? 60,
+      normalPricePence: svc.normalPricePence ?? "",
+      foundingLabel: svc.foundingLabel ?? "",
+      savingsText: svc.savingsText ?? "",
+      bestFor: svc.bestFor ?? "",
+      isFoundingPriceActive: svc.isFoundingPriceActive ?? false,
+      foundingPlacesTotal: svc.foundingPlacesTotal ?? "",
+      foundingPlacesRemaining: svc.foundingPlacesRemaining ?? "",
+      featureNote: svc.featureNote ?? "",
+      features: Array.isArray(svc.features)
+        ? svc.features.join("\n")
+        : (() => { try { return JSON.parse(svc.features).join("\n"); } catch { return svc.features ?? ""; } })(),
+    });
+  };
+
+  const saveEdit = () => {
+    if (!editingId) return;
+    const featuresArr = (form.features as string)
+      .split("\n")
+      .map((f: string) => f.trim())
+      .filter(Boolean);
+    updateMutation.mutate({
+      id: editingId,
+      name: form.name || undefined,
+      shortDescription: form.shortDescription || undefined,
+      pricePence: form.pricePence !== "" ? Number(form.pricePence) : undefined,
+      durationMinutes: form.durationMinutes !== "" ? Number(form.durationMinutes) : undefined,
+      normalPricePence: form.normalPricePence !== "" ? Number(form.normalPricePence) : null,
+      foundingLabel: form.foundingLabel !== "" ? form.foundingLabel : null,
+      savingsText: form.savingsText !== "" ? form.savingsText : null,
+      bestFor: form.bestFor !== "" ? form.bestFor : null,
+      isFoundingPriceActive: Boolean(form.isFoundingPriceActive),
+      foundingPlacesTotal: form.foundingPlacesTotal !== "" ? Number(form.foundingPlacesTotal) : null,
+      foundingPlacesRemaining: form.foundingPlacesRemaining !== "" ? Number(form.foundingPlacesRemaining) : null,
+      featureNote: form.featureNote !== "" ? form.featureNote : null,
+      features: JSON.stringify(featuresArr),
+    });
+  };
+
+  const field = (key: string, label: string, type: "text" | "number" | "textarea" | "checkbox" = "text") => (
+    <div className="space-y-1">
+      <Label className="text-xs text-muted-foreground">{label}</Label>
+      {type === "textarea" ? (
+        <Textarea
+          rows={5}
+          className="text-sm"
+          value={form[key] ?? ""}
+          onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+        />
+      ) : type === "checkbox" ? (
+        <div className="flex items-center gap-2 pt-1">
+          <input
+            type="checkbox"
+            id={`field-${key}`}
+            checked={Boolean(form[key])}
+            onChange={(e) => setForm({ ...form, [key]: e.target.checked })}
+            className="w-4 h-4 accent-cyan-500"
+          />
+          <label htmlFor={`field-${key}`} className="text-sm text-foreground">{label}</label>
+        </div>
+      ) : (
+        <Input
+          type={type}
+          className="text-sm h-8"
+          value={form[key] ?? ""}
+          onChange={(e) => setForm({ ...form, [key]: type === "number" ? e.target.value : e.target.value })}
+        />
+      )}
+    </div>
+  );
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold text-foreground">Coaching Packages &amp; Pricing</h3>
+        <p className="text-xs text-muted-foreground">Click Edit to update any package</p>
+      </div>
+
+      {services.filter((s: any) => s.slug !== "free_assessment").map((svc: any) => (
+        <div key={svc.id} className="bg-card border border-border rounded-xl overflow-hidden">
+          {/* Header row */}
+          <div className="flex items-start justify-between gap-3 p-4">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-semibold text-foreground">{svc.name}</span>
+                {svc.isFoundingPriceActive && (
+                  <span className="text-xs bg-amber-500/15 text-amber-400 border border-amber-500/30 rounded px-2 py-0.5">Founding active</span>
+                )}
+                {!svc.isActive && (
+                  <span className="text-xs bg-red-500/15 text-red-400 border border-red-500/30 rounded px-2 py-0.5">Inactive</span>
+                )}
+              </div>
+              <p className="text-sm text-muted-foreground mt-0.5">
+                £{(svc.pricePence / 100).toFixed(2)}
+                {svc.normalPricePence ? ` · Normally £${(svc.normalPricePence / 100).toFixed(2)}` : ""}
+                {svc.bestFor ? ` · ${svc.bestFor}` : ""}
+              </p>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              className="flex-shrink-0 h-8"
+              onClick={() => editingId === svc.id ? setEditingId(null) : startEdit(svc)}
+            >
+              {editingId === svc.id ? <><X className="h-3.5 w-3.5 mr-1" /> Cancel</> : <><Edit3 className="h-3.5 w-3.5 mr-1" /> Edit</>}
+            </Button>
+          </div>
+
+          {/* Edit form */}
+          {editingId === svc.id && (
+            <div className="border-t border-border p-4 space-y-4 bg-background/50">
+              <div className="grid sm:grid-cols-2 gap-3">
+                {field("name", "Package name")}
+                {field("durationMinutes", "Duration (minutes)", "number")}
+              </div>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {field("pricePence", "Current price (pence, e.g. 14900 = £149)", "number")}
+                {field("normalPricePence", "Normal/RRP price (pence, blank = hide)", "number")}
+              </div>
+              {field("shortDescription", "Package description", "textarea")}
+              <div className="grid sm:grid-cols-2 gap-3">
+                {field("bestFor", "Best-for label (e.g. Best for one immediate challenge)")}
+                {field("foundingLabel", "Founding label (e.g. Founding Client Price, blank = hide)")}
+              </div>
+              {field("savingsText", "Savings text (e.g. Save £28 compared with three individual sessions)")}
+              <div className="grid sm:grid-cols-3 gap-3">
+                {field("foundingPlacesTotal", "Total founding places (blank = hide)", "number")}
+                {field("foundingPlacesRemaining", "Remaining founding places (blank = hide)", "number")}
+                <div className="flex items-end pb-1">
+                  {field("isFoundingPriceActive", "Founding pricing is active", "checkbox")}
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs text-muted-foreground">Package features (one per line)</Label>
+                <Textarea
+                  rows={6}
+                  className="text-sm font-mono"
+                  value={form.features ?? ""}
+                  onChange={(e) => setForm({ ...form, features: e.target.value })}
+                  placeholder="Interview preparation&#10;CV review&#10;Mock interview"
+                />
+              </div>
+              {field("featureNote", "Note below feature list (e.g. suitability note, blank = hide)")}
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  onClick={saveEdit}
+                  disabled={updateMutation.isPending}
+                  className="bg-cyan-500 hover:bg-cyan-600 text-white"
+                >
+                  {updateMutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Save className="h-3.5 w-3.5 mr-1" />}
+                  Save changes
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => setEditingId(null)}>
+                  <X className="h-3.5 w-3.5 mr-1" /> Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+
+      <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg p-4 text-xs text-amber-300 space-y-1">
+        <p className="font-semibold">Founding Client Pricing note</p>
+        <p>When &ldquo;Founding pricing is active&rdquo; is checked, the founding label and normal price will be shown on the public coaching page. Uncheck to hide founding pricing for a package without deleting the data.</p>
+        <p>Prices are stored in pence (100 = £1). The Stripe payment amount is taken from &ldquo;Current price (pence)&rdquo; — update this if you change the price.</p>
+      </div>
+    </div>
+  );
+}
+
 // ── Main admin page ───────────────────────────────────────────────────────────
 export default function AdminCoaching() {
   const { user, loading } = useAuth();
   const [, setLocation] = useLocation();
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [tab, setTab] = useState<"bookings" | "testimonials">("bookings");
+  const [tab, setTab] = useState<"bookings" | "testimonials" | "services">("bookings");
 
   const { data: bookingsData, refetch, isLoading } = trpc.coaching.adminGetBookings.useQuery(
     { status: statusFilter === "all" ? undefined : statusFilter },
@@ -451,7 +644,7 @@ export default function AdminCoaching() {
 
         {/* Tabs */}
         <div className="flex gap-1 bg-muted/30 rounded-lg p-1 w-fit">
-          {(["bookings", "testimonials"] as const).map((t) => (
+          {(["bookings", "testimonials", "services"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
@@ -507,6 +700,7 @@ export default function AdminCoaching() {
         )}
 
         {tab === "testimonials" && <TestimonialSection />}
+        {tab === "services" && <ServicesSection />}
       </div>
     </div>
   );

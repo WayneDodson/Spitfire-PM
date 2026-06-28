@@ -649,6 +649,16 @@ export const coachingRouter = router({
       durationMinutes: z.number().min(15).optional(),
       isActive: z.boolean().optional(),
       orderIndex: z.number().optional(),
+      // New founding/pricing fields
+      normalPricePence: z.number().min(0).nullable().optional(),
+      foundingLabel: z.string().max(128).nullable().optional(),
+      savingsText: z.string().max(255).nullable().optional(),
+      bestFor: z.string().max(255).nullable().optional(),
+      isFoundingPriceActive: z.boolean().optional(),
+      foundingPlacesTotal: z.number().min(1).nullable().optional(),
+      foundingPlacesRemaining: z.number().min(0).nullable().optional(),
+      featureNote: z.string().max(512).nullable().optional(),
+      features: z.string().max(5000).optional(), // JSON array string
     }))
     .mutation(async ({ input, ctx }) => {
       if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });

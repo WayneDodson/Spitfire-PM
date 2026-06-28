@@ -134,6 +134,13 @@
       "when": 1782663811535,
       "tag": "0018_long_lethal_legion",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "5",
+      "when": 1782667094613,
+      "tag": "0019_cool_power_man",
+      "breakpoints": true
     }
   ]
 }
