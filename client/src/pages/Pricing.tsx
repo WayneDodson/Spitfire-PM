@@ -315,10 +315,10 @@ export default function Pricing() {
           <p className="text-foreground/50 text-sm">
             Questions? Email us at{" "}
             <a
-              href="mailto:support@spitfireitsolutions.com"
+              href="mailto:coaching@spitfire-pm.com"
               className="text-cyan-400 hover:underline"
             >
-              support@spitfireitsolutions.com
+              coaching@spitfire-pm.com
             </a>
           </p>
         </div>

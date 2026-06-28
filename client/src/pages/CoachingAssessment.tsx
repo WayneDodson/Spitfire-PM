@@ -51,7 +51,9 @@ export default function CoachingAssessment() {
     timezone: "Europe/London",
     qualifications: "",
     targetRole: "",
+    pmExperience: "",
     mainChallenge: "",
+    supportNeeds: "",
     timeline: "",
     interestedInPaid: false,
     preferredDays: [] as string[],
@@ -88,7 +90,7 @@ export default function CoachingAssessment() {
       if (e.data?.code === "CONFLICT") {
         setError(
           "A free assessment has already been requested with this email address. " +
-          "If you believe this is an error or would like to book a paid session, please email support@spitfireitsolutions.com."
+          "If you believe this is an error or would like to book a paid session, please email coaching@spitfire-pm.com."
         );
       } else {
         setError(e.message);
@@ -116,7 +118,9 @@ export default function CoachingAssessment() {
       timezone: form.timezone,
       qualifications: form.qualifications,
       targetRole: form.targetRole,
+      pmExperience: form.pmExperience,
       mainChallenge: form.mainChallenge,
+      supportNeeds: form.supportNeeds || undefined,
       timeline: form.timeline,
       interestedInPaid: form.interestedInPaid,
       preferredDays: form.preferredDays.join(", "),
@@ -297,6 +301,33 @@ export default function CoachingAssessment() {
               <Input id="targetRole" required value={form.targetRole} onChange={(e) => setForm({ ...form, targetRole: e.target.value })} placeholder="e.g. Junior Project Manager, IT Project Manager" />
             </div>
 
+            {/* PM Experience — required, 50–1500 chars */}
+            <div className="space-y-1.5">
+              <Label htmlFor="pmExperience">
+                Tell us about your project management experience <span className="text-red-500">*</span>
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                Please describe any formal or informal project experience you have. This could include managing work tasks, coordinating people, leading improvements, organising events, supporting system changes, handling deadlines, working with stakeholders or completing project management training.
+              </p>
+              <Textarea
+                id="pmExperience"
+                required
+                rows={6}
+                minLength={50}
+                maxLength={1500}
+                value={form.pmExperience}
+                onChange={(e) => setForm({ ...form, pmExperience: e.target.value })}
+                placeholder="For example: I supported a system rollout, coordinated a small team, managed deadlines, worked with suppliers and completed the Google Project Management Certificate."
+                className="resize-y min-h-[120px]"
+              />
+              <p className={`text-xs text-right ${
+                form.pmExperience.length < 50 ? "text-muted-foreground" :
+                form.pmExperience.length > 1400 ? "text-amber-400" : "text-emerald-400"
+              }`}>
+                {form.pmExperience.length} / 1500 characters{form.pmExperience.length < 50 && form.pmExperience.length > 0 ? ` (minimum 50)` : ""}
+              </p>
+            </div>
+
             <div className="space-y-1.5">
               <Label htmlFor="mainChallenge">Main challenge you currently face <span className="text-red-500">*</span></Label>
               <Textarea
@@ -307,6 +338,32 @@ export default function CoachingAssessment() {
                 onChange={(e) => setForm({ ...form, mainChallenge: e.target.value })}
                 placeholder="e.g. I struggle to articulate my experience in interviews, or I have a qualification but no direct PM experience..."
               />
+            </div>
+
+            {/* Support needs — optional, max 1000 chars */}
+            <div className="space-y-1.5">
+              <Label htmlFor="supportNeeds">
+                What would you most like help with? <span className="text-muted-foreground text-xs">(optional)</span>
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                Tell us what you want to improve, such as interview confidence, competency examples, CV positioning, career direction, practical PM knowledge or moving from your current industry into project management.
+              </p>
+              <Textarea
+                id="supportNeeds"
+                rows={4}
+                maxLength={1000}
+                value={form.supportNeeds}
+                onChange={(e) => setForm({ ...form, supportNeeds: e.target.value })}
+                placeholder="e.g. I want to improve my interview confidence and learn how to present my transferable skills as PM experience."
+                className="resize-y min-h-[100px]"
+              />
+              {form.supportNeeds.length > 0 && (
+                <p className={`text-xs text-right ${
+                  form.supportNeeds.length > 900 ? "text-amber-400" : "text-muted-foreground"
+                }`}>
+                  {form.supportNeeds.length} / 1000 characters
+                </p>
+              )}
             </div>
 
             <div className="space-y-1.5">
@@ -424,7 +481,7 @@ export default function CoachingAssessment() {
             <div className="bg-card border border-border rounded-lg p-4 text-sm text-muted-foreground">
               <p>
                 Your information is processed in accordance with UK GDPR. We will only use your details to manage your assessment request and, if you consent, to send you relevant updates. You can withdraw consent at any time by emailing{" "}
-                <a href="mailto:support@spitfireitsolutions.com" className="text-cyan-500 hover:underline">support@spitfireitsolutions.com</a>.
+                <a href="mailto:coaching@spitfire-pm.com" className="text-cyan-500 hover:underline">coaching@spitfire-pm.com</a>.
               </p>
             </div>
           </section>

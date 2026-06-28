@@ -427,7 +427,7 @@ export default function CoachingLanding() {
         {/* ── Footer ───────────────────────────────────────────────────────── */}
         <footer className="border-t border-border py-8">
           <div className="container text-center text-xs text-muted-foreground space-y-1">
-            <p>© {new Date().getFullYear()} Spitfire PM · <a href="mailto:support@spitfireitsolutions.com" className="text-cyan-500 hover:underline">support@spitfireitsolutions.com</a></p>
+            <p>© {new Date().getFullYear()} Spitfire PM · <a href="mailto:coaching@spitfire-pm.com" className="text-cyan-500 hover:underline">coaching@spitfire-pm.com</a></p>
             <p>
               <a href="/privacy" className="hover:underline">Privacy Policy</a>
               {" · "}

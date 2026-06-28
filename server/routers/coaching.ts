@@ -28,7 +28,7 @@ import {
 } from "../coachingEmail";
 
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY ?? "";
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "support@spitfireitsolutions.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "coaching@spitfire-pm.com";
 
 function getStripe(): Stripe | null {
   if (!STRIPE_SECRET_KEY) return null;
@@ -46,7 +46,9 @@ const assessmentFormSchema = z.object({
   timezone: z.string().min(2).max(100),
   qualifications: z.string().max(500).optional(),
   targetRole: z.string().min(2).max(200),
+  pmExperience: z.string().min(50, "Please describe your PM experience (at least 50 characters)").max(1500, "Please keep your answer under 1,500 characters"),
   mainChallenge: z.string().min(10).max(1000),
+  supportNeeds: z.string().max(1000, "Please keep your answer under 1,000 characters").optional(),
   timeline: z.string().min(2).max(200),
   interestedInPaid: z.boolean(),
   preferredDays: z.string().max(200).optional(),
@@ -295,7 +297,9 @@ export const coachingRouter = router({
           timezone: input.timezone,
           qualifications: input.qualifications ?? null,
           targetRole: input.targetRole,
+          pmExperience: input.pmExperience,
           mainChallenge: input.mainChallenge,
+          supportNeeds: input.supportNeeds ?? null,
           timeline: input.timeline,
           interestedInPaid: input.interestedInPaid,
           preferredDays: input.preferredDays ?? null,
@@ -319,12 +323,21 @@ export const coachingRouter = router({
         await sendAdminBookingNotification(ADMIN_EMAIL, {
           fullName: input.fullName,
           email: input.email,
+          phone: input.phone ?? null,
           serviceName,
           jobTitle: input.jobTitle,
           industry: input.industry,
+          country: input.country,
+          timezone: input.timezone,
+          qualifications: input.qualifications ?? null,
+          targetRole: input.targetRole,
+          pmExperience: input.pmExperience,
           mainChallenge: input.mainChallenge,
+          supportNeeds: input.supportNeeds ?? null,
           timeline: input.timeline,
           interestedInPaid: input.interestedInPaid,
+          preferredDays: input.preferredDays ?? null,
+          preferredTimes: input.preferredTimes ?? null,
           bookingId,
         });
         await notifyOwner({
@@ -738,7 +751,9 @@ export const coachingRouter = router({
       const headers = [
         "ID", "Name", "Email", "Phone", "Service ID", "Status",
         "Job Title", "Industry", "Country", "Timezone",
-        "Target Role", "Main Challenge", "Timeline",
+        "Qualifications", "Target Role",
+        "PM Experience", "Main Challenge", "Support Needs",
+        "Timeline", "Preferred Days", "Preferred Times",
         "Interested in Paid", "Amount Paid (£)", "Scheduled At",
         "Meeting Link", "Admin Notes", "Created At",
       ];
@@ -759,9 +774,14 @@ export const coachingRouter = router({
         esc(b.industry),
         esc(b.country),
         esc(b.timezone),
+        esc(b.qualifications ?? ""),
         esc(b.targetRole),
+        esc((b as any).pmExperience ?? ""),
         esc(b.mainChallenge ?? ""),
+        esc((b as any).supportNeeds ?? ""),
         esc(b.timeline),
+        esc(b.preferredDays ?? ""),
+        esc(b.preferredTimes ?? ""),
         b.interestedInPaid ? "Yes" : "No",
         b.amountPaidPence ? (b.amountPaidPence / 100).toFixed(2) : "0.00",
         b.scheduledAt ? b.scheduledAt.toISOString() : "",

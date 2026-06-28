@@ -888,7 +888,7 @@ export default function Home() {
                 ))}
               </ul>
               <a
-                href="mailto:support@spitfireitsolutions.com?subject=B2B%20Enquiry%20%E2%80%94%20Spitfire%20PM"
+                href="mailto:coaching@spitfire-pm.com?subject=B2B%20Enquiry%20%E2%80%94%20Spitfire%20PM"
                 className="inline-flex items-center gap-2 border border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/5 transition-colors rounded-lg px-5 py-2.5 text-sm font-bold"
               >
                 Enquire about B2B access
@@ -991,8 +991,8 @@ export default function Home() {
               <span className="text-foreground/30 text-xs">Spitfire PM Platform</span>
             </div>
             <div className="flex flex-wrap justify-center gap-6 text-foreground/30 text-sm">
-              <a href="mailto:support@spitfireitsolutions.com" className="hover:text-cyan-400 transition-colors">
-                support@spitfireitsolutions.com
+              <a href="mailto:coaching@spitfire-pm.com" className="hover:text-cyan-400 transition-colors">
+                coaching@spitfire-pm.com
               </a>
               <button onClick={() => setLocation("/login")} className="hover:text-foreground/60 transition-colors">
                 Sign In

@@ -168,10 +168,24 @@ function BookingRow({ booking, onRefresh }: { booking: any; onRefresh: () => voi
             </div>
           </div>
 
+          {booking.pmExperience && (
+            <div className="bg-sky-500/5 border border-sky-500/20 rounded-lg p-3 text-sm">
+              <p className="text-sky-400 text-xs mb-1 font-medium uppercase tracking-wide">PM experience</p>
+              <p className="text-foreground whitespace-pre-wrap leading-relaxed">{booking.pmExperience}</p>
+            </div>
+          )}
+
           {booking.mainChallenge && (
             <div className="bg-muted/30 rounded-lg p-3 text-sm">
-              <p className="text-muted-foreground text-xs mb-1 font-medium">Main challenge</p>
-              <p className="text-foreground">{booking.mainChallenge}</p>
+              <p className="text-muted-foreground text-xs mb-1 font-medium uppercase tracking-wide">Main challenge</p>
+              <p className="text-foreground whitespace-pre-wrap leading-relaxed">{booking.mainChallenge}</p>
+            </div>
+          )}
+
+          {booking.supportNeeds && (
+            <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-lg p-3 text-sm">
+              <p className="text-emerald-400 text-xs mb-1 font-medium uppercase tracking-wide">What they want help with</p>
+              <p className="text-foreground whitespace-pre-wrap leading-relaxed">{booking.supportNeeds}</p>
             </div>
           )}
 

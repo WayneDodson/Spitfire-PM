@@ -711,7 +711,11 @@ export const coachingBookings = mysqlTable("coachingBookings", {
   timezone: varchar("timezone", { length: 64 }).notNull(),
   qualifications: text("qualifications"),
   targetRole: varchar("targetRole", { length: 255 }).notNull(),
+  /** Required: full PM experience description (50–1500 chars) */
+  pmExperience: text("pmExperience"),
   mainChallenge: text("mainChallenge").notNull(),
+  /** Optional: what they most want help with (max 1000 chars) */
+  supportNeeds: text("supportNeeds"),
   /** When they expect to start applying: '1_month' | '3_months' | '6_months' | '12_months' | 'no_rush' */
   timeline: varchar("timeline", { length: 32 }).notNull(),
   interestedInPaid: boolean("interestedInPaid").default(false).notNull(),

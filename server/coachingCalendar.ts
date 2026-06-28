@@ -17,7 +17,7 @@ import { eq } from "drizzle-orm";
 import { generateIcs, buildGoogleCalendarUrl, buildOutlookUrl, type CalendarEventParams } from "./calendarUtils";
 
 const APP_URL = process.env.APP_URL ?? "https://www.spitfire-pm.com";
-const ORGANISER_EMAIL = process.env.EMAIL_FROM_ADDRESS ?? "support@spitfireitsolutions.com";
+const ORGANISER_EMAIL = process.env.COACHING_EMAIL_FROM_ADDRESS ?? process.env.EMAIL_FROM_ADDRESS ?? "coaching@spitfire-pm.com";
 
 // ── Build CalendarEventParams from a booking + service row ───────────────────
 export function buildCalendarParams(
@@ -37,7 +37,7 @@ export function buildCalendarParams(
     `Your ${service.name} with Spitfire PM has been confirmed.\n\n` +
     `Duration: ${service.durationMinutes} minutes\n` +
     (booking.meetingLink ? `Meeting link: ${booking.meetingLink}\n` : "") +
-    `\nIf you need to reschedule or cancel, please email support@spitfireitsolutions.com at least 24 hours in advance.`;
+    `\nIf you need to reschedule or cancel, please email coaching@spitfire-pm.com at least 24 hours in advance.`;
 
   return {
     title: `Spitfire PM — ${service.name}`,

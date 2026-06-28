@@ -141,6 +141,13 @@
       "when": 1782667094613,
       "tag": "0019_cool_power_man",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "5",
+      "when": 1782672683807,
+      "tag": "0020_yielding_tarantula",
+      "breakpoints": true
     }
   ]
 }

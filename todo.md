@@ -547,3 +547,22 @@
 - [x] Add Services tab to AdminCoaching with ServicesSection component (edit all pricing fields inline)
 - [x] Replace static PRICING array in CoachingLanding with DB-driven cards (founding label, normal price strikethrough, savings text, best-for label, founding places counter, feature note)
 - [x] 0 TypeScript errors, 81 tests passing
+
+## Coaching Email & Form Update (Jun 28 2026)
+
+- [x] Add pmExperience column to coachingBookings (DB migration applied)
+- [x] Add supportNeeds column to coachingBookings (DB migration applied)
+- [x] Add pmExperience and supportNeeds to assessmentFormSchema (Zod validation, min 50 chars)
+- [x] Add pmExperience and supportNeeds fields to CoachingAssessment form UI with character counters
+- [x] Add pmExperience and supportNeeds to DB insert in submitAssessment
+- [x] Rewrite all 10 coaching email templates — remove Manus branding, add proper Spitfire PM footer
+- [x] Update sender to coaching@spitfire-pm.com (COACHING_EMAIL_FROM env var)
+- [x] Update reply-to to coaching@spitfire-pm.com for all user-facing emails
+- [x] Update admin notification reply-to to applicant's email (enables direct reply-to-applicant)
+- [x] Enrich admin notification email with all new fields (pmExperience, supportNeeds, phone, country, timezone, qualifications, targetRole, preferredDays, preferredTimes)
+- [x] Update ADMIN_EMAIL fallback to coaching@spitfire-pm.com in coaching.ts
+- [x] Update ORGANISER_EMAIL in coachingCalendar.ts to coaching@spitfire-pm.com
+- [x] Show pmExperience and supportNeeds in admin booking expanded detail view
+- [x] Update CSV export to include Qualifications, PM Experience, Support Needs, Preferred Days, Preferred Times columns
+- [x] Replace all support@spitfireitsolutions.com references in client pages (CoachingLanding, CoachingAssessment, Pricing, Home)
+- [x] 0 TypeScript errors, 81 tests passing
