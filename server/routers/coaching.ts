@@ -345,9 +345,6 @@ export const coachingRouter = router({
       cancelUrl: z.string().url(),
     }))
     .mutation(async ({ input, ctx }) => {
-      const stripe = getStripe();
-      if (!stripe) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Payment system not configured" });
-
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database unavailable" });
 
@@ -358,6 +355,18 @@ export const coachingRouter = router({
         .limit(1);
 
       if (!booking) throw new TRPCError({ code: "NOT_FOUND", message: "Booking not found" });
+
+      // ── Admin bypass: skip Stripe entirely, mark booking as paid ──────────────
+      if (ctx.user.role === "admin") {
+        await db
+          .update(coachingBookings)
+          .set({ amountPaidPence: booking.amountPaidPence ?? 0, stripeSessionId: "admin_bypass" })
+          .where(eq(coachingBookings.id, booking.id));
+        return { url: input.successUrl, adminBypass: true };
+      }
+
+      const stripe = getStripe();
+      if (!stripe) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Payment system not configured" });
 
       // Get service details
       const [svc] = await db
