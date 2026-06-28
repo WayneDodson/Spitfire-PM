@@ -61,6 +61,21 @@ function emailFooter(): string {
   </p>`;
 }
 
+// ── Calendar link block helper ───────────────────────────────────────────────
+function calendarBlock(bookingId: number): string {
+  const googleUrl = `${APP_URL}/api/coaching/calendar/${bookingId}-google`; // placeholder — real URL built server-side
+  const icsUrl = `${APP_URL}/api/coaching/calendar/${bookingId}.ics`;
+  return `
+  <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:20px;margin:24px 0;">
+    <p style="margin:0 0 12px;font-weight:600;color:#1a1a1a;">&#128197; Add to your calendar</p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <a href="${icsUrl}" style="display:inline-block;background:#0ea5e9;color:#fff;text-decoration:none;padding:10px 20px;border-radius:6px;font-size:14px;font-weight:600;">&#127822; Apple Calendar</a>
+      <a href="${icsUrl}" style="display:inline-block;background:#0ea5e9;color:#fff;text-decoration:none;padding:10px 20px;border-radius:6px;font-size:14px;font-weight:600;">&#128231; Outlook (.ics)</a>
+    </div>
+    <p style="margin:12px 0 0;color:#64748b;font-size:13px;">Google Calendar users: open the .ics file and choose &ldquo;Add to Calendar&rdquo; when prompted, or import it manually from Google Calendar settings.</p>
+  </div>`;
+}
+
 function wrap(body: string): string {
   return `<!DOCTYPE html><html><head><meta charset="utf-8"></head>
 <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:600px;margin:0 auto;padding:40px 20px;color:#1a1a1a;background:#fff;">
@@ -95,7 +110,7 @@ export async function sendAssessmentAccepted(
 ): Promise<void> {
   const ctaBlock = bookingLink
     ? `<div style="text-align:center;margin:32px 0;"><a href="${bookingLink}" style="display:inline-block;background:#0ea5e9;color:#fff;text-decoration:none;padding:14px 32px;border-radius:8px;font-weight:600;font-size:16px;">Choose Your Date and Time</a></div>`
-    : `<p style="color:#475569;line-height:1.6;">We will be in touch shortly with available dates and times.</p>`;
+    : `<p style="color:#475569;line-height:1.6;">We will be in touch shortly with available dates and times. Once your session is confirmed, you will receive a separate email with calendar links.</p>`;
 
   const html = wrap(`
   <h2 style="font-size:20px;font-weight:600;margin-bottom:8px;">Your assessment has been accepted</h2>
@@ -139,7 +154,8 @@ export async function sendPaidBookingConfirmation(
   name: string,
   serviceName: string,
   scheduledAt?: Date,
-  meetingLink?: string
+  meetingLink?: string,
+  bookingId?: number
 ): Promise<void> {
   const dateStr = scheduledAt
     ? scheduledAt.toLocaleString("en-GB", { timeZone: "Europe/London", dateStyle: "full", timeStyle: "short" })
@@ -148,6 +164,8 @@ export async function sendPaidBookingConfirmation(
   const meetingBlock = meetingLink
     ? `<p style="color:#475569;line-height:1.6;"><strong>Meeting link:</strong> <a href="${meetingLink}" style="color:#0ea5e9;">${meetingLink}</a></p>`
     : `<p style="color:#475569;line-height:1.6;">A meeting link will be sent to you before the session.</p>`;
+
+  const calendarSection = bookingId && scheduledAt ? calendarBlock(bookingId) : "";
 
   const html = wrap(`
   <h2 style="font-size:20px;font-weight:600;margin-bottom:8px;">Booking confirmed</h2>
@@ -159,6 +177,7 @@ export async function sendPaidBookingConfirmation(
     <p style="margin:0 0 4px;color:#475569;"><strong>Date and time:</strong> ${dateStr} (London time)</p>
     ${meetingBlock}
   </div>
+  ${calendarSection}
   <p style="color:#475569;line-height:1.6;"><strong>Cancellation and rescheduling:</strong> Sessions may be rescheduled with at least 24 hours' notice. Cancellations with less than 24 hours' notice may not be refunded. Missed appointments are non-refundable.</p>
   <p style="color:#475569;line-height:1.6;">If you need to reschedule, please reply to this email as soon as possible.</p>
   <p style="color:#475569;line-height:1.6;">— The Spitfire PM Team</p>`);
@@ -254,12 +273,15 @@ export async function sendRescheduleConfirmation(
   name: string,
   serviceName: string,
   newScheduledAt: Date,
-  meetingLink?: string
+  meetingLink?: string,
+  bookingId?: number
 ): Promise<void> {
   const dateStr = newScheduledAt.toLocaleString("en-GB", { timeZone: "Europe/London", dateStyle: "full", timeStyle: "short" });
   const meetingBlock = meetingLink
     ? `<p style="color:#475569;line-height:1.6;"><strong>Meeting link:</strong> <a href="${meetingLink}" style="color:#0ea5e9;">${meetingLink}</a></p>`
     : `<p style="color:#475569;line-height:1.6;">A meeting link will be sent before the session.</p>`;
+
+  const calendarSection = bookingId ? calendarBlock(bookingId) : "";
 
   const html = wrap(`
   <h2 style="font-size:20px;font-weight:600;margin-bottom:8px;">Your session has been rescheduled</h2>
@@ -269,6 +291,7 @@ export async function sendRescheduleConfirmation(
     <p style="margin:0 0 4px;color:#0369a1;"><strong>New date and time:</strong> ${dateStr} (London time)</p>
     ${meetingBlock}
   </div>
+  ${calendarSection}
   <p style="color:#475569;line-height:1.6;">If this time does not work for you, please reply to this email as soon as possible.</p>
   <p style="color:#475569;line-height:1.6;">— The Spitfire PM Team</p>`);
 

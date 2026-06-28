@@ -199,6 +199,9 @@ export default function CoachingAssessment() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
             <Button onClick={() => setLocation("/dashboard")}>Go to Dashboard</Button>
+            <Button variant="outline" onClick={() => setLocation("/my-bookings")}>
+              View My Bookings
+            </Button>
             <Button variant="outline" onClick={() => setLocation("/one-to-one-coaching")}>
               Back to Coaching
             </Button>

@@ -38,6 +38,7 @@ import BuildSimPlayer from "./pages/BuildSimPlayer";
 import CoachingLanding from "./pages/CoachingLanding";
 import CoachingAssessment from "./pages/CoachingAssessment";
 import AdminCoaching from "./pages/AdminCoaching";
+import MyBookings from "./pages/MyBookings";
 import { TrialBanner } from "./components/TrialBanner";
 import { FounderAccessModal } from "./components/FounderAccessModal";
 import FocusResetProvider from "./components/FocusResetProvider";
@@ -129,7 +130,9 @@ function Router() {
       <Route path="/simulations/build/:id" component={BuildSimPlayer} />
       <Route path="/one-to-one-coaching" component={CoachingLanding} />
       <Route path="/coaching/assessment" component={CoachingAssessment} />
+      <Route path="/one-to-one-coaching/assessment" component={CoachingAssessment} />
       <Route path="/admin/coaching" component={AdminCoaching} />
+      <Route path="/my-bookings" component={MyBookings} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

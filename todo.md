@@ -520,3 +520,20 @@
 - [x] New button links directly to /one-to-one-coaching/assessment (not just /one-to-one-coaching)
 - [x] Button uses bold amber background, calendar icon, arrow icon, and sub-label "No payment required — speak directly with a senior PM coach"
 - [x] 0 TypeScript errors, 81 tests passing
+
+## Add to Calendar Feature (Jun 2026)
+- [x] Create server/calendarUtils.ts — ICS generator (RFC 5545), Google Calendar URL builder, Outlook Web URL builder
+- [x] Create server/coachingCalendar.ts — Express ICS download handler at GET /api/coaching/calendar/:bookingId.ics
+- [x] Mount ICS route in server/_core/index.ts
+- [x] Create client/src/components/AddToCalendar.tsx — Google, Apple Calendar (.ics), Outlook buttons
+- [x] Extend getMyBookings tRPC procedure to join service data and return calendarUrls per booking
+- [x] Add getBookingCalendarUrls tRPC procedure for single-booking calendar URL lookup
+- [x] Add calendarBlock() HTML helper to coachingEmail.ts
+- [x] Update sendPaidBookingConfirmation to include calendar block (Apple + Outlook .ics buttons) when bookingId provided
+- [x] Update sendRescheduleConfirmation to include calendar block when bookingId provided
+- [x] Create client/src/pages/MyBookings.tsx — booking list with expandable AddToCalendar sections
+- [x] Add /my-bookings route to App.tsx
+- [x] Add /one-to-one-coaching/assessment alias route to App.tsx
+- [x] Add My Bookings nav item to AppHeader
+- [x] Add View My Bookings button to CoachingAssessment success screen
+- [x] 0 TypeScript errors, 81 tests passing

@@ -12,7 +12,8 @@ import {
   coachingBlockedDates,
   coachingTestimonials,
 } from "../../drizzle/schema";
-import { eq, and, gte, lte, ne, desc, asc, sql } from "drizzle-orm";
+import { eq, and, gte, lte, ne, desc, asc, sql, inArray } from "drizzle-orm";
+import { buildAllCalendarUrls } from "../coachingCalendar";
 import Stripe from "stripe";
 import { notifyOwner } from "../_core/notification";
 import {
@@ -423,16 +424,65 @@ export const coachingRouter = router({
       return { url: session.url };
     }),
 
-  // ── Protected: get my bookings ──────────────────────────────────────────────
+  // ── Protected: get my bookings (with service info + calendar URLs) ──────────────────
   getMyBookings: protectedProcedure.query(async ({ ctx }) => {
     const db = await getDb();
     if (!db) return [];
-    return db
+
+    const bookings = await db
       .select()
       .from(coachingBookings)
       .where(eq(coachingBookings.email, ctx.user.email ?? ""))
       .orderBy(desc(coachingBookings.createdAt));
+
+    if (bookings.length === 0) return [];
+
+    // Fetch all referenced services in one query
+    const serviceIds = Array.from(new Set(bookings.map((b) => b.serviceId)));
+    const services = await db
+      .select()
+      .from(coachingServices)
+      .where(inArray(coachingServices.id, serviceIds));
+
+    const serviceMap = new Map(services.map((s) => [s.id, s]));
+
+    return bookings.map((booking) => {
+      const svc = serviceMap.get(booking.serviceId) ?? { name: "PM Coaching Session", durationMinutes: 20 };
+      const calendarUrls = buildAllCalendarUrls(booking, svc);
+      return { ...booking, service: svc, calendarUrls };
+    });
   }),
+
+  // ── Protected: get calendar URLs for a single booking ───────────────────────────
+  getBookingCalendarUrls: protectedProcedure
+    .input(z.object({ bookingId: z.number() }))
+    .query(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) return null;
+
+      const [booking] = await db
+        .select()
+        .from(coachingBookings)
+        .where(
+          and(
+            eq(coachingBookings.id, input.bookingId),
+            eq(coachingBookings.email, ctx.user.email ?? ""),
+          )
+        )
+        .limit(1);
+
+      if (!booking) return null;
+      if (!booking.scheduledAt) return null;
+
+      const [svc] = await db
+        .select()
+        .from(coachingServices)
+        .where(eq(coachingServices.id, booking.serviceId))
+        .limit(1);
+
+      const service = svc ?? { name: "PM Coaching Session", durationMinutes: 20 };
+      return buildAllCalendarUrls(booking, service);
+    }),
 
   // ── Admin: get all bookings ─────────────────────────────────────────────────
   adminGetBookings: protectedProcedure

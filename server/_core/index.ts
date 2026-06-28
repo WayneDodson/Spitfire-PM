@@ -8,6 +8,7 @@ import { registerStorageProxy } from "./storageProxy";
 import authRouter from "../authRouter";
 import { handleStripeWebhook } from "../routers/stripe";
 import { coachingRemindersHandler } from "../scheduledHandlers/coachingReminders";
+import { handleCoachingIcsDownload } from "../coachingCalendar";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
@@ -179,6 +180,9 @@ async function startServer() {
       createContext,
     })
   );
+
+  // ─── Coaching ICS calendar download ────────────────────────────────────────
+  app.get("/api/coaching/calendar/:bookingId.ics", handleCoachingIcsDownload);
 
   // ─── Health check (unauthenticated, excluded from rate limiting) ─────────────
   app.get("/api/health", (_req, res) => {
