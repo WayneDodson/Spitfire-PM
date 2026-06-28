@@ -625,3 +625,158 @@ export const userBrainSnapLog = mysqlTable("userBrainSnapLog", {
 });
 export type UserBrainSnapLog = typeof userBrainSnapLog.$inferSelect;
 export type InsertUserBrainSnapLog = typeof userBrainSnapLog.$inferInsert;
+
+/**
+ * Coaching services — the three paid tiers plus the free assessment
+ */
+export const coachingServices = mysqlTable("coachingServices", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Internal name key e.g. 'free_assessment', 'focused_session', 'career_accelerator', 'transition_programme' */
+  slug: varchar("slug", { length: 64 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  /** 'free' | 'paid' | 'application' (paid but requires admin review first) */
+  type: mysqlEnum("type", ["free", "paid", "application"]).notNull(),
+  /** Price in pence (e.g. 5900 = £59). 0 for free. */
+  pricePence: int("pricePence").default(0).notNull(),
+  /** Duration in minutes */
+  durationMinutes: int("durationMinutes").notNull(),
+  shortDescription: text("shortDescription").notNull(),
+  /** JSON array of feature strings */
+  features: text("features").notNull(),
+  /** Stripe price ID for paid services */
+  stripePriceId: varchar("stripePriceId", { length: 255 }),
+  isActive: boolean("isActive").default(true).notNull(),
+  orderIndex: int("orderIndex").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type CoachingService = typeof coachingServices.$inferSelect;
+export type InsertCoachingService = typeof coachingServices.$inferInsert;
+
+/**
+ * Coaching bookings — one row per booking request (free or paid)
+ */
+export const coachingBookings = mysqlTable("coachingBookings", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Nullable — visitor may not be a registered user */
+  userId: int("userId"),
+  serviceId: int("serviceId").notNull(),
+  /**
+   * pending_review  — free assessment awaiting admin accept/decline
+   * accepted        — free assessment accepted, awaiting scheduling
+   * declined        — admin declined (unsuitable)
+   * payment_pending — paid booking awaiting Stripe payment
+   * confirmed       — paid and confirmed (or free + accepted + scheduled)
+   * scheduled       — time slot assigned
+   * completed       — session took place
+   * no_show         — user did not attend
+   * cancelled       — cancelled by user or admin
+   * rescheduled     — rescheduled
+   */
+  status: mysqlEnum("status", [
+    "pending_review",
+    "accepted",
+    "declined",
+    "payment_pending",
+    "confirmed",
+    "scheduled",
+    "completed",
+    "no_show",
+    "cancelled",
+    "rescheduled",
+  ]).default("pending_review").notNull(),
+  // ── Assessment form fields ──────────────────────────────────────────────
+  fullName: varchar("fullName", { length: 255 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  phone: varchar("phone", { length: 32 }),
+  jobTitle: varchar("jobTitle", { length: 255 }).notNull(),
+  industry: varchar("industry", { length: 128 }).notNull(),
+  country: varchar("country", { length: 128 }).notNull(),
+  timezone: varchar("timezone", { length: 64 }).notNull(),
+  qualifications: text("qualifications"),
+  targetRole: varchar("targetRole", { length: 255 }).notNull(),
+  mainChallenge: text("mainChallenge").notNull(),
+  /** When they expect to start applying: '1_month' | '3_months' | '6_months' | '12_months' | 'no_rush' */
+  timeline: varchar("timeline", { length: 32 }).notNull(),
+  interestedInPaid: boolean("interestedInPaid").default(false).notNull(),
+  /** Comma-separated preferred days e.g. 'Monday,Wednesday' */
+  preferredDays: varchar("preferredDays", { length: 128 }),
+  preferredTimes: varchar("preferredTimes", { length: 128 }),
+  privacyConsent: boolean("privacyConsent").default(false).notNull(),
+  bookingConsent: boolean("bookingConsent").default(false).notNull(),
+  // ── Scheduling ──────────────────────────────────────────────────────────
+  scheduledAt: timestamp("scheduledAt"),
+  /** Google Meet or Teams link set by admin */
+  meetingLink: varchar("meetingLink", { length: 512 }),
+  // ── Payment ─────────────────────────────────────────────────────────────
+  stripeSessionId: varchar("stripeSessionId", { length: 255 }),
+  stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }),
+  amountPaidPence: int("amountPaidPence"),
+  paidAt: timestamp("paidAt"),
+  /** Whether admin has issued/recorded a refund */
+  refundIssued: boolean("refundIssued").default(false).notNull(),
+  refundNotes: text("refundNotes"),
+  // ── Admin ────────────────────────────────────────────────────────────────
+  adminNotes: text("adminNotes"),
+  /** Whether this email is eligible for another free assessment (admin toggle) */
+  freeAssessmentEligibleAgain: boolean("freeAssessmentEligibleAgain").default(false).notNull(),
+  // ── Reminders ────────────────────────────────────────────────────────────
+  reminder24hSentAt: timestamp("reminder24hSentAt"),
+  reminder1hSentAt: timestamp("reminder1hSentAt"),
+  followUpSentAt: timestamp("followUpSentAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type CoachingBooking = typeof coachingBookings.$inferSelect;
+export type InsertCoachingBooking = typeof coachingBookings.$inferInsert;
+
+/**
+ * Coaching availability — weekly recurring slots (admin-configurable)
+ */
+export const coachingAvailability = mysqlTable("coachingAvailability", {
+  id: int("id").autoincrement().primaryKey(),
+  /** 0=Sunday … 6=Saturday */
+  dayOfWeek: int("dayOfWeek").notNull(),
+  /** HH:MM 24h e.g. '09:00' */
+  startTime: varchar("startTime", { length: 5 }).notNull(),
+  /** HH:MM 24h e.g. '17:00' */
+  endTime: varchar("endTime", { length: 5 }).notNull(),
+  /** Session duration in minutes (default 60) */
+  sessionDurationMinutes: int("sessionDurationMinutes").default(60).notNull(),
+  /** Buffer between sessions in minutes (default 15) */
+  bufferMinutes: int("bufferMinutes").default(15).notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type CoachingAvailability = typeof coachingAvailability.$inferSelect;
+export type InsertCoachingAvailability = typeof coachingAvailability.$inferInsert;
+
+/**
+ * Coaching blocked dates — specific dates when no sessions are available
+ */
+export const coachingBlockedDates = mysqlTable("coachingBlockedDates", {
+  id: int("id").autoincrement().primaryKey(),
+  /** YYYY-MM-DD */
+  date: varchar("date", { length: 10 }).notNull(),
+  reason: varchar("reason", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type CoachingBlockedDate = typeof coachingBlockedDates.$inferSelect;
+export type InsertCoachingBlockedDate = typeof coachingBlockedDates.$inferInsert;
+
+/**
+ * Coaching testimonials — real testimonials added by admin
+ */
+export const coachingTestimonials = mysqlTable("coachingTestimonials", {
+  id: int("id").autoincrement().primaryKey(),
+  authorName: varchar("authorName", { length: 255 }).notNull(),
+  authorTitle: varchar("authorTitle", { length: 255 }),
+  content: text("content").notNull(),
+  isVisible: boolean("isVisible").default(false).notNull(),
+  orderIndex: int("orderIndex").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type CoachingTestimonial = typeof coachingTestimonials.$inferSelect;
+export type InsertCoachingTestimonial = typeof coachingTestimonials.$inferInsert;

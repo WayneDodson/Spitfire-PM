@@ -262,6 +262,9 @@ export default function Dashboard() {
               <Button variant="ghost" size="sm" onClick={() => setLocation("/simulations")} className="text-amber-400/70 hover:text-amber-300">
                 <Zap className="h-4 w-4 mr-1.5" />Simulations
               </Button>
+              <Button variant="ghost" size="sm" onClick={() => setLocation("/one-to-one-coaching")} className="text-amber-300/80 hover:text-amber-200">
+                <Users className="h-4 w-4 mr-1.5" />Coaching
+              </Button>
               <Button variant="ghost" size="sm" onClick={() => setLocation("/achievements")} className="text-foreground/60 hover:text-white">
                 <Award className="h-4 w-4 mr-1.5" />Achievements
               </Button>
@@ -333,6 +336,9 @@ export default function Dashboard() {
                 <button onClick={() => navTo("/simulations")} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-amber-400/80 hover:text-amber-300 hover:bg-white/5 transition-colors text-left">
                   <Zap className="h-4 w-4 shrink-0" />Simulations
                 </button>
+                <button onClick={() => navTo("/one-to-one-coaching")} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-amber-300/90 hover:text-amber-200 hover:bg-white/5 transition-colors text-left">
+                  <Users className="h-4 w-4 shrink-0" />Coaching
+                </button>
                 <button onClick={() => navTo("/achievements")} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-foreground/70 hover:text-white hover:bg-white/5 transition-colors text-left">
                   <Award className="h-4 w-4 shrink-0" />Achievements
                 </button>
@@ -353,6 +359,9 @@ export default function Dashboard() {
                     </button>
                     <button onClick={() => navTo("/admin/questions")} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-amber-400/80 hover:text-amber-300 hover:bg-white/5 transition-colors text-left">
                       <Pencil className="h-4 w-4 shrink-0" />Questions
+                    </button>
+                    <button onClick={() => navTo("/admin/coaching")} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg text-sm text-emerald-400/80 hover:text-emerald-300 hover:bg-white/5 transition-colors text-left">
+                      <Users className="h-4 w-4 shrink-0" />Coaching Admin
                     </button>
                   </>
                 )}

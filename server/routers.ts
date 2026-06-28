@@ -5,6 +5,7 @@ import { apmRouter } from "./routers/apm";
 import { adminQuestionsRouter } from "./routers/adminQuestions";
 import { simulationsRouter } from "./routers/simulations";
 import { brainSnapRouter } from "./routers/brainSnap";
+import { coachingRouter } from "./routers/coaching";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
@@ -24,6 +25,7 @@ export const appRouter = router({
   simulations: simulationsRouter,
   adminQuestions: adminQuestionsRouter,
   brainSnap: brainSnapRouter,
+  coaching: coachingRouter,
   auth: router({
     me: publicProcedure.query(async opts => {
       const user = opts.ctx.user;

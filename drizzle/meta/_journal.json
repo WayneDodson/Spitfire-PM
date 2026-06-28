@@ -127,6 +127,13 @@
       "when": 1779813036739,
       "tag": "0017_modern_gambit",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "5",
+      "when": 1782663811535,
+      "tag": "0018_long_lethal_legion",
+      "breakpoints": true
     }
   ]
 }

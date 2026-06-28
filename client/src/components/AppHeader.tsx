@@ -23,6 +23,7 @@ import {
   Shield,
   Target,
   User,
+  Users,
   X,
   Zap,
 } from "lucide-react";
@@ -37,17 +38,19 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Dashboard",    path: "/dashboard",    icon: LayoutDashboard, className: "text-cyan-400/90 hover:text-cyan-300" },
-  { label: "Simulations",  path: "/simulations",  icon: Zap,             className: "text-amber-400/80 hover:text-amber-300" },
-  { label: "Achievements", path: "/achievements", icon: Award,           className: "text-foreground/70 hover:text-white" },
-  { label: "Mindset",      path: "/mindset",      icon: Brain,           className: "text-purple-400/80 hover:text-purple-300" },
-  { label: "Glossary",     path: "/glossary",     icon: BookOpen,        className: "text-foreground/70 hover:text-white" },
-  { label: "Frameworks",   path: "/frameworks",   icon: Layers,          className: "text-foreground/70 hover:text-white" },
+  { label: "Dashboard",    path: "/dashboard",           icon: LayoutDashboard, className: "text-cyan-400/90 hover:text-cyan-300" },
+  { label: "Simulations",  path: "/simulations",          icon: Zap,             className: "text-amber-400/80 hover:text-amber-300" },
+  { label: "Coaching",     path: "/one-to-one-coaching",  icon: Users,           className: "text-amber-300/90 hover:text-amber-200" },
+  { label: "Achievements", path: "/achievements",         icon: Award,           className: "text-foreground/70 hover:text-white" },
+  { label: "Mindset",      path: "/mindset",              icon: Brain,           className: "text-purple-400/80 hover:text-purple-300" },
+  { label: "Glossary",     path: "/glossary",             icon: BookOpen,        className: "text-foreground/70 hover:text-white" },
+  { label: "Frameworks",   path: "/frameworks",           icon: Layers,          className: "text-foreground/70 hover:text-white" },
 ];
 
 const ADMIN_ITEMS: NavItem[] = [
-  { label: "Admin",     path: "/admin/cancellations", icon: Shield, className: "text-rose-400/80 hover:text-rose-300" },
-  { label: "Questions", path: "/admin/questions",     icon: Pencil, className: "text-amber-400/80 hover:text-amber-300" },
+  { label: "Admin",          path: "/admin/cancellations", icon: Shield, className: "text-rose-400/80 hover:text-rose-300" },
+  { label: "Questions",      path: "/admin/questions",     icon: Pencil, className: "text-amber-400/80 hover:text-amber-300" },
+  { label: "Coaching Admin", path: "/admin/coaching",      icon: Users,  className: "text-emerald-400/80 hover:text-emerald-300" },
 ];
 
 interface AppHeaderProps {

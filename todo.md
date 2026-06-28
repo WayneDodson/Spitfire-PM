@@ -494,3 +494,23 @@
 - [x] Build useVoiceTranscription hook (client/src/hooks/useVoiceTranscription.ts) — MediaRecorder → base64 → tRPC mutation
 - [x] Add MicButton component + STAR prompt strip to InterviewSimPlayer.tsx
 - [x] Add MicButton component to BuildSimPlayer.tsx (per-field, single shared hook + activeFieldId)
+
+## 1-to-1 Coaching Feature
+
+- [ ] Add coachingServices table to schema (id, name, price, duration, description, features JSON, type: free/paid/application)
+- [ ] Add coachingBookings table (id, userId nullable, serviceId, status, fullName, email, phone, jobTitle, industry, country, timezone, qualifications, targetRole, mainChallenge, timeline, interestedInPaid, preferredDays, privacyConsent, bookingConsent, stripePaymentIntentId, stripeSessionId, meetingLink, adminNotes, scheduledAt, createdAt)
+- [ ] Add coachingAvailability table (id, dayOfWeek 0-6, startTime, endTime, isActive)
+- [ ] Add coachingBlockedDates table (id, date, reason)
+- [ ] Add coachingTestimonials table (id, authorName, authorTitle, content, isVisible, orderIndex)
+- [ ] Push DB migrations with pnpm db:push
+- [ ] Build server/routers/coaching.ts with all procedures
+- [ ] Build CoachingPage (/one-to-one-coaching) — hero, intro, who-its-for, free assessment, pricing cards, FAQ, CTA
+- [ ] Build CoachingAssessmentForm page (/coaching/book) — multi-step form
+- [ ] Build CoachingBookingCalendar component — slot picker, timezone display
+- [ ] Wire Stripe checkout for £59 and £149 paid sessions
+- [ ] Build admin coaching dashboard (/admin/coaching) — view/accept/decline bookings, set availability, notes, CSV export
+- [ ] Add email notification helpers for all 10 email types
+- [ ] Add "1-to-1 Coaching" nav link to homepage header, AppHeader, and Dashboard
+- [ ] Add CTA cards on homepage, pricing page, and dashboard
+- [ ] Add SEO meta tags and FAQ schema to coaching page
+- [ ] Add routes to App.tsx (/one-to-one-coaching, /coaching/book, /admin/coaching)

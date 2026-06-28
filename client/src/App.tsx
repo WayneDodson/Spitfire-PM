@@ -35,6 +35,9 @@ import SimulationHub from "./pages/SimulationHub";
 import DecisionSimPlayer from "./pages/DecisionSimPlayer";
 import InterviewSimPlayer from "./pages/InterviewSimPlayer";
 import BuildSimPlayer from "./pages/BuildSimPlayer";
+import CoachingLanding from "./pages/CoachingLanding";
+import CoachingAssessment from "./pages/CoachingAssessment";
+import AdminCoaching from "./pages/AdminCoaching";
 import { TrialBanner } from "./components/TrialBanner";
 import { FounderAccessModal } from "./components/FounderAccessModal";
 import FocusResetProvider from "./components/FocusResetProvider";
@@ -43,7 +46,7 @@ import { trpc } from "./lib/trpc";
 import { useState, useEffect, useRef } from "react";
 
 // Pages where the trial banner should NOT appear
-const BANNER_EXCLUDED_PATHS = ["/", "/login", "/subscribe", "/pricing", "/verify-email", "/forgot-password", "/reset-password"];
+const BANNER_EXCLUDED_PATHS = ["/", "/login", "/subscribe", "/pricing", "/verify-email", "/forgot-password", "/reset-password", "/one-to-one-coaching", "/coaching/assessment"];
 
 // Pages where the focus reset system should NOT be active (public/auth pages)
 const FOCUS_RESET_EXCLUDED_PATHS = ["/", "/login", "/subscribe", "/pricing", "/verify-email", "/onboarding", "/forgot-password", "/reset-password"];
@@ -124,6 +127,9 @@ function Router() {
       <Route path="/simulations/decision/:id" component={DecisionSimPlayer} />
       <Route path="/simulations/interview/:id" component={InterviewSimPlayer} />
       <Route path="/simulations/build/:id" component={BuildSimPlayer} />
+      <Route path="/one-to-one-coaching" component={CoachingLanding} />
+      <Route path="/coaching/assessment" component={CoachingAssessment} />
+      <Route path="/admin/coaching" component={AdminCoaching} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

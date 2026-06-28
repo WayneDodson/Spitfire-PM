@@ -430,7 +430,7 @@ export default function Home() {
           </div>
 
           {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
             <Button
               size="lg"
               onClick={() => setLocation("/login")}
@@ -447,6 +447,17 @@ export default function Home() {
             >
               See How It Works
             </Button>
+          </div>
+          {/* Coaching CTA */}
+          <div className="flex justify-center mb-16">
+            <button
+              onClick={() => setLocation("/one-to-one-coaching")}
+              className="group inline-flex items-center gap-2 px-6 py-3 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-300 text-sm font-semibold hover:bg-amber-500/20 hover:border-amber-400/60 transition-all"
+            >
+              <span className="text-amber-400">★</span>
+              Want personal 1-to-1 coaching?
+              <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </button>
           </div>
 
           {/* Stats row */}
