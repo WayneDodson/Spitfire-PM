@@ -566,3 +566,10 @@
 - [x] Update CSV export to include Qualifications, PM Experience, Support Needs, Preferred Days, Preferred Times columns
 - [x] Replace all support@spitfireitsolutions.com references in client pages (CoachingLanding, CoachingAssessment, Pricing, Home)
 - [x] 0 TypeScript errors, 81 tests passing
+
+## AppHeader Nav Overflow Fix (Jun 2026)
+- [x] Replace single-row nav with Primary nav + "More" dropdown so all labels are fully visible at 100% zoom
+- [x] Primary items (Dashboard, Simulations, Coaching, My Bookings, Achievements) always visible on desktop
+- [x] Secondary items (Mindset, Glossary, Frameworks) + Admin items in "More" dropdown
+- [x] Mobile burger menu shows all items as full-label touch targets
+- [x] Name/email block shown only at xl (1280px+) with truncate to prevent overflow

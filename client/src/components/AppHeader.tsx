@@ -1,11 +1,12 @@
 /**
  * AppHeader — shared responsive header used by all inner app pages.
  *
- * Desktop (lg+): logo + inline nav links + right controls (ThemeToggle, profile, logout)
+ * Desktop (lg+): logo + primary nav links + "More" dropdown for secondary items + right controls
  * Mobile/tablet (<lg): logo + right controls + burger button → animated slide-down dropdown
  *
- * Usage:
- *   <AppHeader activePath="/simulations" />
+ * Primary items (always visible on desktop): Dashboard, Simulations, Coaching, My Bookings, Achievements
+ * Secondary items (in "More" dropdown on desktop): Mindset, Glossary, Frameworks
+ * Admin items (appended to "More" dropdown for admins): Admin, Questions, Coaching Admin
  */
 
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -16,10 +17,12 @@ import {
   BookOpen,
   Brain,
   CalendarDays,
+  ChevronDown,
   LayoutDashboard,
   Layers,
   LogOut,
   Menu,
+  MoreHorizontal,
   Pencil,
   Shield,
   Target,
@@ -28,7 +31,7 @@ import {
   X,
   Zap,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 
 interface NavItem {
@@ -38,15 +41,20 @@ interface NavItem {
   className: string;
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { label: "Dashboard",    path: "/dashboard",           icon: LayoutDashboard, className: "text-cyan-400/90 hover:text-cyan-300" },
-  { label: "Simulations",  path: "/simulations",          icon: Zap,             className: "text-amber-400/80 hover:text-amber-300" },
-  { label: "Coaching",     path: "/one-to-one-coaching",  icon: Users,           className: "text-amber-300/90 hover:text-amber-200" },
-  { label: "My Bookings",  path: "/my-bookings",          icon: CalendarDays,    className: "text-cyan-300/80 hover:text-cyan-200" },
-  { label: "Achievements", path: "/achievements",         icon: Award,           className: "text-foreground/70 hover:text-white" },
-  { label: "Mindset",      path: "/mindset",              icon: Brain,           className: "text-purple-400/80 hover:text-purple-300" },
-  { label: "Glossary",     path: "/glossary",             icon: BookOpen,        className: "text-foreground/70 hover:text-white" },
-  { label: "Frameworks",   path: "/frameworks",           icon: Layers,          className: "text-foreground/70 hover:text-white" },
+// Always visible in the desktop nav bar
+const PRIMARY_NAV: NavItem[] = [
+  { label: "Dashboard",    path: "/dashboard",          icon: LayoutDashboard, className: "text-cyan-400/90 hover:text-cyan-300" },
+  { label: "Simulations",  path: "/simulations",         icon: Zap,             className: "text-amber-400/80 hover:text-amber-300" },
+  { label: "Coaching",     path: "/one-to-one-coaching", icon: Users,           className: "text-amber-300/90 hover:text-amber-200" },
+  { label: "My Bookings",  path: "/my-bookings",         icon: CalendarDays,    className: "text-cyan-300/80 hover:text-cyan-200" },
+  { label: "Achievements", path: "/achievements",        icon: Award,           className: "text-foreground/70 hover:text-white" },
+];
+
+// Collapsed into the "More" dropdown on desktop
+const SECONDARY_NAV: NavItem[] = [
+  { label: "Mindset",    path: "/mindset",     icon: Brain,    className: "text-purple-400/80 hover:text-purple-300" },
+  { label: "Glossary",   path: "/glossary",    icon: BookOpen, className: "text-foreground/70 hover:text-white" },
+  { label: "Frameworks", path: "/frameworks",  icon: Layers,   className: "text-foreground/70 hover:text-white" },
 ];
 
 const ADMIN_ITEMS: NavItem[] = [
@@ -55,8 +63,10 @@ const ADMIN_ITEMS: NavItem[] = [
   { label: "Coaching Admin", path: "/admin/coaching",      icon: Users,  className: "text-emerald-400/80 hover:text-emerald-300" },
 ];
 
+// All items for the mobile burger dropdown
+const ALL_NAV: NavItem[] = [...PRIMARY_NAV, ...SECONDARY_NAV];
+
 interface AppHeaderProps {
-  /** Current route path — used to highlight the active nav item */
   activePath?: string;
 }
 
@@ -64,13 +74,16 @@ export function AppHeader({ activePath }: AppHeaderProps) {
   const { user, logout } = useAuth();
   const [, setLocation] = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
 
   const navTo = (path: string) => {
     setMenuOpen(false);
+    setMoreOpen(false);
     setLocation(path);
   };
 
-  // Close on outside click or scroll
+  // Close burger on outside click or scroll
   useEffect(() => {
     if (!menuOpen) return;
     const handleClick = (e: MouseEvent) => {
@@ -86,8 +99,28 @@ export function AppHeader({ activePath }: AppHeaderProps) {
     };
   }, [menuOpen]);
 
+  // Close "More" dropdown on outside click
+  useEffect(() => {
+    if (!moreOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
+        setMoreOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [moreOpen]);
+
   const isAdmin = user?.role === "admin";
-  const allItems = isAdmin ? [...NAV_ITEMS, ...ADMIN_ITEMS] : NAV_ITEMS;
+  const moreItems: NavItem[] = isAdmin
+    ? [...SECONDARY_NAV, ...ADMIN_ITEMS]
+    : SECONDARY_NAV;
+
+  const allMobileItems: NavItem[] = isAdmin
+    ? [...ALL_NAV, ...ADMIN_ITEMS]
+    : ALL_NAV;
+
+  const moreIsActive = moreItems.some((item) => item.path === activePath);
 
   return (
     <header
@@ -95,7 +128,7 @@ export function AppHeader({ activePath }: AppHeaderProps) {
       className="border-b border-border bg-background/90 backdrop-blur-md sticky top-0 z-50"
     >
       {/* ── Main row ── */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between gap-2 min-w-0">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex items-center gap-2">
         {/* Logo */}
         <button
           onClick={() => navTo("/dashboard")}
@@ -104,12 +137,12 @@ export function AppHeader({ activePath }: AppHeaderProps) {
           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
             <Target className="h-3.5 w-3.5 text-foreground" />
           </div>
-          <span className="font-bold text-base">Spitfire PM</span>
+          <span className="font-bold text-sm whitespace-nowrap">Spitfire PM</span>
         </button>
 
-        {/* Desktop nav — hidden below lg */}
-        <nav className="hidden lg:flex gap-0.5 flex-1 justify-center overflow-hidden">
-          {allItems.map((item) => {
+        {/* Desktop primary nav — hidden below lg */}
+        <nav className="hidden lg:flex items-center gap-0.5 flex-1">
+          {PRIMARY_NAV.map((item) => {
             const isActive = activePath === item.path;
             return (
               <Button
@@ -117,25 +150,60 @@ export function AppHeader({ activePath }: AppHeaderProps) {
                 variant="ghost"
                 size="sm"
                 onClick={() => setLocation(item.path)}
-                className={`${item.className} ${isActive ? "bg-white/8 font-semibold" : ""} text-xs px-2 py-1.5 shrink-0`}
+                className={`${item.className} ${isActive ? "bg-white/8 font-semibold" : ""} text-xs px-2.5 py-1.5 whitespace-nowrap shrink-0`}
               >
-                <item.icon className="h-3.5 w-3.5 mr-1" />
+                <item.icon className="h-3.5 w-3.5 mr-1 shrink-0" />
                 {item.label}
               </Button>
             );
           })}
+
+          {/* "More" dropdown */}
+          <div ref={moreRef} className="relative shrink-0">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setMoreOpen((v) => !v)}
+              className={`text-foreground/60 hover:text-white text-xs px-2.5 py-1.5 whitespace-nowrap ${moreIsActive ? "bg-white/8 font-semibold text-white" : ""}`}
+            >
+              <MoreHorizontal className="h-3.5 w-3.5 mr-1 shrink-0" />
+              More
+              <ChevronDown className={`h-3 w-3 ml-0.5 transition-transform ${moreOpen ? "rotate-180" : ""}`} />
+            </Button>
+
+            {moreOpen && (
+              <div className="absolute left-0 top-full mt-1 w-48 bg-background border border-border rounded-lg shadow-xl py-1 z-50">
+                {moreItems.map((item, i) => {
+                  const isActive = activePath === item.path;
+                  const showDivider = isAdmin && i === SECONDARY_NAV.length;
+                  return (
+                    <div key={item.path}>
+                      {showDivider && <div className="border-t border-border/40 my-1" />}
+                      <button
+                        onClick={() => navTo(item.path)}
+                        className={`flex items-center gap-2 w-full px-3 py-2 text-sm transition-colors text-left ${item.className} hover:bg-white/5 ${isActive ? "bg-white/8 font-semibold" : ""}`}
+                      >
+                        <item.icon className="h-4 w-4 shrink-0" />
+                        {item.label}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </nav>
 
-        {/* Right controls */}
-        <div className="flex items-center gap-1 shrink-0">
+        {/* Right controls — pushed to the right */}
+        <div className="flex items-center gap-1 ml-auto shrink-0">
           <ThemeToggle />
-          {/* Name + email — desktop only, max-width capped to prevent overflow */}
+          {/* Name + email — only at xl (1280px+) */}
           <button
             onClick={() => setLocation("/profile")}
-            className="text-sm text-right hidden xl:block hover:opacity-80 transition-opacity cursor-pointer max-w-[140px]"
+            className="text-sm text-right hidden xl:block hover:opacity-80 transition-opacity cursor-pointer max-w-[150px]"
           >
-            <p className="font-medium text-foreground truncate">{user?.displayName || user?.name}</p>
-            <p className="text-foreground/40 text-xs truncate">{user?.email}</p>
+            <p className="font-medium text-foreground truncate leading-tight">{user?.displayName || user?.name}</p>
+            <p className="text-foreground/40 text-xs truncate leading-tight">{user?.email}</p>
           </button>
           <Button
             variant="ghost"
@@ -178,10 +246,9 @@ export function AppHeader({ activePath }: AppHeaderProps) {
       >
         <div className="min-h-0">
           <div className="border-t border-border px-4 py-3 flex flex-col gap-1 bg-background/95">
-            {allItems.map((item, i) => {
+            {allMobileItems.map((item, i) => {
               const isActive = activePath === item.path;
-              // Insert a divider before admin items
-              const showDivider = isAdmin && i === NAV_ITEMS.length;
+              const showDivider = isAdmin && i === ALL_NAV.length;
               return (
                 <div key={item.path}>
                   {showDivider && <div className="border-t border-border/40 my-1" />}
