@@ -95,7 +95,7 @@ export function AppHeader({ activePath }: AppHeaderProps) {
       className="border-b border-border bg-background/90 backdrop-blur-md sticky top-0 z-50"
     >
       {/* ── Main row ── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-2">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between gap-2 min-w-0">
         {/* Logo */}
         <button
           onClick={() => navTo("/dashboard")}
@@ -108,7 +108,7 @@ export function AppHeader({ activePath }: AppHeaderProps) {
         </button>
 
         {/* Desktop nav — hidden below lg */}
-        <nav className="hidden lg:flex gap-1 flex-1 justify-center">
+        <nav className="hidden lg:flex gap-0.5 flex-1 justify-center overflow-hidden">
           {allItems.map((item) => {
             const isActive = activePath === item.path;
             return (
@@ -117,9 +117,9 @@ export function AppHeader({ activePath }: AppHeaderProps) {
                 variant="ghost"
                 size="sm"
                 onClick={() => setLocation(item.path)}
-                className={`${item.className} ${isActive ? "bg-white/8 font-semibold" : ""}`}
+                className={`${item.className} ${isActive ? "bg-white/8 font-semibold" : ""} text-xs px-2 py-1.5 shrink-0`}
               >
-                <item.icon className="h-4 w-4 mr-1.5" />
+                <item.icon className="h-3.5 w-3.5 mr-1" />
                 {item.label}
               </Button>
             );
@@ -127,15 +127,15 @@ export function AppHeader({ activePath }: AppHeaderProps) {
         </nav>
 
         {/* Right controls */}
-        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+        <div className="flex items-center gap-1 shrink-0">
           <ThemeToggle />
-          {/* Name + email — desktop only */}
+          {/* Name + email — desktop only, max-width capped to prevent overflow */}
           <button
             onClick={() => setLocation("/profile")}
-            className="text-sm text-right hidden lg:block hover:opacity-80 transition-opacity cursor-pointer"
+            className="text-sm text-right hidden xl:block hover:opacity-80 transition-opacity cursor-pointer max-w-[140px]"
           >
-            <p className="font-medium text-foreground">{user?.displayName || user?.name}</p>
-            <p className="text-foreground/40 text-xs">{user?.email}</p>
+            <p className="font-medium text-foreground truncate">{user?.displayName || user?.name}</p>
+            <p className="text-foreground/40 text-xs truncate">{user?.email}</p>
           </button>
           <Button
             variant="ghost"
