@@ -6,14 +6,16 @@
 import { Resend } from "resend";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY ?? "";
-// Coaching-specific sender — distinct from the main platform sender
+// Coaching sender — set COACHING_EMAIL_FROM in your hosting env variables
+// Format: "Spitfire PM Coaching <coaching@spitfire-pm.com>"
 const FROM_EMAIL =
   process.env.COACHING_EMAIL_FROM ??
-  process.env.EMAIL_FROM ??
   "Spitfire PM Coaching <coaching@spitfire-pm.com>";
+// Reply-to for customer emails — defaults to coaching@spitfire-pm.com
 const COACHING_REPLY_TO =
   process.env.COACHING_REPLY_TO ??
   "coaching@spitfire-pm.com";
+// Admin notification recipient — set ADMIN_EMAIL in your hosting env variables
 const ADMIN_EMAIL_DEFAULT =
   process.env.ADMIN_EMAIL ?? "coaching@spitfire-pm.com";
 const APP_URL = process.env.APP_URL ?? "https://www.spitfire-pm.com";
