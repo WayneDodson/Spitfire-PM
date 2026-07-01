@@ -13,7 +13,7 @@ import { emailTokens } from "../drizzle/schema";
 import { eq, and, gt } from "drizzle-orm";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY ?? "";
-const FROM_EMAIL = process.env.EMAIL_FROM ?? "Spitfire PM <support@spitfireitsolutions.com>";
+const FROM_EMAIL = process.env.EMAIL_FROM ?? "Spitfire PM <coaching@spitfire-pm.com>";
 const REPLY_TO = process.env.EMAIL_REPLY_TO ?? "support@spitfireitsolutions.com";
 const APP_URL = process.env.APP_URL ?? "https://www.spitfire-pm.com";
 
