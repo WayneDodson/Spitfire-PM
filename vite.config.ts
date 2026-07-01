@@ -1,13 +1,12 @@
 import { jsxLocPlugin } from "@builder.io/vite-plugin-jsx-loc";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
-import fs from "node:fs";
 import path from "path";
 import { defineConfig } from "vite";
-import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
 
+// Removed vite-plugin-manus-runtime — Manus-specific, not needed on Railway/Vercel
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime()];
+const plugins = [react(), tailwindcss(), jsxLocPlugin()];
 
 export default defineConfig({
   plugins,
@@ -24,18 +23,12 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
-    // Raise warning threshold — chunks above this are flagged in build output
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        // Manual chunk splitting: keeps vendor code separate from app code
-        // so browsers can cache React/UI libs independently of app changes
         manualChunks: {
-          // Core React runtime — changes rarely
           'vendor-react': ['react', 'react-dom'],
-          // Routing
           'vendor-router': ['wouter'],
-          // tRPC + React Query — changes rarely
           'vendor-trpc': [
             '@trpc/client',
             '@trpc/react-query',
@@ -43,7 +36,6 @@ export default defineConfig({
             '@tanstack/react-query',
             'superjson',
           ],
-          // Radix UI / shadcn primitives — large but stable
           'vendor-ui': [
             '@radix-ui/react-dialog',
             '@radix-ui/react-dropdown-menu',
@@ -61,7 +53,6 @@ export default defineConfig({
             '@radix-ui/react-checkbox',
             '@radix-ui/react-avatar',
           ],
-          // Icons — large bundle, changes rarely
           'vendor-icons': ['lucide-react'],
         },
       },
@@ -69,15 +60,7 @@ export default defineConfig({
   },
   server: {
     host: true,
-    allowedHosts: [
-      ".manuspre.computer",
-      ".manus.computer",
-      ".manus-asia.computer",
-      ".manuscomputer.ai",
-      ".manusvm.computer",
-      "localhost",
-      "127.0.0.1",
-    ],
+    allowedHosts: ["localhost", "127.0.0.1"],
     fs: {
       strict: true,
       deny: ["**/.*"],
