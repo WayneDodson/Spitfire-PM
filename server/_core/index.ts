@@ -11,7 +11,7 @@ import { coachingRemindersHandler } from "../scheduledHandlers/coachingReminders
 import { handleCoachingIcsDownload } from "../coachingCalendar";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
-import { serveStatic, setupVite } from "./vite";
+// Vite and static serving are loaded dynamically below (keeps Vite out of production bundle)
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import hpp from "hpp";
@@ -191,8 +191,12 @@ async function startServer() {
 
   // ─── Frontend ────────────────────────────────────────────────────────────────
   if (process.env.NODE_ENV === "development") {
+    // Dynamic import keeps Vite entirely out of the production bundle
+    const { setupVite } = await import("./vite.js");
     await setupVite(app, server);
   } else {
+    // Use the Vite-free static server in production
+    const { serveStatic } = await import("./static.js");
     serveStatic(app);
   }
 
