@@ -16,6 +16,8 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import hpp from "hpp";
 import crypto from "crypto";
+import fs from "fs";
+import path from "path";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -195,9 +197,17 @@ async function startServer() {
     const { setupVite } = await import("./vite.js");
     await setupVite(app, server);
   } else {
-    // Use the Vite-free static server in production
-    const { serveStatic } = await import("./static.js");
-    serveStatic(app);
+    // Inline static server — no Vite dependency in production
+    const distPath = path.resolve(import.meta.dirname, "public");
+    if (!fs.existsSync(distPath)) {
+      console.error(`[static] Build directory not found: ${distPath}`);
+    } else {
+      console.log(`[static] Serving from: ${distPath}`);
+    }
+    app.use(express.static(distPath));
+    app.use("*", (_req, res) => {
+      res.sendFile(path.resolve(distPath, "index.html"));
+    });
   }
 
   const preferredPort = parseInt(process.env.PORT || "3000");
